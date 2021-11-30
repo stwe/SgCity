@@ -19,7 +19,7 @@ namespace sg::ogl::resource
         //-------------------------------------------------
 
         ShaderProgram() = delete;
-        ShaderProgram(std::string t_path);
+        explicit ShaderProgram(std::string t_path);
 
         ShaderProgram(const ShaderProgram& t_other) = delete;
         ShaderProgram(ShaderProgram&& t_other) noexcept = delete;
@@ -41,16 +41,19 @@ namespace sg::ogl::resource
         void Bind() const;
         void Unbind() const;
 
-        //-------------------------------------------------
-        // Add shader types
-        //-------------------------------------------------
-
-        void AddVertexShader(const std::string& t_shaderCode);
-        void AddFragmentShader(const std::string& t_shaderCode);
-
     protected:
 
     private:
+        //-------------------------------------------------
+        // Type
+        //-------------------------------------------------
+
+        struct Uniform
+        {
+            std::string type;
+            std::string name;
+        };
+
         //-------------------------------------------------
         // Member
         //-------------------------------------------------
@@ -67,12 +70,20 @@ namespace sg::ogl::resource
         void CreateId();
 
         //-------------------------------------------------
-        // Helper
+        // Add shader types
+        //-------------------------------------------------
+
+        void AddVertexShader(const std::string& t_shaderCode);
+        void AddFragmentShader(const std::string& t_shaderCode);
+
+        //-------------------------------------------------
+        // Shader
         //-------------------------------------------------
 
         static uint32_t CreateShaderObject(int32_t t_shaderType);
         static void CompileShader(uint32_t t_shaderId, const std::string& t_shaderCode);
         static void CheckCompileStatus(uint32_t t_shaderId);
+        void FindUniforms(const std::string& t_shaderCode);
 
         uint32_t AddShader(const std::string& t_shaderCode, int32_t t_shaderType);
 
@@ -80,6 +91,6 @@ namespace sg::ogl::resource
         // Clean up
         //-------------------------------------------------
 
-        void CleanUp();
+        void CleanUp() const;
     };
 }

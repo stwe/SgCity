@@ -84,7 +84,7 @@ void sg::ogl::Window::Init()
 {
     Log::SG_LOG_DEBUG("[Window::Init()] Initializing window.");
 
-    InitGlfw();
+    InitWindow();
     InitProjectionMatrix();
 
     Log::SG_LOG_DEBUG("[Window::Init()] The window was successfully initialized.");
@@ -126,9 +126,9 @@ void sg::ogl::Window::CloseIfEscKeyPressed()
 // Init
 //-------------------------------------------------
 
-void sg::ogl::Window::InitGlfw()
+void sg::ogl::Window::InitWindow()
 {
-    Log::SG_LOG_DEBUG("[Window::InitGlfw()] Initializing GLFW.");
+    Log::SG_LOG_DEBUG("[Window::InitWindow()] Initializing GLFW.");
 
     // Setup an error callback.
     glfwSetErrorCallback(
@@ -141,7 +141,7 @@ void sg::ogl::Window::InitGlfw()
     // Initialize GLFW.
     if (!glfwInit())
     {
-        throw SG_EXCEPTION("[Window::InitGlfw()] Unable to initialize GLFW.");
+        throw SG_EXCEPTION("[Window::InitWindow()] Unable to initialize GLFW.");
     }
 
     glfwDefaultWindowHints();
@@ -158,14 +158,14 @@ void sg::ogl::Window::InitGlfw()
     if (!m_windowHandle)
     {
         glfwTerminate();
-        throw SG_EXCEPTION("[Window::InitGlfw()] Failed to create the GLFW window.");
+        throw SG_EXCEPTION("[Window::InitWindow()] Failed to create the GLFW window.");
     }
 
     // Get the resolution of the primary monitor.
     const auto* primaryMonitor{ glfwGetVideoMode(glfwGetPrimaryMonitor()) };
     if (!primaryMonitor)
     {
-        throw SG_EXCEPTION("[Window::InitGlfw()] Unable to get the primary monitor.");
+        throw SG_EXCEPTION("[Window::InitWindow()] Unable to get the primary monitor.");
     }
 
     // Center our window.
@@ -178,11 +178,11 @@ void sg::ogl::Window::InitGlfw()
     glViewport(0, 0, m_width, m_height);
 
     // Initialize GLEW.
-    Log::SG_LOG_DEBUG("[Window::InitGlfw()] Initialize GLEW.");
+    Log::SG_LOG_DEBUG("[Window::InitWindow()] Initializing GLEW.");
     const auto err{ glewInit() };
     if (err != GLEW_OK)
     {
-        throw SG_EXCEPTION("[Window::InitGlfw()] Unable to initialize GLEW." + std::string(reinterpret_cast<const char*>(glewGetErrorString(err))));
+        throw SG_EXCEPTION("[Window::InitWindow()] Unable to initialize GLEW." + std::string(reinterpret_cast<const char*>(glewGetErrorString(err))));
     }
 
     // Print out some informations about the graphics drivers.

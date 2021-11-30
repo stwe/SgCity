@@ -51,6 +51,18 @@ void sg::ogl::resource::ShaderProgram::Unbind() const
 }
 
 //-------------------------------------------------
+// Create
+//-------------------------------------------------
+
+void sg::ogl::resource::ShaderProgram::CreateId()
+{
+    id = glCreateProgram();
+    SG_ASSERT(id, "[ShaderProgram::CreateId()] Error while creating a new Shader Program.");
+
+    Log::SG_LOG_DEBUG("[ShaderProgram::CreateId()] A new Shader Program was created. The Id is {}.", id);
+}
+
+//-------------------------------------------------
 // Add shader types
 //-------------------------------------------------
 
@@ -67,19 +79,7 @@ void sg::ogl::resource::ShaderProgram::AddFragmentShader(const std::string& t_sh
 }
 
 //-------------------------------------------------
-// Create
-//-------------------------------------------------
-
-void sg::ogl::resource::ShaderProgram::CreateId()
-{
-    id = glCreateProgram();
-    SG_ASSERT(id, "[ShaderProgram::CreateId()] Error while creating a new Shader Program.");
-
-    Log::SG_LOG_DEBUG("[ShaderProgram::CreateId()] A new Shader Program was created. The Id is {}.", id);
-}
-
-//-------------------------------------------------
-// Helper
+// Shader
 //-------------------------------------------------
 
 uint32_t sg::ogl::resource::ShaderProgram::CreateShaderObject(int32_t t_shaderType)
@@ -122,6 +122,11 @@ void sg::ogl::resource::ShaderProgram::CheckCompileStatus(uint32_t t_shaderId)
     }
 }
 
+void sg::ogl::resource::ShaderProgram::FindUniforms(const std::string& t_shaderCode)
+{
+
+}
+
 uint32_t sg::ogl::resource::ShaderProgram::AddShader(const std::string& t_shaderCode, int32_t t_shaderType)
 {
     const auto shaderId{ CreateShaderObject(t_shaderType) };
@@ -129,7 +134,7 @@ uint32_t sg::ogl::resource::ShaderProgram::AddShader(const std::string& t_shader
     CheckCompileStatus(shaderId);
     glAttachShader(id, shaderId);
 
-    //FindUniforms(t_shaderCode);
+    FindUniforms(t_shaderCode);
 
     return shaderId;
 }
@@ -138,7 +143,7 @@ uint32_t sg::ogl::resource::ShaderProgram::AddShader(const std::string& t_shader
 // Clean up
 //-------------------------------------------------
 
-void sg::ogl::resource::ShaderProgram::CleanUp()
+void sg::ogl::resource::ShaderProgram::CleanUp() const
 {
     Log::SG_LOG_DEBUG("[ShaderProgram::CleanUp()] Clean up Shader Program Id {}.", id);
 

@@ -151,9 +151,9 @@ namespace sg::ogl
         //-------------------------------------------------
 
         /**
-         * The GLFW Window initialization code.
+         * The Window initialization code.
          */
-        void InitGlfw();
+        void InitWindow();
 
         /**
          * Init projection matrices.

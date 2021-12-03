@@ -2,6 +2,10 @@
 
 #include <cstdint>
 #include <string>
+#include <utility>
+#include <vector>
+#include <unordered_map>
+#include <glm/glm.hpp>
 
 namespace sg::ogl::resource
 {
@@ -41,6 +45,19 @@ namespace sg::ogl::resource
         void Bind() const;
         void Unbind() const;
 
+        //-------------------------------------------------
+        // Set uniforms
+        //-------------------------------------------------
+
+        void SetUniform(const std::string& t_uniformName, int32_t t_value);
+        void SetUniform(const std::string& t_uniformName, float t_value);
+        void SetUniform(const std::string& t_uniformName, bool t_value);
+        void SetUniform(const std::string& t_uniformName, const glm::vec2& t_value);
+        void SetUniform(const std::string& t_uniformName, const glm::vec3& t_value);
+        void SetUniform(const std::string& t_uniformName, const glm::vec4& t_value);
+        void SetUniform(const std::string& t_uniformName, const glm::mat4& t_value);
+        void SetUniform(const std::string& t_uniformName, const glm::mat3& t_value);
+
     protected:
 
     private:
@@ -52,6 +69,10 @@ namespace sg::ogl::resource
         {
             std::string type;
             std::string name;
+
+            Uniform(std::string t_type, std::string t_name)
+                : type{ std::move(t_type) }
+                , name{ std::move(t_name) } {}
         };
 
         //-------------------------------------------------
@@ -62,6 +83,9 @@ namespace sg::ogl::resource
 
         uint32_t m_vertexShaderId{ 0 };
         uint32_t m_fragmentShaderId{ 0 };
+
+        std::vector<Uniform> m_foundUniforms;
+        std::unordered_map<std::string, int32_t> m_uniforms;
 
         //-------------------------------------------------
         // Create
@@ -86,6 +110,18 @@ namespace sg::ogl::resource
         void FindUniforms(const std::string& t_shaderCode);
 
         uint32_t AddShader(const std::string& t_shaderCode, int32_t t_shaderType);
+
+        //-------------------------------------------------
+        // Link
+        //-------------------------------------------------
+
+        void LinkAndValidateProgram() const;
+
+        //-------------------------------------------------
+        // Uniforms
+        //-------------------------------------------------
+
+        void AddFoundUniforms();
 
         //-------------------------------------------------
         // Clean up

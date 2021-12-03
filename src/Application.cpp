@@ -42,9 +42,8 @@ void sg::Application::Init()
     Log::SG_LOG_DEBUG("[Application::Init()] Initializing application.");
 
     m_window.Init();
-
-    ogl::resource::ShaderProgram shaderProgram("/home/steffen/CLionProjects/SgCity/resources/shader/sprite");
-    shaderProgram.Load();
+    //m_vao.Add2DQuadVbo();
+    //m_shaderProgram.Load();
 
     Log::SG_LOG_DEBUG("[Application::Init()] The application was successfully initialized.");
 }

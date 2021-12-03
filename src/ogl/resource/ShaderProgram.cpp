@@ -1,3 +1,4 @@
+#include <glm/gtc/type_ptr.hpp>
 #include "ShaderProgram.h"
 #include "OpenGL.h"
 #include "Assert.h"
@@ -32,8 +33,8 @@ void sg::ogl::resource::ShaderProgram::Load()
     AddVertexShader(ResourceUtil::ReadShaderFile(m_path + "/Vertex.vert"));
     AddFragmentShader(ResourceUtil::ReadShaderFile(m_path + "/Fragment.frag"));
 
-    //LinkAndValidateProgram();
-    //AddFoundUniforms();
+    LinkAndValidateProgram();
+    AddFoundUniforms();
 }
 
 //-------------------------------------------------
@@ -48,6 +49,51 @@ void sg::ogl::resource::ShaderProgram::Bind() const
 void sg::ogl::resource::ShaderProgram::Unbind() const
 {
     glUseProgram(0);
+}
+
+//-------------------------------------------------
+// Set uniforms
+//-------------------------------------------------
+
+void sg::ogl::resource::ShaderProgram::SetUniform(const std::string& t_uniformName, const int32_t t_value)
+{
+    glUniform1i(m_uniforms.at(t_uniformName), t_value);
+}
+
+void sg::ogl::resource::ShaderProgram::SetUniform(const std::string& t_uniformName, const float t_value)
+{
+    glUniform1f(m_uniforms.at(t_uniformName), t_value);
+}
+
+void sg::ogl::resource::ShaderProgram::SetUniform(const std::string& t_uniformName, const bool t_value)
+{
+    // if value == true load 1 else 0 as float
+    glUniform1f(m_uniforms.at(t_uniformName), t_value ? 1.0f : 0.0f);
+}
+
+void sg::ogl::resource::ShaderProgram::SetUniform(const std::string& t_uniformName, const glm::vec2& t_value)
+{
+    glUniform2f(m_uniforms.at(t_uniformName), t_value.x, t_value.y);
+}
+
+void sg::ogl::resource::ShaderProgram::SetUniform(const std::string& t_uniformName, const glm::vec3& t_value)
+{
+    glUniform3f(m_uniforms.at(t_uniformName), t_value.x, t_value.y, t_value.z);
+}
+
+void sg::ogl::resource::ShaderProgram::SetUniform(const std::string& t_uniformName, const glm::vec4& t_value)
+{
+    glUniform4f(m_uniforms.at(t_uniformName), t_value.x, t_value.y, t_value.z, t_value.w);
+}
+
+void sg::ogl::resource::ShaderProgram::SetUniform(const std::string& t_uniformName, const glm::mat4& t_value)
+{
+    glUniformMatrix4fv(m_uniforms.at(t_uniformName), 1, GL_FALSE, value_ptr(t_value));
+}
+
+void sg::ogl::resource::ShaderProgram::SetUniform(const std::string& t_uniformName, const glm::mat3& t_value)
+{
+    glUniformMatrix3fv(m_uniforms.at(t_uniformName), 1, GL_FALSE, value_ptr(t_value));
 }
 
 //-------------------------------------------------
@@ -109,7 +155,6 @@ void sg::ogl::resource::ShaderProgram::CheckCompileStatus(uint32_t t_shaderId)
         std::vector<char> errorLog(maxLength);
         glGetShaderInfoLog(t_shaderId, maxLength, &maxLength, &errorLog[0]);
 
-        // We don't need the shader anymore.
         glDeleteShader(t_shaderId);
 
         std::string log;
@@ -124,7 +169,24 @@ void sg::ogl::resource::ShaderProgram::CheckCompileStatus(uint32_t t_shaderId)
 
 void sg::ogl::resource::ShaderProgram::FindUniforms(const std::string& t_shaderCode)
 {
+    std::string uniformKeyword{ "uniform" };
+    const auto uniformKeywordLength{ uniformKeyword.length() };
 
+    std::vector<size_t> uniformPositions;
+    ResourceUtil::FindAllOccurances(uniformPositions, t_shaderCode, uniformKeyword);
+
+    for (const auto& position : uniformPositions)
+    {
+        const auto begin{ position + uniformKeywordLength + 1 };
+        const auto end{ t_shaderCode.find_first_of(';', begin) };
+        const auto uniformLine{ t_shaderCode.substr(begin, end - begin) };
+
+        const auto uniformNamePos{ uniformLine.find_first_of(' ') + 1 };
+        const auto uniformName{ uniformLine.substr(uniformNamePos, uniformLine.length()) };
+        const auto uniformType{ uniformLine.substr(0, uniformNamePos - 1) };
+
+        m_foundUniforms.emplace_back(uniformType, uniformName);
+    }
 }
 
 uint32_t sg::ogl::resource::ShaderProgram::AddShader(const std::string& t_shaderCode, int32_t t_shaderType)
@@ -137,6 +199,86 @@ uint32_t sg::ogl::resource::ShaderProgram::AddShader(const std::string& t_shader
     FindUniforms(t_shaderCode);
 
     return shaderId;
+}
+
+//-------------------------------------------------
+// Link
+//-------------------------------------------------
+
+void sg::ogl::resource::ShaderProgram::LinkAndValidateProgram() const
+{
+    // link our program
+    glLinkProgram(id);
+
+    // error handling
+    auto isLinked{ GL_FALSE };
+    glGetProgramiv(id, GL_LINK_STATUS, &isLinked);
+    if (isLinked == GL_FALSE)
+    {
+        auto maxLength{ 0 };
+        glGetProgramiv(id, GL_INFO_LOG_LENGTH, &maxLength);
+
+        std::vector<char> infoLog(maxLength);
+        glGetProgramInfoLog(id, maxLength, &maxLength, &infoLog[0]);
+
+        CleanUp();
+
+        std::string log;
+        for (const auto& value : infoLog)
+        {
+            log.push_back(value);
+        }
+
+        throw SG_EXCEPTION("[ShaderProgram::LinkAndValidate()] Error while linking shader program. Log: " + log);
+    }
+
+    // cleanup: always detach shaders after a successful link
+    if (m_vertexShaderId != 0)
+    {
+        glDetachShader(id, m_vertexShaderId);
+    }
+
+    if (m_fragmentShaderId != 0)
+    {
+        glDetachShader(id, m_fragmentShaderId);
+    }
+
+    // validate our program
+    glValidateProgram(id);
+
+    auto isValidated{ GL_FALSE };
+    glGetProgramiv(id, GL_VALIDATE_STATUS, &isValidated);
+    if (isValidated == GL_FALSE)
+    {
+        auto maxLength{ 0 };
+        glGetProgramiv(id, GL_INFO_LOG_LENGTH, &maxLength);
+
+        std::vector<char> infoLog(maxLength);
+        glGetProgramInfoLog(id, maxLength, &maxLength, &infoLog[0]);
+
+        CleanUp();
+
+        std::string log;
+        for (const auto& value : infoLog)
+        {
+            log.push_back(value);
+        }
+
+        throw SG_EXCEPTION("[ShaderProgram::LinkAndValidate()] Shader Program validation error. Log: " + log);
+    }
+}
+
+//-------------------------------------------------
+// Uniforms
+//-------------------------------------------------
+
+void sg::ogl::resource::ShaderProgram::AddFoundUniforms()
+{
+    for (const auto& uniform : m_foundUniforms)
+    {
+        int32_t uniformId{ glGetUniformLocation(id, uniform.name.c_str()) };
+        m_uniforms.emplace(uniform.name, uniformId);
+    }
 }
 
 //-------------------------------------------------

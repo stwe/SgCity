@@ -42,8 +42,8 @@ namespace sg
 
     private:
         ogl::Window m_window{ 1024, 768, "SgCity Sandbox" };
-        ogl::buffer::Vao m_vao;
-        ogl::resource::ShaderProgram m_shaderProgram{"/home/steffen/CLionProjects/SgCity/resources/shader/sprite"};
+        ogl::buffer::Vao* m_vao;
+        ogl::resource::ShaderProgram* m_shaderProgram;
 
         //-------------------------------------------------
         // Logic
@@ -66,5 +66,11 @@ namespace sg
 
         void StartFrame();
         void EndFrame();
+
+        //-------------------------------------------------
+        // Clean up
+        //-------------------------------------------------
+
+        void CleanUp();
     };
 }

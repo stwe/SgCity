@@ -2,7 +2,6 @@
 #include "Application.h"
 #include "Log.h"
 #include "OpenGL.h"
-
 #include "resource/ShaderProgram.h"
 
 //-------------------------------------------------
@@ -17,6 +16,8 @@ sg::Application::Application()
 sg::Application::~Application() noexcept
 {
     Log::SG_LOG_DEBUG("[Application::~Application()] Destruct Application.");
+
+    CleanUp();
 }
 
 //-------------------------------------------------
@@ -42,8 +43,12 @@ void sg::Application::Init()
     Log::SG_LOG_DEBUG("[Application::Init()] Initializing application.");
 
     m_window.Init();
-    //m_vao.Add2DQuadVbo();
-    //m_shaderProgram.Load();
+
+    m_vao = new ogl::buffer::Vao();
+    m_shaderProgram = new ogl::resource::ShaderProgram("/home/steffen/CLionProjects/SgCity/resources/shader/sprite");
+
+    m_vao->Add2DQuadVbo();
+    m_shaderProgram->Load();
 
     Log::SG_LOG_DEBUG("[Application::Init()] The application was successfully initialized.");
 }
@@ -63,6 +68,16 @@ void sg::Application::Render()
     StartFrame();
 
     // render frame
+
+    /*
+    m_vao->Bind();
+    m_shaderProgram->Bind();
+
+    m_vao->DrawPrimitives();
+
+    m_shaderProgram->Unbind();
+    m_vao->Unbind();
+    */
 
     EndFrame();
 }
@@ -131,4 +146,14 @@ void sg::Application::StartFrame()
 void sg::Application::EndFrame()
 {
     m_window.Update();
+}
+
+//-------------------------------------------------
+// Clean up
+//-------------------------------------------------
+
+void sg::Application::CleanUp()
+{
+    delete m_vao;
+    delete m_shaderProgram;
 }

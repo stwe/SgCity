@@ -1,6 +1,6 @@
 #include <glm/gtc/type_ptr.hpp>
 #include "ShaderProgram.h"
-#include "OpenGL.h"
+#include "ogl/OpenGL.h"
 #include "Assert.h"
 #include "SgException.h"
 #include "ResourceUtil.h"
@@ -130,7 +130,7 @@ void sg::ogl::resource::ShaderProgram::AddFragmentShader(const std::string& t_sh
 
 uint32_t sg::ogl::resource::ShaderProgram::CreateShaderObject(int32_t t_shaderType)
 {
-    const auto shaderId{ glCreateShader(t_shaderType) };
+    const uint32_t shaderId{ glCreateShader(t_shaderType) };
     SG_ASSERT(shaderId, "[ShaderProgram::CreateShaderObject()] Shader object creation has failed.");
 
     return shaderId;
@@ -191,7 +191,7 @@ void sg::ogl::resource::ShaderProgram::FindUniforms(const std::string& t_shaderC
 
 uint32_t sg::ogl::resource::ShaderProgram::AddShader(const std::string& t_shaderCode, int32_t t_shaderType)
 {
-    const auto shaderId{ CreateShaderObject(t_shaderType) };
+    const uint32_t shaderId{ CreateShaderObject(t_shaderType) };
     CompileShader(shaderId, t_shaderCode);
     CheckCompileStatus(shaderId);
     glAttachShader(id, shaderId);

@@ -11,7 +11,6 @@ namespace sg::ogl
     class OpenGL
     {
     public:
-
         //-------------------------------------------------
         // OpenGL states
         //-------------------------------------------------
@@ -24,9 +23,9 @@ namespace sg::ogl
          * @param b blue - range [0, 1].
          * @param a alpha - range [0, 1].
          */
-        static void SetClearColor(float r, float g, float b, float a)
+        static void SetClearColor(float t_red, float t_green, float t_blue, float t_alpha)
         {
-            glClearColor(r, g, b, a);
+            glClearColor(t_red, t_green, t_blue, t_alpha);
         }
 
         /**

@@ -13,7 +13,6 @@ namespace sg::ogl
     class Window
     {
     public:
-
         //-------------------------------------------------
         // Constants
         //-------------------------------------------------
@@ -173,5 +172,11 @@ namespace sg::ogl
          * Update orthographic projection matrix.
          */
         void UpdateOrthographicProjectionMatrix();
+
+        //-------------------------------------------------
+        // Clean up
+        //-------------------------------------------------
+
+        void CleanUp() const;
     };
 }

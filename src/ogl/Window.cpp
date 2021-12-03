@@ -38,8 +38,7 @@ sg::ogl::Window::~Window() noexcept
 {
     Log::SG_LOG_DEBUG("[Window::~Window()] Destruct Window.");
 
-    glfwDestroyWindow(m_windowHandle);
-    glfwTerminate();
+    CleanUp();
 }
 
 //-------------------------------------------------
@@ -226,4 +225,14 @@ void sg::ogl::Window::UpdateOrthographicProjectionMatrix()
             0.0f,
             static_cast<float>(m_height)
         );
+}
+
+//-------------------------------------------------
+// Clean up
+//-------------------------------------------------
+
+void sg::ogl::Window::CleanUp() const
+{
+    glfwDestroyWindow(m_windowHandle);
+    glfwTerminate();
 }

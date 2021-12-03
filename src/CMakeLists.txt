@@ -20,5 +20,5 @@ else()
     target_compile_definitions(${PROJECT_NAME} PUBLIC GLFW_INCLUDE_NONE)
 endif()
 
-target_include_directories(${PROJECT_NAME} PUBLIC ${PROJECT_SOURCE_DIR}/src ${PROJECT_SOURCE_DIR}/src/ogl)
+target_include_directories(${PROJECT_NAME} PUBLIC ${PROJECT_SOURCE_DIR}/src)
 target_link_libraries(${PROJECT_NAME} ${CONAN_LIBS})

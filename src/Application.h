@@ -1,15 +1,14 @@
 #pragma once
 
-#include "Window.h"
-#include "buffer/Vao.h"
-#include "resource/ShaderProgram.h"
+#include "ogl/Window.h"
+#include "ogl/buffer/Vao.h"
+#include "ogl/resource/ShaderProgram.h"
 
 namespace sg
 {
     class Application
     {
     public:
-
         //-------------------------------------------------
         // Constants
         //-------------------------------------------------
@@ -42,8 +41,8 @@ namespace sg
 
     private:
         ogl::Window m_window{ 1024, 768, "SgCity Sandbox" };
-        ogl::buffer::Vao* m_vao;
-        ogl::resource::ShaderProgram* m_shaderProgram;
+        ogl::buffer::Vao* m_vao{ nullptr };
+        ogl::resource::ShaderProgram* m_shaderProgram{ nullptr };
 
         //-------------------------------------------------
         // Logic

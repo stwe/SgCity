@@ -1,8 +1,8 @@
 #include <sstream>
 #include "Application.h"
 #include "Log.h"
-#include "OpenGL.h"
-#include "resource/ShaderProgram.h"
+#include "ogl/OpenGL.h"
+#include "ogl/resource/ShaderProgram.h"
 
 //-------------------------------------------------
 // Ctors. / Dtor.

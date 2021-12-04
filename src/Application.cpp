@@ -48,7 +48,7 @@ void sg::Application::Init()
 
     m_vao = new ogl::buffer::Vao();
     m_shaderProgram = new ogl::resource::ShaderProgram("/home/steffen/CLionProjects/SgCity/resources/shader/sprite");
-    m_texture = new ogl::resource::Texture("/home/steffen/CLionProjects/SgCity/resources/texture/t.png");
+    m_texture = new ogl::resource::Texture("/home/steffen/CLionProjects/SgCity/resources/texture/red.png");
 
     m_vao->Add2DQuadVbo();
     m_shaderProgram->Load();
@@ -77,7 +77,7 @@ void sg::Application::Render()
     m_shaderProgram->Bind();
 
     m_shaderProgram->SetUniform("model", ogl::math::Transform::CreateModelMatrix(
-        glm::vec2(200.0f, 200.0f), glm::vec2(200.0f, 200.0f)));
+        glm::vec2(200.0f, 200.0f), glm::vec2(64.0f, 32.0f)));
     m_shaderProgram->SetUniform("view", m_camera.GetViewMatrix());
     m_shaderProgram->SetUniform("projection", m_window.GetOrthographicProjectionMatrix());
 

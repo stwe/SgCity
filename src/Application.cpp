@@ -76,7 +76,7 @@ void sg::Application::Render()
     m_shaderProgram->SetUniform("model", ogl::math::Transform::CreateModelMatrix(
         glm::vec2(200.0f, 200.0f), glm::vec2(200.0f, 200.0f)));
 
-    //m_shaderProgram->SetUniform("view", glm::mat4());
+    m_shaderProgram->SetUniform("view", m_camera.GetViewMatrix());
     m_shaderProgram->SetUniform("projection", m_window.GetOrthographicProjectionMatrix());
 
     m_vao->DrawPrimitives();

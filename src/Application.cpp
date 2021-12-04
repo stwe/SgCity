@@ -3,6 +3,7 @@
 #include "Log.h"
 #include "ogl/OpenGL.h"
 #include "ogl/resource/ShaderProgram.h"
+#include "ogl/resource/Texture.h"
 #include "ogl/math/Transform.h"
 
 //-------------------------------------------------
@@ -47,9 +48,11 @@ void sg::Application::Init()
 
     m_vao = new ogl::buffer::Vao();
     m_shaderProgram = new ogl::resource::ShaderProgram("/home/steffen/CLionProjects/SgCity/resources/shader/sprite");
+    m_texture = new ogl::resource::Texture("/home/steffen/CLionProjects/SgCity/resources/texture/t.png");
 
     m_vao->Add2DQuadVbo();
     m_shaderProgram->Load();
+    m_texture->Load();
 
     Log::SG_LOG_DEBUG("[Application::Init()] The application was successfully initialized.");
 }
@@ -75,9 +78,11 @@ void sg::Application::Render()
 
     m_shaderProgram->SetUniform("model", ogl::math::Transform::CreateModelMatrix(
         glm::vec2(200.0f, 200.0f), glm::vec2(200.0f, 200.0f)));
-
     m_shaderProgram->SetUniform("view", m_camera.GetViewMatrix());
     m_shaderProgram->SetUniform("projection", m_window.GetOrthographicProjectionMatrix());
+
+    m_texture->BindForReading(GL_TEXTURE0);
+    m_shaderProgram->SetUniform("diffuseMap", 0);
 
     m_vao->DrawPrimitives();
 
@@ -163,4 +168,5 @@ void sg::Application::CleanUp()
 {
     delete m_vao;
     delete m_shaderProgram;
+    delete m_texture;
 }

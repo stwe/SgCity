@@ -3,6 +3,7 @@
 #include "ogl/Window.h"
 #include "ogl/buffer/Vao.h"
 #include "ogl/resource/ShaderProgram.h"
+#include "ogl/resource/Texture.h"
 #include "ogl/camera/Camera.h"
 
 namespace sg
@@ -42,6 +43,7 @@ namespace sg
         ogl::camera::Camera m_camera{ glm::vec2(0.0f, 0.0f) };
         ogl::buffer::Vao* m_vao{ nullptr };
         ogl::resource::ShaderProgram* m_shaderProgram{ nullptr };
+        ogl::resource::Texture* m_texture{ nullptr };
 
         //-------------------------------------------------
         // Logic

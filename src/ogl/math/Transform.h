@@ -2,33 +2,23 @@
 
 #include <glm/gtc/matrix_transform.hpp>
 
-/*
-    public static Matrix4f createModelMatrix(Vector2f position, Vector2f size) {
-        Matrix4f modelMatrix = new Matrix4f();
-        modelMatrix
-                .identity()
-                .translate(new Vector3f(position, 0.0f))
-                .scale(new Vector3f(size, 1.0f));
-
-        return modelMatrix;
-    }
-*/
-
 namespace sg::ogl::math
 {
-    struct Transform
+    class Transform
     {
-        glm::vec3 position{ glm::vec3(0.0f, 0.0f, 0.0f) };
-        glm::vec3 scale{ glm::vec3(1.0f, 1.0f, 1.0f) };
-
-        explicit operator glm::mat4() const
+    public:
+        static glm::mat4 CreateModelMatrix(const glm::vec2& t_position, const glm::vec2& t_size)
         {
             auto modelMatrix{ glm::mat4(1.0f) };
 
-            modelMatrix = translate(modelMatrix, position);
-            modelMatrix = glm::scale(modelMatrix, scale);
+            modelMatrix = glm::translate(modelMatrix, glm::vec3(t_position, 0.0f));
+            modelMatrix = glm::scale(modelMatrix, glm::vec3(t_size, 1.0f));
 
             return modelMatrix;
         }
+
+    protected:
+
+    private:
     };
 }

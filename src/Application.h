@@ -3,6 +3,7 @@
 #include "ogl/Window.h"
 #include "ogl/buffer/Vao.h"
 #include "ogl/resource/ShaderProgram.h"
+#include "ogl/camera/Camera.h"
 
 namespace sg
 {
@@ -13,9 +14,6 @@ namespace sg
         // Constants
         //-------------------------------------------------
 
-        /**
-         * Time per frame.
-         */
         static constexpr auto FRAME_TIME{ 1.0 / 60.0 };
 
         //-------------------------------------------------
@@ -41,6 +39,7 @@ namespace sg
 
     private:
         ogl::Window m_window{ 1024, 768, "SgCity Sandbox" };
+        ogl::camera::Camera m_camera{ glm::vec2(10.0f, 10.0f) };
         ogl::buffer::Vao* m_vao{ nullptr };
         ogl::resource::ShaderProgram* m_shaderProgram{ nullptr };
 

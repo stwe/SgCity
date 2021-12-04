@@ -3,6 +3,7 @@
 #include "Log.h"
 #include "ogl/OpenGL.h"
 #include "ogl/resource/ShaderProgram.h"
+#include "ogl/math/Transform.h"
 
 //-------------------------------------------------
 // Ctors. / Dtor.
@@ -67,17 +68,23 @@ void sg::Application::Render()
 {
     StartFrame();
 
-    // render frame
+    ogl::OpenGL::EnableAlphaBlending();
 
-    /*
     m_vao->Bind();
     m_shaderProgram->Bind();
+
+    m_shaderProgram->SetUniform("model", ogl::math::Transform::CreateModelMatrix(
+        glm::vec2(200.0f, 200.0f), glm::vec2(200.0f, 200.0f)));
+
+    //m_shaderProgram->SetUniform("view", glm::mat4());
+    m_shaderProgram->SetUniform("projection", m_window.GetOrthographicProjectionMatrix());
 
     m_vao->DrawPrimitives();
 
     m_shaderProgram->Unbind();
     m_vao->Unbind();
-    */
+
+    ogl::OpenGL::DisableBlending();
 
     EndFrame();
 }
@@ -139,7 +146,7 @@ void sg::Application::GameLoop()
 
 void sg::Application::StartFrame()
 {
-    sg::ogl::OpenGL::SetClearColor(1.0f, 0.0f, 0.0f, 0.0f);
+    sg::ogl::OpenGL::SetClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     sg::ogl::OpenGL::Clear();
 }
 

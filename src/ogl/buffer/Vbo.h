@@ -26,6 +26,12 @@ namespace sg::ogl::buffer
         //-------------------------------------------------
 
         Vbo();
+
+        Vbo(const Vbo& t_other) = delete;
+        Vbo(Vbo&& t_other) noexcept = delete;
+        Vbo& operator=(const Vbo& t_other) = delete;
+        Vbo& operator=(Vbo&& t_other) noexcept = delete;
+
         ~Vbo() noexcept;
 
         //-------------------------------------------------

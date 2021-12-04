@@ -58,7 +58,7 @@ void sg::ogl::buffer::Vao::Unbind() const
 
 sg::ogl::buffer::Vbo& sg::ogl::buffer::Vao::AddVbo()
 {
-    return m_vbos.emplace_back(Vbo());
+    return *m_vbos.emplace_back(std::make_unique<Vbo>());
 }
 
 void sg::ogl::buffer::Vao::Add2DQuadVbo()
@@ -80,8 +80,14 @@ void sg::ogl::buffer::Vao::Add2DQuadVbo()
     auto& vbo{ AddVbo() };
 
     vbo.Bind();
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices,GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
     vbo.Unbind();
+
+    // enable location 0 (position)
+    vbo.AddFloatAttribute(0, 2, 4, 0);
+
+    // enable location 1 (uv)
+    vbo.AddFloatAttribute(1, 2, 4, 2);
 
     Unbind();
     SetDrawCount(6);
@@ -130,7 +136,7 @@ void sg::ogl::buffer::Vao::CleanUp()
 
     for (auto& vbo : m_vbos)
     {
-        vbo.CleanUp();
+        vbo->CleanUp();
     }
 
     Unbind();

@@ -222,8 +222,10 @@ void sg::ogl::Window::UpdateOrthographicProjectionMatrix()
         (
             0.0f,
             static_cast<float>(m_width),
+            static_cast<float>(m_height),
             0.0f,
-            static_cast<float>(m_height)
+            -1.0f,
+            1.0f
         );
 }
 

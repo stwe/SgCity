@@ -2,6 +2,7 @@
 
 #include <cstdint>
 #include <vector>
+#include <memory>
 #include "Vbo.h"
 
 namespace sg::ogl::buffer
@@ -78,7 +79,7 @@ namespace sg::ogl::buffer
         /**
          * The Vbo objects assigned to the Vao.
          */
-        std::vector<Vbo> m_vbos;
+        std::vector<std::unique_ptr<Vbo>> m_vbos;
 
         /**
          * Number of vertices to draw.

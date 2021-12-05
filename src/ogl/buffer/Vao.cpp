@@ -1,6 +1,6 @@
 #include "Vao.h"
-#include "ogl/OpenGL.h"
 #include "Assert.h"
+#include "ogl/OpenGL.h"
 
 //-------------------------------------------------
 // Ctors. / Dtor.

@@ -41,7 +41,7 @@ namespace sg::ogl::resource
 
         void Bind() const;
         void Unbind() const;
-        void BindForReading(uint32_t t_textureUnit);
+        void BindForReading(uint32_t t_textureUnit) const;
 
     protected:
 

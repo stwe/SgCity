@@ -1,13 +1,24 @@
 #pragma once
 
+#include <memory>
 #include "ogl/Window.h"
-#include "ogl/buffer/Vao.h"
-#include "ogl/resource/ShaderProgram.h"
-#include "ogl/resource/Texture.h"
 #include "ogl/camera/Camera.h"
+
+namespace sg::ogl::resource
+{
+    class Texture;
+}
+
+namespace sg::ogl::renderer
+{
+    class SpriteRenderer;
+}
 
 namespace sg
 {
+    /**
+     * Represents the main application class of the game.
+     */
     class Application
     {
     public:
@@ -39,11 +50,15 @@ namespace sg
     protected:
 
     private:
+        //-------------------------------------------------
+        // Member
+        //-------------------------------------------------
+
         ogl::Window m_window{ 1024, 768, "SgCity Sandbox" };
         ogl::camera::Camera m_camera{ glm::vec2(0.0f, 0.0f) };
-        ogl::buffer::Vao* m_vao{ nullptr };
-        ogl::resource::ShaderProgram* m_shaderProgram{ nullptr };
-        ogl::resource::Texture* m_texture{ nullptr };
+
+        std::unique_ptr<ogl::resource::Texture> m_texture;
+        std::unique_ptr<ogl::renderer::SpriteRenderer> m_spriteRenderer;
 
         //-------------------------------------------------
         // Logic

@@ -54,7 +54,7 @@ void sg::ogl::resource::Texture::Unbind() const
     glBindTexture(GL_TEXTURE_2D, 0);
 }
 
-void sg::ogl::resource::Texture::BindForReading(uint32_t t_textureUnit)
+void sg::ogl::resource::Texture::BindForReading(uint32_t t_textureUnit) const
 {
     // make sure that the OpenGL constants are used here
     if (t_textureUnit < GL_TEXTURE0 || t_textureUnit > GL_TEXTURE15) {

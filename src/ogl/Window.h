@@ -47,7 +47,6 @@ namespace sg::ogl
         //-------------------------------------------------
 
         Window();
-
         Window(int t_width, int t_height, std::string t_title);
 
         Window(const Window& t_other) = delete;
@@ -114,6 +113,9 @@ namespace sg::ogl
     protected:
 
     private:
+        //-------------------------------------------------
+        // Member
+        //-------------------------------------------------
 
         /**
          * The title of the window.
@@ -177,6 +179,9 @@ namespace sg::ogl
         // Clean up
         //-------------------------------------------------
 
+        /**
+         * Clean up.
+         */
         void CleanUp() const;
     };
 }

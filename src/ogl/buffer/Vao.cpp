@@ -134,11 +134,6 @@ void sg::ogl::buffer::Vao::CleanUp()
 
     glDisableVertexAttribArray(0);
 
-    for (auto& vbo : m_vbos)
-    {
-        vbo->CleanUp();
-    }
-
     Unbind();
     glDeleteVertexArrays(1, &id);
 

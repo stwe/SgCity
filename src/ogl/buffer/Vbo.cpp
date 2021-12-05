@@ -1,6 +1,6 @@
 #include "Vbo.h"
-#include "ogl/OpenGL.h"
 #include "Assert.h"
+#include "ogl/OpenGL.h"
 
 //-------------------------------------------------
 // Ctors. / Dtor.
@@ -106,6 +106,18 @@ void sg::ogl::buffer::Vbo::AddFloatAttribute(uint32_t t_index,
 }
 
 //-------------------------------------------------
+// Create
+//-------------------------------------------------
+
+void sg::ogl::buffer::Vbo::CreateId()
+{
+    glGenBuffers(1, &id);
+    SG_ASSERT(id, "[Vbo::CreateId()] Error while creating a new Vbo.")
+
+    Log::SG_LOG_DEBUG("[Vbo::CreateId()] A new Vbo was created. The Id is {}.", id);
+}
+
+//-------------------------------------------------
 // Clean up
 //-------------------------------------------------
 
@@ -117,16 +129,4 @@ void sg::ogl::buffer::Vbo::CleanUp()
     glDeleteBuffers(1, &id);
 
     Log::SG_LOG_DEBUG("[Vbo::CleanUp()] Vbo Id {} was deleted.", id);
-}
-
-//-------------------------------------------------
-// Create
-//-------------------------------------------------
-
-void sg::ogl::buffer::Vbo::CreateId()
-{
-    glGenBuffers(1, &id);
-    SG_ASSERT(id, "[Vbo::CreateId()] Error while creating a new Vbo.")
-
-    Log::SG_LOG_DEBUG("[Vbo::CreateId()] A new Vbo was created. The Id is {}.", id);
 }

@@ -2,7 +2,7 @@
 
 #include <memory>
 #include <glm/mat4x4.hpp>
-#include <ogl/resource/Texture.h>
+#include "ogl/resource/Texture.h"
 
 namespace sg::ogl::buffer
 {

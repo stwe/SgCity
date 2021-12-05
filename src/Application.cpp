@@ -5,6 +5,7 @@
 #include "ogl/resource/Texture.h"
 #include "ogl/renderer/SpriteRenderer.h"
 #include "ogl/math/Transform.h"
+#include "iso/IsoUtil.h"
 
 //-------------------------------------------------
 // Ctors. / Dtor.
@@ -46,8 +47,11 @@ void sg::Application::Init()
 
     m_window.Init();
 
-    m_texture = std::make_unique<ogl::resource::Texture>("/home/steffen/CLionProjects/SgCity/resources/texture/red.png");
-    m_texture->Load();
+    m_redGrid = std::make_unique<ogl::resource::Texture>("/home/steffen/CLionProjects/SgCity/resources/texture/red.png");
+    m_redGrid->Load();
+
+    m_full = std::make_unique<ogl::resource::Texture>("/home/steffen/CLionProjects/SgCity/resources/texture/full.png");
+    m_full->Load();
 
     m_spriteRenderer = std::make_unique<ogl::renderer::SpriteRenderer>();
 
@@ -68,18 +72,37 @@ void sg::Application::Render()
 {
     StartFrame();
 
-    auto modelMatrix{ sg::ogl::math::Transform::CreateModelMatrix(
-        glm::vec2(),
-        glm::vec2(64.0f, 32.0f)
-        )
-    };
+    for (auto y{ 0 }; y < 12; ++y)
+    {
+        for (auto x{ 0 }; x < 12; ++x)
+        {
+            auto screen{ iso::IsoUtil::ToScreen(x, y, 0) };
+            auto modelMatrix{ogl::math::Transform::CreateModelMatrix(
+                glm::vec2(screen.x, screen.y),
+                glm::vec2(iso::IsoUtil::TILE_SIZE_WIDTH, iso::IsoUtil::TILE_SIZE_HEIGHT)
+            )
+            };
 
-    m_spriteRenderer->Render(
-        modelMatrix,
-        m_camera.GetViewMatrix(),
-        m_window.GetOrthographicProjectionMatrix(),
-        *m_texture
-        );
+            if (x == 0 && y == 0)
+            {
+                m_spriteRenderer->Render(
+                    modelMatrix,
+                    m_camera.GetViewMatrix(),
+                    m_window.GetOrthographicProjectionMatrix(),
+                    *m_full
+                );
+            }
+            else
+            {
+                m_spriteRenderer->Render(
+                    modelMatrix,
+                    m_camera.GetViewMatrix(),
+                    m_window.GetOrthographicProjectionMatrix(),
+                    *m_redGrid
+                );
+            }
+        }
+    }
 
     EndFrame();
 }
@@ -141,8 +164,8 @@ void sg::Application::GameLoop()
 
 void sg::Application::StartFrame()
 {
-    sg::ogl::OpenGL::SetClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-    sg::ogl::OpenGL::Clear();
+    ogl::OpenGL::SetClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+    ogl::OpenGL::Clear();
 }
 
 void sg::Application::EndFrame()

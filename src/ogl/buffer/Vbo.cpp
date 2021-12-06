@@ -29,7 +29,7 @@ void sg::ogl::buffer::Vbo::Bind() const
     glBindBuffer(GL_ARRAY_BUFFER, id);
 }
 
-void sg::ogl::buffer::Vbo::Unbind() const
+void sg::ogl::buffer::Vbo::Unbind()
 {
     glBindBuffer(GL_ARRAY_BUFFER, 0);
 }

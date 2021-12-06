@@ -61,6 +61,27 @@ void sg::ogl::renderer::SpriteRenderer::Render(const glm::mat4& t_modelMatrix,
     OpenGL::DisableBlending();
 }
 
+void sg::ogl::renderer::SpriteRenderer::Render(const glm::mat4& t_modelMatrix,
+                                               const glm::mat4& t_viewMatrix,
+                                               const glm::mat4& t_projectionMatrix) const
+{
+    OpenGL::EnableAlphaBlending();
+
+    m_vao->Bind();
+    m_shaderProgram->Bind();
+
+    m_shaderProgram->SetUniform("model", t_modelMatrix);
+    m_shaderProgram->SetUniform("view", t_viewMatrix);
+    m_shaderProgram->SetUniform("projection", t_projectionMatrix);
+
+    m_vao->DrawPrimitives();
+
+    m_shaderProgram->Unbind();
+    m_vao->Unbind();
+
+    OpenGL::DisableBlending();
+}
+
 //-------------------------------------------------
 // Clean up
 //-------------------------------------------------

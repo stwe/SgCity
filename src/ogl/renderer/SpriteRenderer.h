@@ -37,12 +37,19 @@ namespace sg::ogl::renderer
         //-------------------------------------------------
 
         void Init();
+
         void Render(
             const glm::mat4& t_modelMatrix,
             const glm::mat4& t_viewMatrix,
             const glm::mat4& t_projectionMatrix,
             const resource::Texture& t_texture
             ) const;
+
+        void Render(
+            const glm::mat4& t_modelMatrix,
+            const glm::mat4& t_viewMatrix,
+            const glm::mat4& t_projectionMatrix
+        ) const;
 
     protected:
 

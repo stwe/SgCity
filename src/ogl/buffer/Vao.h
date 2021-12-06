@@ -22,6 +22,11 @@ namespace sg::ogl::buffer
          */
         uint32_t id{ 0 };
 
+        /**
+         * Number of vertices to draw.
+         */
+        int32_t drawCount{ 0 };
+
         //-------------------------------------------------
         // Ctors. / Dtor.
         //-------------------------------------------------
@@ -36,23 +41,11 @@ namespace sg::ogl::buffer
         ~Vao() noexcept;
 
         //-------------------------------------------------
-        // Getter
-        //-------------------------------------------------
-
-        [[nodiscard]] int32_t GetDrawCount() const;
-
-        //-------------------------------------------------
-        // Setter
-        //-------------------------------------------------
-
-        void SetDrawCount(int32_t t_drawCount);
-
-        //-------------------------------------------------
         // Bind / unbind
         //-------------------------------------------------
 
         void Bind() const;
-        void Unbind() const;
+        static void Unbind();
 
         //-------------------------------------------------
         // Add Vbo
@@ -80,11 +73,6 @@ namespace sg::ogl::buffer
          * The Vbo objects assigned to the Vao.
          */
         std::vector<std::unique_ptr<Vbo>> m_vbos;
-
-        /**
-         * Number of vertices to draw.
-         */
-        int32_t m_drawCount{ 0 };
 
         //-------------------------------------------------
         // Create

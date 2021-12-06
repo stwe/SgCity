@@ -39,7 +39,7 @@ namespace sg::ogl::buffer
         //-------------------------------------------------
 
         void Bind() const;
-        void Unbind() const;
+        static void Unbind();
 
         //-------------------------------------------------
         // Store data by calling glBufferData

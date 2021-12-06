@@ -5,7 +5,6 @@
 #include "ogl/resource/Texture.h"
 #include "ogl/renderer/SpriteRenderer.h"
 #include "ogl/math/Transform.h"
-#include "iso/IsoUtil.h"
 
 //-------------------------------------------------
 // Ctors. / Dtor.
@@ -72,37 +71,21 @@ void sg::Application::Render()
 {
     StartFrame();
 
-    for (auto y{ 0 }; y < 12; ++y)
-    {
-        for (auto x{ 0 }; x < 12; ++x)
-        {
-            auto screen{ iso::IsoUtil::ToScreen(x, y, 0) };
-            auto modelMatrix{ogl::math::Transform::CreateModelMatrix(
-                glm::vec2(screen.x, screen.y),
-                glm::vec2(iso::IsoUtil::TILE_SIZE_WIDTH, iso::IsoUtil::TILE_SIZE_HEIGHT)
-            )
-            };
+    auto modelMatrix{ogl::math::Transform::CreateModelMatrix(
+        glm::vec3(-0.5f, 0.0f, 0.0f),
+        glm::vec3(0.0f),
+        glm::vec3(1.0f, 1.0f, 1.0f)
+    )
+    };
 
-            if (x == 0 && y == 0)
-            {
-                m_spriteRenderer->Render(
-                    modelMatrix,
-                    m_camera.GetViewMatrix(),
-                    m_window.GetOrthographicProjectionMatrix(),
-                    *m_full
-                );
-            }
-            else
-            {
-                m_spriteRenderer->Render(
-                    modelMatrix,
-                    m_camera.GetViewMatrix(),
-                    m_window.GetOrthographicProjectionMatrix(),
-                    *m_redGrid
-                );
-            }
-        }
-    }
+    m_spriteRenderer->Render(
+        modelMatrix,
+        glm::lookAt(
+            glm::vec3(0.0f, 1.0f, 1.0f),
+            glm::vec3(0.0f, 0.0, 0.0f),
+            glm::vec3(0.0f, 1.0f, 0.0f)),
+        m_window.GetProjectionMatrix()
+    );
 
     EndFrame();
 }

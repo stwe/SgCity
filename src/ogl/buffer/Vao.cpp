@@ -21,24 +21,6 @@ sg::ogl::buffer::Vao::~Vao() noexcept
 }
 
 //-------------------------------------------------
-// Getter
-//-------------------------------------------------
-
-int32_t sg::ogl::buffer::Vao::GetDrawCount() const
-{
-    return m_drawCount;
-}
-
-//-------------------------------------------------
-// Setter
-//-------------------------------------------------
-
-void sg::ogl::buffer::Vao::SetDrawCount(int32_t t_drawCount)
-{
-    m_drawCount = t_drawCount;
-}
-
-//-------------------------------------------------
 // Bind / unbind
 //-------------------------------------------------
 
@@ -47,7 +29,7 @@ void sg::ogl::buffer::Vao::Bind() const
     glBindVertexArray(id);
 }
 
-void sg::ogl::buffer::Vao::Unbind() const
+void sg::ogl::buffer::Vao::Unbind()
 {
     glBindVertexArray(0);
 }
@@ -65,14 +47,14 @@ void sg::ogl::buffer::Vao::Add2DQuadVbo()
 {
     const float vertices[] =
     {
-        // pos      // uv
-        0.0f, 1.0f, 0.0f, 1.0f,
-        1.0f, 0.0f, 1.0f, 0.0f,
-        0.0f, 0.0f, 0.0f, 0.0f,
+        // pos             // uv
+        0.0f, 0.0f, -1.0f, 0.0f, 1.0f,
+        0.0f, 0.0f,  0.0f, 0.0f, 0.0f,
+        1.0f, 0.0f,  0.0f, 1.0f, 0.0f,
 
-        0.0f, 1.0f, 0.0f, 1.0f,
-        1.0f, 1.0f, 1.0f, 1.0f,
-        1.0f, 0.0f, 1.0f, 0.0f
+        0.0f, 0.0f, -1.0f, 0.0f, 1.0f,
+        1.0f, 0.0f,  0.0f, 1.0f, 0.0f,
+        1.0f, 0.0f, -1.0f, 1.0f, 1.0f
     };
 
     Bind();
@@ -84,13 +66,14 @@ void sg::ogl::buffer::Vao::Add2DQuadVbo()
     vbo.Unbind();
 
     // enable location 0 (position)
-    vbo.AddFloatAttribute(0, 2, 4, 0);
+    vbo.AddFloatAttribute(0, 3, 5, 0);
 
     // enable location 1 (uv)
-    vbo.AddFloatAttribute(1, 2, 4, 2);
+    vbo.AddFloatAttribute(1, 2, 5, 3);
 
     Unbind();
-    SetDrawCount(6);
+
+    drawCount = 6;
 }
 
 //-------------------------------------------------
@@ -99,7 +82,7 @@ void sg::ogl::buffer::Vao::Add2DQuadVbo()
 
 void sg::ogl::buffer::Vao::DrawPrimitives(uint32_t t_drawMode, int32_t t_first) const
 {
-    glDrawArrays(t_drawMode, t_first, m_drawCount);
+    glDrawArrays(t_drawMode, t_first, drawCount);
 }
 
 void sg::ogl::buffer::Vao::DrawPrimitives(uint32_t t_drawMode) const

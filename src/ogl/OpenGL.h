@@ -33,7 +33,7 @@ namespace sg::ogl
          */
         static void Clear()
         {
-            glClear(GL_COLOR_BUFFER_BIT);
+            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
         }
 
         /**
@@ -51,6 +51,16 @@ namespace sg::ogl
         static void DisableBlending()
         {
             glDisable(GL_BLEND);
+        }
+
+        static void EnableWireframeMode()
+        {
+            glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+        }
+
+        static void DisableWireframeMode()
+        {
+            glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
         }
 
     protected:

@@ -184,6 +184,7 @@ void sg::Application::StartFrame()
 {
     ogl::OpenGL::SetClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     ogl::OpenGL::Clear();
+    ogl::OpenGL::EnableWireframeMode();
 }
 
 void sg::Application::EndFrame()

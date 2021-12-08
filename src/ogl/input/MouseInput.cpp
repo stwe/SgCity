@@ -65,12 +65,12 @@ void sg::ogl::input::MouseInput::Input()
 
         if (rotateX)
         {
-            m_displVec.x = static_cast<float>(deltax);
+            m_displVec.y = static_cast<float>(deltax);
         }
 
         if (rotateY)
         {
-            m_displVec.y = static_cast<float>(deltay);
+            m_displVec.x = static_cast<float>(deltay);
         }
     }
 

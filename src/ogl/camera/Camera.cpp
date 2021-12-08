@@ -15,6 +15,14 @@ sg::ogl::camera::Camera::Camera(const glm::vec3& t_position, const float t_yaw, 
     Update();
 }
 
+sg::ogl::camera::Camera::Camera(const glm::vec3& t_position)
+    : m_position{ t_position }
+{
+    Log::SG_LOG_DEBUG("[Camera::Camera()] Create Camera.");
+
+    Update();
+}
+
 sg::ogl::camera::Camera::~Camera() noexcept
 {
     Log::SG_LOG_DEBUG("[Camera::~Camera()] Destruct Camera.");
@@ -28,32 +36,30 @@ void sg::ogl::camera::Camera::Update()
 {
     // Calculate the new Front vector.
     glm::vec3 front;
-    front.x = cos(glm::radians(m_yaw)) * cos(glm::radians(m_pitch));
-    front.y = sin(glm::radians(m_pitch));
-    front.z = sin(glm::radians(m_yaw)) * cos(glm::radians(m_pitch));
-    m_front = normalize(front);
+    front.x = glm::cos(glm::radians(m_yaw)) * glm::cos(glm::radians(m_pitch));
+    front.y = glm::sin(glm::radians(m_pitch));
+    front.z = glm::sin(glm::radians(m_yaw)) * glm::cos(glm::radians(m_pitch));
+    m_front = glm::normalize(front);
 
     // Also re-calculate the Right and Up vector.
-    m_right = normalize(cross(m_front, m_worldUp));
-    m_up = normalize(cross(m_right, m_front));
+    m_right = glm::normalize(glm::cross(m_front, m_worldUp));
+    m_up = glm::normalize(glm::cross(m_right, m_front));
 }
 
-void sg::ogl::camera::Camera::ProcessKeyboard(const camera::Camera::Direction t_direction, const float t_dt)
+void sg::ogl::camera::Camera::ProcessKeyboard(const camera::Camera::Direction t_direction)
 {
-    const auto velocity{ m_movementSpeed * t_dt };
-
     if (t_direction == Direction::FORWARD)
-        m_position += m_front * velocity;
+        m_position += m_front * m_movementSpeed;
     if (t_direction == Direction::BACKWARD)
-        m_position -= m_front * velocity;
+        m_position -= m_front * m_movementSpeed;
     if (t_direction == Direction::LEFT)
-        m_position -= m_right * velocity;
+        m_position -= m_right * m_movementSpeed;
     if (t_direction == Direction::RIGHT)
-        m_position += m_right * velocity;
+        m_position += m_right * m_movementSpeed;
     if (t_direction == Direction::UP)
-        m_position += m_up * velocity;
+        m_position += m_up * m_movementSpeed;
     if (t_direction == Direction::DOWN)
-        m_position -= m_up * velocity;
+        m_position -= m_up * m_movementSpeed;
 }
 
 void sg::ogl::camera::Camera::ProcessMouse(const glm::vec2& t_displVec)

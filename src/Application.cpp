@@ -49,11 +49,11 @@ void sg::Application::Init()
 
     ogl::input::MouseInput::Init(m_window);
 
-    m_redGrid = std::make_unique<ogl::resource::Texture>("/home/steffen/CLionProjects/SgCity/resources/texture/red.png");
-    m_redGrid->Load();
+    //m_redGrid = std::make_unique<ogl::resource::Texture>("/home/steffen/CLionProjects/SgCity/resources/texture/red.png");
+    //m_redGrid->Load();
 
-    m_full = std::make_unique<ogl::resource::Texture>("/home/steffen/CLionProjects/SgCity/resources/texture/full.png");
-    m_full->Load();
+    //m_full = std::make_unique<ogl::resource::Texture>("/home/steffen/CLionProjects/SgCity/resources/texture/full.png");
+    //m_full->Load();
 
     m_spriteRenderer = std::make_unique<ogl::renderer::SpriteRenderer>();
 
@@ -90,11 +90,7 @@ void sg::Application::Render()
 
     m_spriteRenderer->Render(
         modelMatrix,
-        glm::lookAt(
-            glm::vec3(0.0f, 1.0f, 1.0f),
-            glm::vec3(0.0f, 0.0, 0.0f),
-            glm::vec3(0.0f, 1.0f, 0.0f)
-            ),
+        m_camera.GetViewMatrix(),
         m_window.GetProjectionMatrix()
     );
 

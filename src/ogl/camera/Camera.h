@@ -27,6 +27,7 @@ namespace sg::ogl::camera
 
         Camera() = delete;
         Camera(const glm::vec3& t_position, float t_yaw, float t_pitch);
+        explicit Camera(const glm::vec3& t_position);
 
         Camera(const Camera& t_other) = delete;
         Camera(Camera&& t_other) noexcept = delete;
@@ -39,16 +40,16 @@ namespace sg::ogl::camera
         // Getter
         //-------------------------------------------------
 
-        auto& GetPosition() noexcept { return m_position; }
-        [[nodiscard]] const auto& GetPosition() const noexcept { return m_position; }
+        auto& GetPosition() { return m_position; }
+        [[nodiscard]] const auto& GetPosition() const { return m_position; }
 
         [[nodiscard]] auto GetViewMatrix() const { return glm::lookAt(m_position, m_position + m_front, m_up); }
 
-        auto& GetYaw() noexcept { return m_yaw; }
-        [[nodiscard]] const auto& GetYaw() const noexcept { return m_yaw; }
+        auto& GetYaw() { return m_yaw; }
+        [[nodiscard]] const auto& GetYaw() const { return m_yaw; }
 
-        auto& GetPitch() noexcept { return m_pitch; }
-        [[nodiscard]] const auto& GetPitch() const noexcept { return m_pitch; }
+        auto& GetPitch() { return m_pitch; }
+        [[nodiscard]] const auto& GetPitch() const { return m_pitch; }
 
         //-------------------------------------------------
         // Setter
@@ -68,7 +69,7 @@ namespace sg::ogl::camera
         // Keyboard && Mouse
         //-------------------------------------------------
 
-        void ProcessKeyboard(Direction t_direction, float t_dt);
+        void ProcessKeyboard(Direction t_direction);
         void ProcessMouse(const glm::vec2& t_displVec);
 
     protected:

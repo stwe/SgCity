@@ -38,7 +38,7 @@ void sg::ogl::camera::Camera::Update()
     m_up = normalize(cross(m_right, m_front));
 }
 
-void sg::ogl::camera::Camera::ProcessKeyboard(const sg::ogl::camera::Camera::Direction t_direction, const float t_dt)
+void sg::ogl::camera::Camera::ProcessKeyboard(const camera::Camera::Direction t_direction, const float t_dt)
 {
     const auto velocity{ m_movementSpeed * t_dt };
 

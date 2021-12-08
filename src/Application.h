@@ -55,7 +55,7 @@ namespace sg
         //-------------------------------------------------
 
         ogl::Window m_window{ 1024, 768, "SgCity Sandbox" };
-        ogl::camera::Camera m_camera{ glm::vec2(0.0f, 0.0f) };
+        ogl::camera::Camera m_camera{ glm::vec3(75.0f, 38.0f, -71.0f), 111.0f, -23.0f };
 
         std::unique_ptr<ogl::resource::Texture> m_redGrid;
         std::unique_ptr<ogl::resource::Texture> m_full;

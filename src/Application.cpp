@@ -5,6 +5,7 @@
 #include "ogl/resource/Texture.h"
 #include "ogl/renderer/SpriteRenderer.h"
 #include "ogl/math/Transform.h"
+#include "ogl/input/MouseInput.h"
 
 //-------------------------------------------------
 // Ctors. / Dtor.
@@ -46,6 +47,8 @@ void sg::Application::Init()
 
     m_window.Init();
 
+    ogl::input::MouseInput::Init(m_window);
+
     m_redGrid = std::make_unique<ogl::resource::Texture>("/home/steffen/CLionProjects/SgCity/resources/texture/red.png");
     m_redGrid->Load();
 
@@ -59,7 +62,14 @@ void sg::Application::Init()
 
 void sg::Application::Input()
 {
+    ogl::input::MouseInput::GetInstance().Input();
+
     m_window.CloseIfEscKeyPressed();
+
+    if (ogl::input::MouseInput::GetInstance().IsRightButtonPressed())
+    {
+        m_camera.ProcessMouse(ogl::input::MouseInput::GetInstance().GetDisplVec());
+    }
 }
 
 void sg::Application::Update()
@@ -83,7 +93,8 @@ void sg::Application::Render()
         glm::lookAt(
             glm::vec3(0.0f, 1.0f, 1.0f),
             glm::vec3(0.0f, 0.0, 0.0f),
-            glm::vec3(0.0f, 1.0f, 0.0f)),
+            glm::vec3(0.0f, 1.0f, 0.0f)
+            ),
         m_window.GetProjectionMatrix()
     );
 

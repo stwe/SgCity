@@ -109,6 +109,28 @@ void sg::Application::Render()
 {
     StartFrame();
 
+    for (auto z{ 0 }; z < 4; ++z)
+    {
+        for (auto x{ 0 }; x < 4; ++x)
+        {
+            auto modelMatrix{ogl::math::Transform::CreateModelMatrix(
+                    glm::vec3(x - 2, 0.0f, z - 2),
+                    glm::vec3(0.0f),
+                    glm::vec3(1.0f, 1.0f, 1.0f)
+            )
+            };
+
+            m_spriteRenderer->Render(
+                    modelMatrix,
+                    m_camera.GetViewMatrix(),
+                    m_window.GetProjectionMatrix()
+            );
+        }
+    }
+
+    EndFrame();
+
+    /*
     auto modelMatrix{ogl::math::Transform::CreateModelMatrix(
         glm::vec3(-0.5f, 0.0f, 0.0f),
         glm::vec3(0.0f),
@@ -121,8 +143,7 @@ void sg::Application::Render()
         m_camera.GetViewMatrix(),
         m_window.GetProjectionMatrix()
     );
-
-    EndFrame();
+    */
 }
 
 //-------------------------------------------------

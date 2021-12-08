@@ -74,7 +74,35 @@ void sg::Application::Input()
 
 void sg::Application::Update()
 {
+    if (m_window.IsKeyPressed(GLFW_KEY_W))
+    {
+        m_camera.ProcessKeyboard(ogl::camera::Camera::Direction::FORWARD);
+    }
 
+    if (m_window.IsKeyPressed(GLFW_KEY_S))
+    {
+        m_camera.ProcessKeyboard(ogl::camera::Camera::Direction::BACKWARD);
+    }
+
+    if (m_window.IsKeyPressed(GLFW_KEY_A))
+    {
+        m_camera.ProcessKeyboard(ogl::camera::Camera::Direction::LEFT);
+    }
+
+    if (m_window.IsKeyPressed(GLFW_KEY_D))
+    {
+        m_camera.ProcessKeyboard(ogl::camera::Camera::Direction::RIGHT);
+    }
+
+    if (m_window.IsKeyPressed(GLFW_KEY_O))
+    {
+        m_camera.ProcessKeyboard(ogl::camera::Camera::Direction::UP);
+    }
+
+    if (m_window.IsKeyPressed(GLFW_KEY_U))
+    {
+        m_camera.ProcessKeyboard(ogl::camera::Camera::Direction::DOWN);
+    }
 }
 
 void sg::Application::Render()

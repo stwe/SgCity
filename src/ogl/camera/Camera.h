@@ -79,7 +79,7 @@ namespace sg::ogl::camera
         // Member
         //-------------------------------------------------
 
-        float m_movementSpeed{ 1.0f };
+        float m_movementSpeed{ 0.0167f };
         float m_mouseSensitivity{ 0.2f };
 
         glm::vec3 m_position{ glm::vec3(0.0f, 0.0f, 0.0f) };

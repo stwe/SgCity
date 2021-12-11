@@ -126,7 +126,11 @@ void sg::ogl::buffer::Vbo::CleanUp()
     Log::SG_LOG_DEBUG("[Vbo::CleanUp()] Clean up Vbo Id {}.", id);
 
     Unbind();
-    glDeleteBuffers(1, &id);
+
+    if (id)
+    {
+        glDeleteBuffers(1, &id);
+    }
 
     Log::SG_LOG_DEBUG("[Vbo::CleanUp()] Vbo Id {} was deleted.", id);
 }

@@ -20,6 +20,9 @@ namespace sg::ogl::input
         // Getter
         //-------------------------------------------------
 
+        [[nodiscard]] auto GetX() const { return static_cast<int>(m_currentPosition.x); }
+        [[nodiscard]] auto GetY() const { return static_cast<int>(m_currentPosition.y); }
+
         [[nodiscard]] auto GetCurrentPosition() const { return m_currentPosition; }
         [[nodiscard]] auto GetDisplVec() const { return m_displVec; }
         [[nodiscard]] auto IsInWindow() const { return m_inWindow; }

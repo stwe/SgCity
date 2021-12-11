@@ -2,10 +2,13 @@
 #include "Application.h"
 #include "Log.h"
 #include "ogl/OpenGL.h"
+#include "ogl/buffer/Vao.h"
 #include "ogl/resource/Texture.h"
+#include "ogl/resource/ShaderProgram.h"
 #include "ogl/renderer/SpriteRenderer.h"
 #include "ogl/math/Transform.h"
 #include "ogl/input/MouseInput.h"
+#include "ogl/input/PickingTexture.h"
 
 //-------------------------------------------------
 // Ctors. / Dtor.
@@ -57,6 +60,15 @@ void sg::Application::Init()
 
     m_spriteRenderer = std::make_unique<ogl::renderer::SpriteRenderer>();
 
+    m_vao = std::make_unique<ogl::buffer::Vao>();
+    m_vao->Add2DQuadVbo();
+
+    m_pickingShaderProgram = std::make_unique<ogl::resource::ShaderProgram>("/home/steffen/CLionProjects/SgCity/resources/shader/picking");
+    m_pickingShaderProgram->Load();
+
+    m_pickingTexture = std::make_unique<ogl::input::PickingTexture>();
+    m_pickingTexture->Init(m_window.GetWidth(), m_window.GetHeight());
+
     Log::SG_LOG_DEBUG("[Application::Init()] The application was successfully initialized.");
 }
 
@@ -69,6 +81,18 @@ void sg::Application::Input()
     if (ogl::input::MouseInput::GetInstance().IsRightButtonPressed())
     {
         m_camera.ProcessMouse(ogl::input::MouseInput::GetInstance().GetDisplVec());
+
+        //Log::SG_LOG_DEBUG("Right Mouse Button pressed.");
+    }
+
+    if (ogl::input::MouseInput::GetInstance().IsLeftButtonPressed())
+    {
+        //Log::SG_LOG_DEBUG("Left Mouse Button pressed.");
+        auto id{ m_pickingTexture->ReadId(
+            ogl::input::MouseInput::GetInstance().GetX(),
+            ogl::input::MouseInput::GetInstance().GetY())
+        };
+        Log::SG_LOG_DEBUG("Id {}.", id);
     }
 }
 
@@ -107,6 +131,57 @@ void sg::Application::Update()
 
 void sg::Application::Render()
 {
+    // Render to Fbo for picking
+    if (m_renderToFbo)
+    {
+        ogl::OpenGL::SetClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+
+        m_pickingShaderProgram->Bind();
+        m_pickingTexture->EnableWriting();
+
+        ogl::OpenGL::Clear();
+
+        auto i{0};
+        for (auto z{0}; z < 4; ++z)
+        {
+            for (auto x{0}; x < 4; ++x)
+            {
+                auto modelMatrix{ogl::math::Transform::CreateModelMatrix(
+                    glm::vec3(x - 2, 0.0f, z - 2),
+                    glm::vec3(0.0f),
+                    glm::vec3(1.0f, 1.0f, 1.0f)
+                )
+                };
+
+                m_vao->Bind();
+
+                m_pickingShaderProgram->SetUniform("model", modelMatrix);
+                m_pickingShaderProgram->SetUniform("view", m_camera.GetViewMatrix());
+                m_pickingShaderProgram->SetUniform("projection", m_window.GetProjectionMatrix());
+
+                // convert "i", the integer mesh Id, into an RGB color
+                int r = (i & 0x000000FF) >> 0;
+                int g = (i & 0x0000FF00) >> 8;
+                int b = (i & 0x00FF0000) >> 16;
+                glm::vec4 color{r / 255.0f, g / 255.0f, b / 255.0f, 1.0f};
+                Log::SG_LOG_DEBUG("i:  {}, r: {},  g: {},  b: {}", i, r / 255.0f, g / 255.0f, b / 255.0f);
+
+                m_pickingShaderProgram->SetUniform("pickingColor", color);
+
+                m_vao->DrawPrimitives();
+                m_vao->Unbind();
+
+                i++;
+            }
+        }
+
+        m_pickingTexture->DisableWriting();
+        m_pickingShaderProgram->Unbind();
+
+        m_renderToFbo = false;
+    }
+
+    // Render scene
     StartFrame();
 
     for (auto z{ 0 }; z < 4; ++z)
@@ -129,21 +204,6 @@ void sg::Application::Render()
     }
 
     EndFrame();
-
-    /*
-    auto modelMatrix{ogl::math::Transform::CreateModelMatrix(
-        glm::vec3(-0.5f, 0.0f, 0.0f),
-        glm::vec3(0.0f),
-        glm::vec3(1.0f, 1.0f, 1.0f)
-    )
-    };
-
-    m_spriteRenderer->Render(
-        modelMatrix,
-        m_camera.GetViewMatrix(),
-        m_window.GetProjectionMatrix()
-    );
-    */
 }
 
 //-------------------------------------------------

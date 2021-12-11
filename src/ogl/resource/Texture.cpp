@@ -49,7 +49,7 @@ void sg::ogl::resource::Texture::Bind() const
     glBindTexture(GL_TEXTURE_2D, id);
 }
 
-void sg::ogl::resource::Texture::Unbind() const
+void sg::ogl::resource::Texture::Unbind()
 {
     glBindTexture(GL_TEXTURE_2D, 0);
 }

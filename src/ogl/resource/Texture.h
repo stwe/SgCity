@@ -40,7 +40,7 @@ namespace sg::ogl::resource
         //-------------------------------------------------
 
         void Bind() const;
-        void Unbind() const;
+        static void Unbind();
         void BindForReading(uint32_t t_textureUnit) const;
 
     protected:

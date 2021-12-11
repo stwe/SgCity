@@ -4,14 +4,25 @@
 #include "ogl/Window.h"
 #include "ogl/camera/Camera.h"
 
+namespace sg::ogl::input
+{
+    class PickingTexture;
+}
+
 namespace sg::ogl::resource
 {
+    class ShaderProgram;
     class Texture;
 }
 
 namespace sg::ogl::renderer
 {
     class SpriteRenderer;
+}
+
+namespace sg::ogl::buffer
+{
+    class Vao;
 }
 
 namespace sg
@@ -60,7 +71,12 @@ namespace sg
         //std::unique_ptr<ogl::resource::Texture> m_redGrid;
         //std::unique_ptr<ogl::resource::Texture> m_full;
 
+        std::unique_ptr<ogl::buffer::Vao> m_vao;
         std::unique_ptr<ogl::renderer::SpriteRenderer> m_spriteRenderer;
+        std::unique_ptr<ogl::resource::ShaderProgram> m_pickingShaderProgram;
+        std::unique_ptr<ogl::input::PickingTexture> m_pickingTexture;
+
+        bool m_renderToFbo{ true };
 
         //-------------------------------------------------
         // Logic

@@ -63,7 +63,7 @@ void sg::ogl::buffer::Vao::Add2DQuadVbo()
 
     vbo.Bind();
     glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-    vbo.Unbind();
+    Vbo::Unbind();
 
     // enable location 0 (position)
     vbo.AddFloatAttribute(0, 3, 5, 0);
@@ -118,7 +118,11 @@ void sg::ogl::buffer::Vao::CleanUp()
     glDisableVertexAttribArray(0);
 
     Unbind();
-    glDeleteVertexArrays(1, &id);
+
+    if (id)
+    {
+        glDeleteVertexArrays(1, &id);
+    }
 
     Log::SG_LOG_DEBUG("[Vao::CleanUp()] Vao Id {} was deleted.", id);
 }

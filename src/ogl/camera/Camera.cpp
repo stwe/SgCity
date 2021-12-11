@@ -46,6 +46,10 @@ void sg::ogl::camera::Camera::Update()
     m_up = glm::normalize(glm::cross(m_right, m_front));
 }
 
+//-------------------------------------------------
+// Keyboard && Mouse
+//-------------------------------------------------
+
 void sg::ogl::camera::Camera::ProcessKeyboard(const camera::Camera::Direction t_direction)
 {
     if (t_direction == Direction::FORWARD)

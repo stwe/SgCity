@@ -38,9 +38,33 @@ void sg::ogl::buffer::Vao::Unbind()
 // Add Vbo
 //-------------------------------------------------
 
+// todo bind/unbind Vao
 sg::ogl::buffer::Vbo& sg::ogl::buffer::Vao::AddVbo()
 {
     return *m_vbos.emplace_back(std::make_unique<Vbo>());
+}
+
+sg::ogl::buffer::Vbo& sg::ogl::buffer::Vao::AddEmptyVbo(const uint32_t t_size, const int32_t t_drawCount)
+{
+    Bind();
+
+    auto& vbo{ AddVbo() };
+
+    vbo.Bind();
+    glBufferData(GL_ARRAY_BUFFER, t_size, nullptr, GL_DYNAMIC_DRAW);
+    Vbo::Unbind();
+
+    // enable location 0 (position)
+    vbo.AddFloatAttribute(0, 3, 5, 0);
+
+    // enable location 1 (uv)
+    vbo.AddFloatAttribute(1, 2, 5, 3);
+
+    Unbind();
+
+    drawCount = t_drawCount;
+
+    return vbo;
 }
 
 void sg::ogl::buffer::Vao::Add2DQuadVbo()
@@ -80,12 +104,12 @@ void sg::ogl::buffer::Vao::Add2DQuadVbo()
 // Draw
 //-------------------------------------------------
 
-void sg::ogl::buffer::Vao::DrawPrimitives(uint32_t t_drawMode, int32_t t_first) const
+void sg::ogl::buffer::Vao::DrawPrimitives(const uint32_t t_drawMode, const int32_t t_first) const
 {
     glDrawArrays(t_drawMode, t_first, drawCount);
 }
 
-void sg::ogl::buffer::Vao::DrawPrimitives(uint32_t t_drawMode) const
+void sg::ogl::buffer::Vao::DrawPrimitives(const uint32_t t_drawMode) const
 {
     DrawPrimitives(t_drawMode, 0);
 }

@@ -52,6 +52,7 @@ namespace sg::ogl::buffer
         //-------------------------------------------------
 
         Vbo& AddVbo();
+        Vbo& AddEmptyVbo(uint32_t t_size, int32_t t_drawCount);
         void Add2DQuadVbo();
 
         //-------------------------------------------------

@@ -141,10 +141,10 @@ void sg::Application::Render()
 
         ogl::OpenGL::Clear();
 
-        auto i{0};
-        for (auto z{0}; z < 4; ++z)
+        auto i{ 0 };
+        for (auto z{ 0 }; z < 4; ++z)
         {
-            for (auto x{0}; x < 4; ++x)
+            for (auto x{ 0 }; x < 4; ++x)
             {
                 auto modelMatrix{ogl::math::Transform::CreateModelMatrix(
                     glm::vec3(x - 2, 0.0f, z - 2),

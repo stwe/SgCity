@@ -189,6 +189,7 @@ void sg::Application::StartFrame()
 void sg::Application::EndFrame()
 {
     m_window.Update();
+    ogl::OpenGL::DisableWireframeMode();
 }
 
 //-------------------------------------------------

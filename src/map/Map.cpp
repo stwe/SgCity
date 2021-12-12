@@ -32,13 +32,12 @@ sg::map::Map::~Map() noexcept
 
 void sg::map::Map::RenderForMousePicking(const sg::ogl::Window& t_window, const sg::ogl::camera::Camera& t_camera)
 {
-    if (m_pickingTexture)
+    if (!m_pickingTexture)
     {
-        return;
+        m_pickingTexture = std::make_unique<ogl::input::PickingTexture>();
+        m_pickingTexture->Init(t_window.GetWidth(), t_window.GetHeight());
     }
 
-    m_pickingTexture = std::make_unique<ogl::input::PickingTexture>();
-    m_pickingTexture->Init(t_window.GetWidth(), t_window.GetHeight());
     m_pickingTexture->EnableWriting();
 
     ogl::OpenGL::SetClearColor(1.0f, 1.0f, 1.0f, 1.0f);

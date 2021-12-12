@@ -51,8 +51,28 @@ namespace sg::ogl::buffer
         // Add Vbo
         //-------------------------------------------------
 
+        /**
+         * Adds a new Vbo object. This Vao is not bound beforehand.
+         *
+         * @return Vbo
+         */
         Vbo& AddVbo();
+
+        /**
+         * Binds this Vao and creates an empty Vbo.
+         * Allocate memory and not fill it.
+         *
+         * @param t_size Specifies the size in bytes of the buffer object's new data store.
+         * @param t_drawCount The number of vertices to draw.
+         *
+         * @return Vbo
+         */
         Vbo& AddEmptyVbo(uint32_t t_size, int32_t t_drawCount);
+
+        /**
+         * Binds this Vao and adds a new Vbo object and copies vertices
+         * representing a 2D quad into the buffer's memory.
+         */
         void Add2DQuadVbo();
 
         //-------------------------------------------------

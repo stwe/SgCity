@@ -25,6 +25,11 @@ namespace sg::ogl::buffer
     class Vao;
 }
 
+namespace sg::map
+{
+    class Map;
+}
+
 namespace sg
 {
     /**
@@ -75,6 +80,7 @@ namespace sg
         std::unique_ptr<ogl::renderer::SpriteRenderer> m_spriteRenderer;
         std::unique_ptr<ogl::resource::ShaderProgram> m_pickingShaderProgram;
         std::unique_ptr<ogl::input::PickingTexture> m_pickingTexture;
+        std::unique_ptr<map::Map> m_map;
 
         bool m_renderToFbo{ true };
 

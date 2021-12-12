@@ -38,7 +38,6 @@ void sg::ogl::buffer::Vao::Unbind()
 // Add Vbo
 //-------------------------------------------------
 
-// todo bind/unbind Vao
 sg::ogl::buffer::Vbo& sg::ogl::buffer::Vao::AddVbo()
 {
     return *m_vbos.emplace_back(std::make_unique<Vbo>());

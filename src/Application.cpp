@@ -9,6 +9,7 @@
 #include "ogl/math/Transform.h"
 #include "ogl/input/MouseInput.h"
 #include "ogl/input/PickingTexture.h"
+#include "map/Map.h"
 
 //-------------------------------------------------
 // Ctors. / Dtor.
@@ -58,6 +59,7 @@ void sg::Application::Init()
     //m_full = std::make_unique<ogl::resource::Texture>("/home/steffen/CLionProjects/SgCity/resources/texture/full.png");
     //m_full->Load();
 
+    /*
     m_spriteRenderer = std::make_unique<ogl::renderer::SpriteRenderer>();
 
     m_vao = std::make_unique<ogl::buffer::Vao>();
@@ -68,6 +70,9 @@ void sg::Application::Init()
 
     m_pickingTexture = std::make_unique<ogl::input::PickingTexture>();
     m_pickingTexture->Init(m_window.GetWidth(), m_window.GetHeight());
+    */
+
+    m_map = std::make_unique<map::Map>();
 
     Log::SG_LOG_DEBUG("[Application::Init()] The application was successfully initialized.");
 }
@@ -88,11 +93,13 @@ void sg::Application::Input()
     if (ogl::input::MouseInput::GetInstance().IsLeftButtonPressed())
     {
         //Log::SG_LOG_DEBUG("Left Mouse Button pressed.");
+        /*
         auto id{ m_pickingTexture->ReadId(
             ogl::input::MouseInput::GetInstance().GetX(),
             ogl::input::MouseInput::GetInstance().GetY())
         };
         Log::SG_LOG_DEBUG("Id {}.", id);
+        */
     }
 }
 
@@ -132,6 +139,7 @@ void sg::Application::Update()
 void sg::Application::Render()
 {
     // Render to Fbo for picking
+    /*
     if (m_renderToFbo)
     {
         ogl::OpenGL::SetClearColor(1.0f, 1.0f, 1.0f, 1.0f);
@@ -180,10 +188,14 @@ void sg::Application::Render()
 
         m_renderToFbo = false;
     }
+    */
 
     // Render scene
     StartFrame();
 
+    m_map->Render(m_window, m_camera);
+
+    /*
     for (auto z{ 0 }; z < 4; ++z)
     {
         for (auto x{ 0 }; x < 4; ++x)
@@ -202,6 +214,7 @@ void sg::Application::Render()
             );
         }
     }
+    */
 
     EndFrame();
 }

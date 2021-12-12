@@ -1,10 +1,10 @@
 #version 330
 
-uniform vec4 pickingColor;
-
 out vec4 fragColor;
+
+in vec3 vIdColor;
 
 void main()
 {
-    fragColor = pickingColor;
+    fragColor = vec4(vIdColor, 1.0);
 }

@@ -15,6 +15,11 @@ namespace sg::ogl::resource
     class ShaderProgram;
 }
 
+namespace sg::ogl::input
+{
+    class PickingTexture;
+}
+
 namespace sg::map
 {
     class Tile;
@@ -42,7 +47,10 @@ namespace sg::map
         // Logic
         //-------------------------------------------------
 
+        void RenderForMousePicking(const ogl::Window& t_window, const ogl::camera::Camera& t_camera);
         void Render(const ogl::Window& t_window, const ogl::camera::Camera& t_camera);
+
+        int GetTileObjectId();
 
     protected:
 
@@ -57,14 +65,24 @@ namespace sg::map
         std::vector<std::unique_ptr<Tile>> m_tiles;
 
         /**
-         * A Vao object.
+         * A Vao object for the Map.
          */
-        std::unique_ptr<ogl::buffer::Vao> m_vao;
+        std::unique_ptr<ogl::buffer::Vao> m_mapVao;
 
         /**
          * A ShaderProgram object used to draw the Map.
          */
-        std::unique_ptr<ogl::resource::ShaderProgram> m_shaderProgram;
+        std::unique_ptr<ogl::resource::ShaderProgram> m_mapShaderProgram;
+
+        /**
+         * A ShaderProgram object used for mouse picking.
+         */
+        std::unique_ptr<ogl::resource::ShaderProgram> m_pickingShaderProgram;
+
+        /**
+         *
+         */
+        std::unique_ptr<ogl::input::PickingTexture> m_pickingTexture;
 
         //-------------------------------------------------
         // Init

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <vector>
+#include <glm/vec3.hpp>
 
 namespace sg::map
 {
@@ -35,6 +36,11 @@ namespace sg::map
          */
         float mapZ{ 0.0f };
 
+        /**
+         * The unique color used for mouse picking.
+         */
+        glm::vec3 idColor{ glm::vec3(0.0f) };
+
         //-------------------------------------------------
         // Ctors. / Dtor.
         //-------------------------------------------------
@@ -57,5 +63,6 @@ namespace sg::map
         //-------------------------------------------------
 
         void Init();
+        void CreateObjectIdColor();
     };
 }

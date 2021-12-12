@@ -54,10 +54,13 @@ sg::ogl::buffer::Vbo& sg::ogl::buffer::Vao::AddEmptyVbo(const uint32_t t_size, c
     Vbo::Unbind();
 
     // enable location 0 (position)
-    vbo.AddFloatAttribute(0, 3, 5, 0);
+    vbo.AddFloatAttribute(0, 3, 8, 0);
 
     // enable location 1 (uv)
-    vbo.AddFloatAttribute(1, 2, 5, 3);
+    vbo.AddFloatAttribute(1, 2, 8, 3);
+
+    // enable location 2 (idColor)
+    vbo.AddFloatAttribute(2, 3, 8, 5);
 
     Unbind();
 

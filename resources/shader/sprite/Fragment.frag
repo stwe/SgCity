@@ -9,5 +9,5 @@ in vec2 vUv;
 void main()
 {
     //fragColor = texture(diffuseMap, vUv);
-    fragColor = vec4(0.0, 1.0, 0.0, 1.0);
+    fragColor = vec4(0.1, 0.8, 0.1, 1.0);
 }

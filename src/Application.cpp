@@ -75,10 +75,18 @@ void sg::Application::Input()
         //Log::SG_LOG_DEBUG("Right Mouse Button pressed.");
     }
 
-    if (ogl::input::MouseInput::GetInstance().IsLeftButtonPressed())
+    if (!ogl::input::MouseInput::GetInstance().IsLeftButtonPressed())
+    {
+        m_handleMouseEvent = true;
+    }
+
+    if (ogl::input::MouseInput::GetInstance().IsLeftButtonPressed() && m_handleMouseEvent)
     {
         //Log::SG_LOG_DEBUG("Left Mouse Button pressed.");
-        Log::SG_LOG_DEBUG("Id {}.", m_map->GetTileObjectId());
+        auto id{ m_map->GetTileObjectId() };
+        Log::SG_LOG_DEBUG("Id {}.", id);
+        m_map->Raise(id);
+        m_handleMouseEvent = false;
     }
 }
 

@@ -52,6 +52,8 @@ namespace sg::map
 
         int GetTileObjectId();
 
+        void Raise(int t_tileObjectId);
+
     protected:
 
     private:
@@ -68,6 +70,11 @@ namespace sg::map
          * A Vao object for the Map.
          */
         std::unique_ptr<ogl::buffer::Vao> m_mapVao;
+
+        /**
+         *
+         */
+        uint32_t m_vboId{ 0 };
 
         /**
          * A ShaderProgram object used to draw the Map.

@@ -96,6 +96,29 @@ int sg::map::Map::GetTileObjectId()
         ogl::input::MouseInput::GetInstance().GetY());
 }
 
+void sg::map::Map::Raise(int t_tileObjectId)
+{
+    if (t_tileObjectId < 0 || t_tileObjectId >= m_tiles.size() - 1)
+    {
+        return;
+    }
+
+    auto& vertices{ m_tiles[t_tileObjectId]->vertices };
+
+    vertices[1] += 0.5f;
+    vertices[9] += 0.5f;
+    vertices[17] += .5f;
+
+    vertices[25] += 0.5f;
+    vertices[33] += 0.5f;
+    vertices[41] += 0.5f;
+
+    //vbo.Bind();
+    glBindBuffer(GL_ARRAY_BUFFER, m_vboId);
+    glBufferSubData(GL_ARRAY_BUFFER, t_tileObjectId * 192, 192, vertices.data());
+    ogl::buffer::Vbo::Unbind();
+}
+
 //-------------------------------------------------
 // Init
 //-------------------------------------------------
@@ -123,6 +146,7 @@ void sg::map::Map::Init()
     // 4x4 Tiles = 16 tiles = 16x192 bytes = 3072 bytes
 
     const auto& vbo{ m_mapVao->AddEmptyVbo(16 * 192, 16 * 6) };
+    m_vboId = vbo.id;
 
     // add vertices to the VBO
     vbo.Bind();

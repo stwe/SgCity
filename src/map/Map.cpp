@@ -107,7 +107,7 @@ void sg::map::Map::Raise(int t_tileObjectId)
 
     vertices[1] += 0.5f;
     vertices[9] += 0.5f;
-    vertices[17] += .5f;
+    vertices[17] += 0.5f;
 
     vertices[25] += 0.5f;
     vertices[33] += 0.5f;

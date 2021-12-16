@@ -54,8 +54,8 @@ namespace sg
 
         //std::unique_ptr<ogl::resource::Texture> m_redGrid;
         //std::unique_ptr<ogl::resource::Texture> m_full;
+        //std::unique_ptr<map::Map> m_map;
 
-        std::unique_ptr<map::Map> m_map;
         bool m_handleMouseEvent{ true };
 
         //-------------------------------------------------

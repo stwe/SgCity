@@ -57,7 +57,7 @@ void sg::Application::Init()
     //m_full = std::make_unique<ogl::resource::Texture>("/home/steffen/CLionProjects/SgCity/resources/texture/full.png");
     //m_full->Load();
 
-    m_map = std::make_unique<map::Map>();
+    //m_map = std::make_unique<map::Map>();
 
     Log::SG_LOG_DEBUG("[Application::Init()] The application was successfully initialized.");
 }
@@ -83,9 +83,11 @@ void sg::Application::Input()
     if (ogl::input::MouseInput::GetInstance().IsLeftButtonPressed() && m_handleMouseEvent)
     {
         //Log::SG_LOG_DEBUG("Left Mouse Button pressed.");
+        /*
         auto id{ m_map->GetTileObjectId() };
         Log::SG_LOG_DEBUG("Id {}.", id);
         m_map->Raise(id);
+        */
         m_handleMouseEvent = false;
     }
 }
@@ -125,10 +127,10 @@ void sg::Application::Update()
 
 void sg::Application::Render()
 {
-    m_map->RenderForMousePicking(m_window, m_camera);
+    //m_map->RenderForMousePicking(m_window, m_camera);
 
     StartFrame();
-    m_map->Render(m_window, m_camera);
+    //m_map->Render(m_window, m_camera);
     EndFrame();
 }
 

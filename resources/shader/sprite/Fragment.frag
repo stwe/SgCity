@@ -3,11 +3,13 @@
 out vec4 fragColor;
 
 in vec2 vUv;
+in vec3 vIdColor;
 
 //niform sampler2D diffuseMap;
+//uniform vec3 col;
 
 void main()
 {
     //fragColor = texture(diffuseMap, vUv);
-    fragColor = vec4(0.1, 0.8, 0.1, 1.0);
+    fragColor = vec4(vIdColor.x, vIdColor.y, vIdColor.z, 1.0);
 }

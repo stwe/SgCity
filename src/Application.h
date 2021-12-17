@@ -7,6 +7,7 @@
 namespace sg::map
 {
     class Map;
+    class Terrain;
 }
 
 namespace sg
@@ -54,7 +55,9 @@ namespace sg
 
         //std::unique_ptr<ogl::resource::Texture> m_redGrid;
         //std::unique_ptr<ogl::resource::Texture> m_full;
-        //std::unique_ptr<map::Map> m_map;
+
+        std::unique_ptr<map::Map> m_map;
+        //std::unique_ptr<map::Terrain> m_terrain;
 
         bool m_handleMouseEvent{ true };
 

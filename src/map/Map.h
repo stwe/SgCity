@@ -34,7 +34,8 @@ namespace sg::map
         // Ctors. / Dtor.
         //-------------------------------------------------
 
-        Map();
+        Map() = delete;
+        explicit Map(int t_tileCount);
 
         Map(const Map& t_other) = delete;
         Map(Map&& t_other) noexcept = delete;
@@ -60,6 +61,8 @@ namespace sg::map
         //-------------------------------------------------
         // Member
         //-------------------------------------------------
+
+        int m_tileCount{ 0 };
 
         /**
          * A container holding the Tile objects.

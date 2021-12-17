@@ -4,6 +4,7 @@
 #include <vector>
 #include <memory>
 #include "Vbo.h"
+#include "Ebo.h"
 
 namespace sg::ogl::buffer
 {
@@ -52,7 +53,7 @@ namespace sg::ogl::buffer
         //-------------------------------------------------
 
         /**
-         * Adds a new Vbo object. This Vao is not bound beforehand.
+         * Adds a new Vbo object. This Vao is *not* bound beforehand.
          *
          * @return Vbo
          */
@@ -60,20 +61,34 @@ namespace sg::ogl::buffer
 
         /**
          * Binds this Vao and creates an empty Vbo.
-         * Allocate memory and not fill it.
+         * Allocate memory and *not* fill it.
          *
          * @param t_size Specifies the size in bytes of the buffer object's new data store.
-         * @param t_drawCount The number of vertices to draw.
+         * @param t_drawCount Sets the number of vertices to be render if the value is greater than zero.
          *
          * @return Vbo
          */
-        Vbo& AddEmptyVbo(uint32_t t_size, int32_t t_drawCount);
+        Vbo& AddEmptyVbo(uint32_t t_size, int32_t t_drawCount = 0);
 
         /**
          * Binds this Vao and adds a new Vbo object and copies vertices
          * representing a 2D quad into the buffer's memory.
          */
         void Add2DQuadVbo();
+
+        void AddFloatVbo(const std::vector<float>& t_vertices);
+
+        //-------------------------------------------------
+        // Add Ebo
+        //-------------------------------------------------
+
+        /**
+         * Adds an index buffer to the Vao and fill with the indices.
+         * The function sets draw count to the number of indices.
+         *
+         * @param t_indices The indices.
+         */
+        void AddIndexBuffer(const std::vector<uint32_t>& t_indices);
 
         //-------------------------------------------------
         // Draw
@@ -94,6 +109,11 @@ namespace sg::ogl::buffer
          * The Vbo objects assigned to the Vao.
          */
         std::vector<std::unique_ptr<Vbo>> m_vbos;
+
+        /**
+         * An Ebo object.
+         */
+        std::unique_ptr<Ebo> m_ebo;
 
         //-------------------------------------------------
         // Create

@@ -5,6 +5,7 @@ layout (location = 1) in vec2 aUv;
 layout (location = 2) in vec3 aIdColor;
 
 out vec2 vUv;
+out vec3 vIdColor;
 
 uniform mat4 model;
 uniform mat4 view;
@@ -14,4 +15,5 @@ void main()
 {
     gl_Position = projection * view * model * vec4(aPosition, 1.0);
     vUv = aUv;
+    vIdColor = aIdColor;
 }

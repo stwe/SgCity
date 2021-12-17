@@ -8,6 +8,7 @@
 #include "ogl/input/MouseInput.h"
 #include "ogl/input/PickingTexture.h"
 #include "map/Map.h"
+#include "map/Terrain.h"
 
 //-------------------------------------------------
 // Ctors. / Dtor.
@@ -57,7 +58,8 @@ void sg::Application::Init()
     //m_full = std::make_unique<ogl::resource::Texture>("/home/steffen/CLionProjects/SgCity/resources/texture/full.png");
     //m_full->Load();
 
-    //m_map = std::make_unique<map::Map>();
+    m_map = std::make_unique<map::Map>(8);
+    //m_terrain = std::make_unique<map::Terrain>(4);
 
     Log::SG_LOG_DEBUG("[Application::Init()] The application was successfully initialized.");
 }
@@ -83,11 +85,10 @@ void sg::Application::Input()
     if (ogl::input::MouseInput::GetInstance().IsLeftButtonPressed() && m_handleMouseEvent)
     {
         //Log::SG_LOG_DEBUG("Left Mouse Button pressed.");
-        /*
         auto id{ m_map->GetTileObjectId() };
         Log::SG_LOG_DEBUG("Id {}.", id);
         m_map->Raise(id);
-        */
+
         m_handleMouseEvent = false;
     }
 }
@@ -127,10 +128,11 @@ void sg::Application::Update()
 
 void sg::Application::Render()
 {
-    //m_map->RenderForMousePicking(m_window, m_camera);
+    m_map->RenderForMousePicking(m_window, m_camera);
 
     StartFrame();
-    //m_map->Render(m_window, m_camera);
+    m_map->Render(m_window, m_camera);
+    //m_terrain->Render(m_window, m_camera);
     EndFrame();
 }
 
@@ -193,13 +195,13 @@ void sg::Application::StartFrame()
 {
     ogl::OpenGL::SetClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     ogl::OpenGL::Clear();
-    ogl::OpenGL::EnableWireframeMode();
+    //ogl::OpenGL::EnableWireframeMode();
 }
 
 void sg::Application::EndFrame()
 {
     m_window.Update();
-    ogl::OpenGL::DisableWireframeMode();
+    //ogl::OpenGL::DisableWireframeMode();
 }
 
 //-------------------------------------------------

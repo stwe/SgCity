@@ -36,6 +36,8 @@ namespace sg::map
          */
         float mapZ{ 0.0f };
 
+        int tileCount{ 0 };
+
         /**
          * The unique color used for mouse picking.
          */
@@ -46,7 +48,7 @@ namespace sg::map
         //-------------------------------------------------
 
         Tile() = delete;
-        Tile(float t_mapX, float t_mapZ);
+        Tile(float t_mapX, float t_mapZ, int t_tileCount);
 
         Tile(const Tile& t_other) = delete;
         Tile(Tile&& t_other) noexcept = delete;

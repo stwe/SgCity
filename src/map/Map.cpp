@@ -12,7 +12,8 @@
 // Ctors. / Dtor.
 //-------------------------------------------------
 
-sg::map::Map::Map()
+sg::map::Map::Map(const int t_tileCount)
+    : m_tileCount{ t_tileCount }
 {
     Log::SG_LOG_DEBUG("[Map::Map()] Create Map.");
 
@@ -80,6 +81,7 @@ void sg::map::Map::Render(const ogl::Window& t_window, const ogl::camera::Camera
     m_mapShaderProgram->SetUniform("model", modelMatrix);
     m_mapShaderProgram->SetUniform("view", t_camera.GetViewMatrix());
     m_mapShaderProgram->SetUniform("projection", t_window.GetProjectionMatrix());
+    //m_mapShaderProgram->SetUniform("col", glm::vec3(0.8, 0.1, 0.1));
 
     m_mapVao->DrawPrimitives();
 
@@ -125,13 +127,14 @@ void sg::map::Map::Raise(int t_tileObjectId)
 
 void sg::map::Map::Init()
 {
-    for (auto z{ 0 }; z < 4; ++z)
+    for (auto z{ 0 }; z < m_tileCount; ++z)
     {
-        for (auto x{ 0 }; x < 4; ++x)
+        for (auto x{ 0 }; x < m_tileCount; ++x)
         {
             auto tile{ std::make_unique<Tile>(
                 static_cast<float>(x),
-                static_cast<float>(z)
+                static_cast<float>(z),
+                m_tileCount
                 ) };
 
             m_tiles.push_back(std::move(tile));
@@ -145,7 +148,7 @@ void sg::map::Map::Init()
     // 6 vertices = 32 x 6 = 192 bytes per Tile
     // 4x4 Tiles = 16 tiles = 16x192 bytes = 3072 bytes
 
-    const auto& vbo{ m_mapVao->AddEmptyVbo(16 * 192, 16 * 6) };
+    const auto& vbo{ m_mapVao->AddEmptyVbo(m_tileCount * m_tileCount * 192, m_tileCount * m_tileCount * 6) };
     m_vboId = vbo.id;
 
     // add vertices to the VBO

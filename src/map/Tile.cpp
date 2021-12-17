@@ -4,9 +4,10 @@
 // Ctors. / Dtor.
 //-------------------------------------------------
 
-sg::map::Tile::Tile(const float t_mapX, const float t_mapZ)
+sg::map::Tile::Tile(const float t_mapX, const float t_mapZ, int t_tileCount)
     : mapX{ t_mapX }
     , mapZ{ t_mapZ }
+    , tileCount{ t_tileCount }
 {
     Init();
 }
@@ -44,14 +45,7 @@ void sg::map::Tile::Init()
 
 void sg::map::Tile::CreateObjectIdColor()
 {
-    /*
-    public static int getIndexFrom2D(int worldX, int worldY)
-    {
-        return worldY * WORLD_WIDTH + worldX;
-    }
-    */
-
-    auto i{ static_cast<int>(mapZ) * 4 + static_cast<int>(mapX) };
+    auto i{ static_cast<int>(mapZ) * tileCount + static_cast<int>(mapX) };
 
     // convert "i", the integer mesh Id, into an RGB color
     int r = (i & 0x000000FF) >> 0;

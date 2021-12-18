@@ -47,10 +47,13 @@ void sg::Application::Init()
 {
     Log::SG_LOG_DEBUG("[Application::Init()] Initializing application.");
 
+    // init window
     m_window.Init();
 
+    // init mouse
     ogl::input::MouseInput::Init(m_window);
 
+    // create && init map
     m_map = std::make_unique<map::Map>(8);
 
     Log::SG_LOG_DEBUG("[Application::Init()] The application was successfully initialized.");
@@ -58,29 +61,34 @@ void sg::Application::Init()
 
 void sg::Application::Input()
 {
+    // updated mouse stuff
     ogl::input::MouseInput::GetInstance().Input();
 
+    // Esc key closes the app
     m_window.CloseIfEscKeyPressed();
 
+    // handle right mouse button
     if (ogl::input::MouseInput::GetInstance().IsRightButtonPressed())
     {
         m_camera.ProcessMouse(ogl::input::MouseInput::GetInstance().GetDisplVec());
-
-        //Log::SG_LOG_DEBUG("Right Mouse Button pressed.");
     }
 
+    // workaround: handle *not* left mouse button
     if (!ogl::input::MouseInput::GetInstance().IsLeftButtonPressed())
     {
         m_handleMouseEvent = true;
     }
 
+    // handle left mouse button
     if (ogl::input::MouseInput::GetInstance().IsLeftButtonPressed() && m_handleMouseEvent)
     {
-        //Log::SG_LOG_DEBUG("Left Mouse Button pressed.");
         auto id{ m_map->GetTileObjectId() };
         Log::SG_LOG_DEBUG("Id {}.", id);
+
+        // raise tile and his neighbors
         m_map->Raise(id);
 
+        // do not run the event again
         m_handleMouseEvent = false;
     }
 }
@@ -131,8 +139,10 @@ void sg::Application::Update()
 
 void sg::Application::Render()
 {
+    // (1) renders all tiles in a different color in an Fbo for mousepicking
     m_map->RenderForMousePicking(m_window, m_camera);
 
+    // (2) render scene
     StartFrame();
     m_map->Render(m_window, m_camera);
     EndFrame();
@@ -212,5 +222,7 @@ void sg::Application::EndFrame()
 
 void sg::Application::CleanUp()
 {
+    Log::SG_LOG_DEBUG("[Application::CleanUp()] Clean up Application.");
 
+    // ...
 }

@@ -2,14 +2,10 @@
 
 #include <cstdint>
 #include <memory>
+#include "Vbo.h"
 
 namespace sg::ogl::buffer
 {
-    /**
-     * Forward declaration class Vbo.
-     */
-    class Vbo;
-
     /**
      * Represents a Vertex Array Object.
      */
@@ -44,6 +40,12 @@ namespace sg::ogl::buffer
         ~Vao() noexcept;
 
         //-------------------------------------------------
+        // Getter
+        //-------------------------------------------------
+
+        Vbo& GetVbo() { return *m_vbo; }
+
+        //-------------------------------------------------
         // Bind / unbind
         //-------------------------------------------------
 
@@ -60,8 +62,6 @@ namespace sg::ogl::buffer
          *
          * @param t_size Specifies the size in bytes of the buffer object's new data store.
          * @param t_drawCount Sets the number of vertices to be render if the value is greater than zero.
-         *
-         * @return Vbo
          */
         void CreateEmptyDynamicVbo(uint32_t t_size, int32_t t_drawCount = 0);
 

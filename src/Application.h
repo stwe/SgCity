@@ -4,11 +4,18 @@
 #include "ogl/Window.h"
 #include "ogl/camera/Camera.h"
 
+//-------------------------------------------------
+// Forward declarations
+//-------------------------------------------------
+
 namespace sg::map
 {
     class Map;
-    class Terrain;
 }
+
+//-------------------------------------------------
+// Application
+//-------------------------------------------------
 
 namespace sg
 {
@@ -50,15 +57,24 @@ namespace sg
         // Member
         //-------------------------------------------------
 
+        /**
+         * A Glfw window.
+         */
         ogl::Window m_window{ 1024, 768, "SgCity Sandbox" };
+
+        /**
+         * A camera to move around the map.
+         */
         ogl::camera::Camera m_camera{ glm::vec3(2.0f, 7.0f, 9.0f), -90.0f, -38.0f };
 
-        //std::unique_ptr<ogl::resource::Texture> m_redGrid;
-        //std::unique_ptr<ogl::resource::Texture> m_full;
-
+        /**
+         * The map from tiles.
+         */
         std::unique_ptr<map::Map> m_map;
-        //std::unique_ptr<map::Terrain> m_terrain;
 
+        /**
+         * So that events are only executed once.
+         */
         bool m_handleMouseEvent{ true };
 
         //-------------------------------------------------

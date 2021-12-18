@@ -1,5 +1,4 @@
 #include "Vao.h"
-#include "Vbo.h"
 #include "Assert.h"
 #include "ogl/OpenGL.h"
 

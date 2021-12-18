@@ -15,6 +15,8 @@ namespace sg::map
         // Constants
         //-------------------------------------------------
 
+        static constexpr auto BYTES_PER_TILE{ 264 };
+
         static constexpr auto DEFAULT_HEIGHT{ 0.0f };
 
         static constexpr auto TL_1_Y{ 1 };

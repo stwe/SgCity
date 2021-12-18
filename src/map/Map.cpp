@@ -208,15 +208,14 @@ void sg::map::Map::Init()
     // 11 floats per vertex = 11 x 4 bytes pro float = 44 bytes
     // 6 vertices = 44 x 6 = 264 bytes per Tile
 
-    const auto& vbo{ m_mapVao->AddEmptyVbo(m_tileCount * m_tileCount * 264, m_tileCount * m_tileCount * 6) };
-    m_vboId = vbo.id;
+    m_mapVao->CreateEmptyDynamicVbo(m_tileCount * m_tileCount * Tile::BYTES_PER_TILE, m_tileCount * m_tileCount * 6);
 
     // add vertices to the VBO
-    vbo.Bind();
+    m_mapVao->GetVbo().Bind();
     auto offset{ 0 };
     for (const auto& tile : m_tiles)
     {
-        glBufferSubData(GL_ARRAY_BUFFER, offset * 264, 264, tile->vertices.data());
+        glBufferSubData(GL_ARRAY_BUFFER, offset * Tile::BYTES_PER_TILE, Tile::BYTES_PER_TILE, tile->vertices.data());
         offset++;
     }
     ogl::buffer::Vbo::Unbind();
@@ -691,7 +690,7 @@ void sg::map::Map::UpdateEastNeighbor(Tile& t_tile)
 void sg::map::Map::UpdateVertices(const std::vector<float>& t_vertices, const int t_offset) const
 {
     glBindBuffer(GL_ARRAY_BUFFER, m_vboId);
-    glBufferSubData(GL_ARRAY_BUFFER, t_offset * 264, 264, t_vertices.data());
+    glBufferSubData(GL_ARRAY_BUFFER, t_offset * Tile::BYTES_PER_TILE, Tile::BYTES_PER_TILE, t_vertices.data());
     ogl::buffer::Vbo::Unbind();
 }
 

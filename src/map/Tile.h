@@ -17,6 +17,22 @@ namespace sg::map
 
         static constexpr auto DEFAULT_HEIGHT{ 0.0f };
 
+        static constexpr auto TL_1_Y{ 1 };
+        static constexpr auto BL_1_Y{ 12 };
+        static constexpr auto BR_1_Y{ 23 };
+
+        static constexpr auto TL_2_Y{ 34 };
+        static constexpr auto BR_2_Y{ 45 };
+        static constexpr auto TR_2_Y{ 56 };
+
+        static constexpr auto TL_1_N{ 8 };
+        static constexpr auto BL_1_N{ 19 };
+        static constexpr auto BR_1_N{ 30 };
+
+        static constexpr auto TL_2_N{ 41 };
+        static constexpr auto BR_2_N{ 52 };
+        static constexpr auto TR_2_N{ 63 };
+
         //-------------------------------------------------
         // Member
         //-------------------------------------------------
@@ -42,6 +58,11 @@ namespace sg::map
          * The unique color used for mouse picking.
          */
         glm::vec3 idColor{ glm::vec3(0.0f) };
+
+        Tile* n{ nullptr };
+        Tile* s{ nullptr };
+        Tile* e{ nullptr };
+        Tile* w{ nullptr };
 
         //-------------------------------------------------
         // Ctors. / Dtor.

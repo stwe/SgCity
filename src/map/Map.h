@@ -13,6 +13,7 @@ namespace sg::ogl::buffer
 namespace sg::ogl::resource
 {
     class ShaderProgram;
+    class Texture;
 }
 
 namespace sg::ogl::input
@@ -94,11 +95,26 @@ namespace sg::map
          */
         std::unique_ptr<ogl::input::PickingTexture> m_pickingTexture;
 
+        std::unique_ptr<ogl::resource::Texture> m_tileTexture;
+
         //-------------------------------------------------
         // Init
         //-------------------------------------------------
 
         void Init();
+
+        //-------------------------------------------------
+        // Helper
+        //-------------------------------------------------
+
+        glm::vec3 CalcNormal(Tile& t_tile);
+
+        void UpdateAll(Tile& t_tile);
+        void UpdateN(Tile& t_tile);
+        void UpdateS(Tile& t_tile);
+        void UpdateW(Tile& t_tile);
+        void UpdateE(Tile& t_tile);
+        void UpdateVertices(const std::vector<float>& t_vertices, int t_offset) const;
 
         //-------------------------------------------------
         // Clean up

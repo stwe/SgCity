@@ -117,8 +117,8 @@ void sg::map::Map::Raise(int t_tileObjectId)
     UpdateTile(*tile);
     UpdateNorthNeighbor(*tile);
     UpdateSouthNeighbor(*tile);
-    //UpdateW(*tile);
-    //UpdateE(*tile);
+    UpdateWestNeighbor(*tile);
+    UpdateEastNeighbor(*tile);
 }
 
 //-------------------------------------------------
@@ -382,17 +382,29 @@ void sg::map::Map::UpdateSouthNeighbor(Tile& t_tile)
     }
 }
 
-void sg::map::Map::UpdateW(Tile& t_tile)
+void sg::map::Map::UpdateWestNeighbor(Tile& t_tile)
 {
     if (t_tile.w)
     {
         auto& tile{ t_tile.w };
         auto& vertices{ tile->vertices };
 
-        vertices[Tile::TL_1_Y] += 0.5f;
-        vertices[Tile::BL_1_Y] += 0.5f;
+        /*
+        tl.      tr   tl
+         |  .  2            raise
+         | 1   .
+        bl------ br   bl
 
-        vertices[Tile::TL_2_Y] += 0.5f;
+        tl.      tr
+         |  .  2
+         | 1   .
+        bl------ br   Raise
+        */
+
+        vertices[Tile::TL_1_Y] += t_tile.vertices[Tile::TR_2_Y] - vertices[Tile::TL_1_Y];
+        vertices[Tile::BL_1_Y] += t_tile.vertices[Tile::BR_1_Y] - vertices[Tile::BL_1_Y];
+
+        vertices[Tile::TL_2_Y] += t_tile.vertices[Tile::TR_2_Y] - vertices[Tile::TL_2_Y];
 
         auto normal{ CalcNormal(*tile) };
 
@@ -425,17 +437,17 @@ void sg::map::Map::UpdateW(Tile& t_tile)
     }
 }
 
-void sg::map::Map::UpdateE(Tile& t_tile)
+void sg::map::Map::UpdateEastNeighbor(Tile& t_tile)
 {
     if (t_tile.e)
     {
         auto& tile{ t_tile.e };
         auto& vertices{ tile->vertices };
 
-        vertices[Tile::BR_1_Y] += 0.5f;
+        vertices[Tile::BR_1_Y] += t_tile.vertices[Tile::TL_1_Y] - vertices[Tile::BR_1_Y];
 
-        vertices[Tile::BR_2_Y] += 0.5f;
-        vertices[Tile::TR_2_Y] += 0.5f;
+        vertices[Tile::BR_2_Y] += t_tile.vertices[Tile::BL_1_Y] - vertices[Tile::BR_2_Y];
+        vertices[Tile::TR_2_Y] += t_tile.vertices[Tile::TL_2_Y] - vertices[Tile::TR_2_Y];
 
         auto normal{ CalcNormal(*tile) };
 

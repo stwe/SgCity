@@ -112,8 +112,8 @@ namespace sg::map
         void UpdateTile(Tile& t_tile);
         void UpdateNorthNeighbor(Tile& t_tile);
         void UpdateSouthNeighbor(Tile& t_tile);
-        void UpdateW(Tile& t_tile);
-        void UpdateE(Tile& t_tile);
+        void UpdateWestNeighbor(Tile& t_tile);
+        void UpdateEastNeighbor(Tile& t_tile);
         void UpdateVertices(const std::vector<float>& t_vertices, int t_offset) const;
 
         //-------------------------------------------------

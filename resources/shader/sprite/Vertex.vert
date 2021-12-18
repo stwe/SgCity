@@ -8,7 +8,7 @@ layout (location = 3) in vec3 aNormal;
 out vec2 vUv;
 flat out vec3 vColor;
 out vec3 vNormalColor;
-flat out float intensity;
+flat out float vIntensity;
 
 uniform mat4 model;
 uniform mat4 view;
@@ -29,4 +29,5 @@ void main()
 
     vColor = max(intensity * baseColor, ambientIntensity * baseColor);
     vNormalColor = aNormal;
+    vIntensity = intensity;
 }

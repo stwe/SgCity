@@ -108,7 +108,7 @@ int sg::map::Map::GetTileObjectId()
 
 void sg::map::Map::Raise(int t_tileObjectId)
 {
-    if (t_tileObjectId < 0 || t_tileObjectId >= m_tiles.size() - 1)
+    if (t_tileObjectId < 0 || t_tileObjectId > m_tiles.size() - 1)
     {
         return;
     }
@@ -121,8 +121,10 @@ void sg::map::Map::Raise(int t_tileObjectId)
     UpdateWestNeighbor(*tile);
     UpdateEastNeighbor(*tile);
 
-    UpdateNorthWestNeighbor(*tile);
     UpdateNorthEastNeighbor(*tile);
+    UpdateNorthWestNeighbor(*tile);
+    UpdateSouthEastNeighbor(*tile);
+    UpdateSouthWestNeighbor(*tile);
 }
 
 //-------------------------------------------------
@@ -175,32 +177,29 @@ void sg::map::Map::Init()
             }
 
             // connect diagonally
-
-            // nw
             if (z > 0 && x < m_tileCount - 1)
             {
                 auto i{ static_cast<int>(z) * m_tileCount + static_cast<int>(x) };
-                m_tiles[i]->nw = m_tiles[static_cast<int>(z - 1) * m_tileCount + static_cast<int>(x + 1)].get();
+                m_tiles[i]->ne = m_tiles[static_cast<int>(z - 1) * m_tileCount + static_cast<int>(x + 1)].get();
             }
 
-            // ne
-            if (z > 0 && x < m_tileCount - 1)
+            if (z > 0 && x > 0)
             {
                 auto i{ static_cast<int>(z) * m_tileCount + static_cast<int>(x) };
-                m_tiles[i]->ne = m_tiles[static_cast<int>(z - 1) * m_tileCount + static_cast<int>(x - 1)].get();
+                m_tiles[i]->nw = m_tiles[static_cast<int>(z - 1) * m_tileCount + static_cast<int>(x - 1)].get();
             }
 
-            /*
-            if (y>0 && x>0)
-                nodes[y*nMapWidth + x].vecNeighbours.push_back(&nodes[(y - 1) * nMapWidth + (x - 1)]);
-            if (y<nMapHeight-1 && x>0)
-                nodes[y*nMapWidth + x].vecNeighbours.push_back(&nodes[(y + 1) * nMapWidth + (x - 1)]);
-            if (y>0 && x<nMapWidth-1)
-                nodes[y*nMapWidth + x].vecNeighbours.push_back(&nodes[(y - 1) * nMapWidth + (x + 1)]);
-            if (y<nMapHeight - 1 && x<nMapWidth-1)
-                nodes[y*nMapWidth + x].vecNeighbours.push_back(&nodes[(y + 1) * nMapWidth + (x + 1)]);
-            */
+            if (z < m_tileCount - 1 && x > 0)
+            {
+                auto i{ static_cast<int>(z) * m_tileCount + static_cast<int>(x) };
+                m_tiles[i]->sw = m_tiles[static_cast<int>(z + 1) * m_tileCount + static_cast<int>(x - 1)].get();
+            }
 
+            if (z < m_tileCount - 1 && x < m_tileCount - 1)
+            {
+                auto i{ static_cast<int>(z) * m_tileCount + static_cast<int>(x) };
+                m_tiles[i]->se = m_tiles[static_cast<int>(z + 1) * m_tileCount + static_cast<int>(x + 1)].get();
+            }
         }
     }
 
@@ -305,12 +304,12 @@ void sg::map::Map::UpdateTile(Tile& t_tile)
     UpdateVertices(vertices, i);
 }
 
-void sg::map::Map::UpdateNorthEastNeighbor(sg::map::Tile& t_tile)
+void sg::map::Map::UpdateNorthWestNeighbor(Tile& t_tile)
 {
-    if (t_tile.ne)
+    if (t_tile.nw)
     {
-        auto& tile{t_tile.ne};
-        auto& vertices{tile->vertices};
+        auto& tile{ t_tile.nw };
+        auto& vertices{ tile->vertices };
 
         vertices[Tile::BR_1_Y] += t_tile.vertices[Tile::TL_1_Y] - vertices[Tile::BR_1_Y];
         vertices[Tile::BR_2_Y] += t_tile.vertices[Tile::TL_1_Y] - vertices[Tile::BR_2_Y];
@@ -343,15 +342,14 @@ void sg::map::Map::UpdateNorthEastNeighbor(sg::map::Tile& t_tile)
 
         auto i{ static_cast<int>(tile->mapZ) * tile->tileCount + static_cast<int>(tile->mapX) };
         UpdateVertices(vertices, i);
-
     }
 }
 
-void sg::map::Map::UpdateNorthWestNeighbor(sg::map::Tile& t_tile)
+void sg::map::Map::UpdateNorthEastNeighbor(Tile& t_tile)
 {
-    if (t_tile.nw)
+    if (t_tile.ne)
     {
-        auto& tile{ t_tile.nw };
+        auto& tile{ t_tile.ne };
         auto& vertices{ tile->vertices };
 
         /*
@@ -401,14 +399,85 @@ void sg::map::Map::UpdateNorthWestNeighbor(sg::map::Tile& t_tile)
 
 // todo
 
-void sg::map::Map::UpdateSouthWestNeighbor(sg::map::Tile& t_tile)
+void sg::map::Map::UpdateSouthWestNeighbor(Tile& t_tile)
 {
+    if (t_tile.sw)
+    {
+        auto& tile{ t_tile.sw };
+        auto& vertices{ tile->vertices };
 
+        vertices[Tile::TR_2_Y] += t_tile.vertices[Tile::BL_1_Y] - vertices[Tile::TR_2_Y];
+
+        auto normal{ CalcNormal(*tile) };
+
+        vertices[Tile::TL_1_N] = normal.x;
+        vertices[Tile::TL_1_N + 1] = normal.y;
+        vertices[Tile::TL_1_N + 2] = normal.z;
+
+        vertices[Tile::BL_1_N] = normal.x;
+        vertices[Tile::BL_1_N + 1] = normal.y;
+        vertices[Tile::BL_1_N + 2] = normal.z;
+
+        vertices[Tile::BR_1_N] = normal.x;
+        vertices[Tile::BR_1_N + 1] = normal.y;
+        vertices[Tile::BR_1_N + 2] = normal.z;
+
+        vertices[Tile::TL_2_N] = normal.x;
+        vertices[Tile::TL_2_N + 1] = normal.y;
+        vertices[Tile::TL_2_N + 2] = normal.z;
+
+        vertices[Tile::BR_2_N] = normal.x;
+        vertices[Tile::BR_2_N + 1] = normal.y;
+        vertices[Tile::BR_2_N + 2] = normal.z;
+
+        vertices[Tile::TR_2_N] = normal.x;
+        vertices[Tile::TR_2_N + 1] = normal.y;
+        vertices[Tile::TR_2_N + 2] = normal.z;
+
+        auto i{ static_cast<int>(tile->mapZ) * tile->tileCount + static_cast<int>(tile->mapX) };
+        UpdateVertices(vertices, i);
+    }
 }
 
 void sg::map::Map::UpdateSouthEastNeighbor(sg::map::Tile& t_tile)
 {
+    if (t_tile.se)
+    {
+        auto& tile{ t_tile.se };
+        auto& vertices{ tile->vertices };
 
+        vertices[Tile::TL_1_Y] += t_tile.vertices[Tile::BR_1_Y] - vertices[Tile::TL_1_Y];
+        vertices[Tile::TL_2_Y] += t_tile.vertices[Tile::BR_2_Y] - vertices[Tile::TL_2_Y];
+
+        auto normal{ CalcNormal(*tile) };
+
+        vertices[Tile::TL_1_N] = normal.x;
+        vertices[Tile::TL_1_N + 1] = normal.y;
+        vertices[Tile::TL_1_N + 2] = normal.z;
+
+        vertices[Tile::BL_1_N] = normal.x;
+        vertices[Tile::BL_1_N + 1] = normal.y;
+        vertices[Tile::BL_1_N + 2] = normal.z;
+
+        vertices[Tile::BR_1_N] = normal.x;
+        vertices[Tile::BR_1_N + 1] = normal.y;
+        vertices[Tile::BR_1_N + 2] = normal.z;
+
+        vertices[Tile::TL_2_N] = normal.x;
+        vertices[Tile::TL_2_N + 1] = normal.y;
+        vertices[Tile::TL_2_N + 2] = normal.z;
+
+        vertices[Tile::BR_2_N] = normal.x;
+        vertices[Tile::BR_2_N + 1] = normal.y;
+        vertices[Tile::BR_2_N + 2] = normal.z;
+
+        vertices[Tile::TR_2_N] = normal.x;
+        vertices[Tile::TR_2_N + 1] = normal.y;
+        vertices[Tile::TR_2_N + 2] = normal.z;
+
+        auto i{ static_cast<int>(tile->mapZ) * tile->tileCount + static_cast<int>(tile->mapX) };
+        UpdateVertices(vertices, i);
+    }
 }
 
 void sg::map::Map::UpdateNorthNeighbor(Tile& t_tile)

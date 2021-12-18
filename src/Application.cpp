@@ -8,7 +8,6 @@
 #include "ogl/input/MouseInput.h"
 #include "ogl/input/PickingTexture.h"
 #include "map/Map.h"
-#include "map/Terrain.h"
 
 //-------------------------------------------------
 // Ctors. / Dtor.
@@ -52,14 +51,7 @@ void sg::Application::Init()
 
     ogl::input::MouseInput::Init(m_window);
 
-    //m_redGrid = std::make_unique<ogl::resource::Texture>("/home/steffen/CLionProjects/SgCity/resources/texture/red.png");
-    //m_redGrid->Load();
-
-    //m_full = std::make_unique<ogl::resource::Texture>("/home/steffen/CLionProjects/SgCity/resources/texture/full.png");
-    //m_full->Load();
-
     m_map = std::make_unique<map::Map>(8);
-    //m_terrain = std::make_unique<map::Terrain>(4);
 
     Log::SG_LOG_DEBUG("[Application::Init()] The application was successfully initialized.");
 }
@@ -124,6 +116,17 @@ void sg::Application::Update()
     {
         m_camera.ProcessKeyboard(ogl::camera::Camera::Direction::DOWN);
     }
+
+    if (m_window.IsKeyPressed(GLFW_KEY_I))
+    {
+        Log::SG_LOG_DEBUG("Camera position: x: {}, y: {}, z: {}, yaw: {}, pitch: {}",
+                          m_camera.GetPosition().x,
+                          m_camera.GetPosition().y,
+                          m_camera.GetPosition().z,
+                          m_camera.GetYaw(),
+                          m_camera.GetPitch()
+                          );
+    }
 }
 
 void sg::Application::Render()
@@ -132,7 +135,6 @@ void sg::Application::Render()
 
     StartFrame();
     m_map->Render(m_window, m_camera);
-    //m_terrain->Render(m_window, m_camera);
     EndFrame();
 }
 

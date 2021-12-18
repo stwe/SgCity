@@ -114,11 +114,11 @@ void sg::map::Map::Raise(int t_tileObjectId)
     }
 
     auto& tile{ m_tiles[t_tileObjectId] };
-    UpdateAll(*tile);
-    UpdateN(*tile);
-    UpdateS(*tile);
-    UpdateW(*tile);
-    UpdateE(*tile);
+    UpdateTile(*tile);
+    UpdateNorthNeighbor(*tile);
+    UpdateSouthNeighbor(*tile);
+    //UpdateW(*tile);
+    //UpdateE(*tile);
 }
 
 //-------------------------------------------------
@@ -229,7 +229,7 @@ glm::vec3 sg::map::Map::CalcNormal(Tile& t_tile)
     return glm::normalize(normal);
 }
 
-void sg::map::Map::UpdateAll(Tile& t_tile)
+void sg::map::Map::UpdateTile(Tile& t_tile)
 {
     auto& vertices{ t_tile.vertices };
 
@@ -272,17 +272,29 @@ void sg::map::Map::UpdateAll(Tile& t_tile)
     UpdateVertices(vertices, i);
 }
 
-void sg::map::Map::UpdateN(Tile& t_tile)
+void sg::map::Map::UpdateNorthNeighbor(Tile& t_tile)
 {
     if (t_tile.n)
     {
         auto& tile{ t_tile.n };
         auto& vertices{ tile->vertices };
 
-        vertices[Tile::BL_1_Y] += 0.5f;
-        vertices[Tile::BR_1_Y] += 0.5f;
+        /*
+        tl.      tr
+         |  .  2
+         | 1   .
+        bl------ br   Raise
 
-        vertices[Tile::BR_2_Y] += 0.5f;
+        tl.      tr
+         |  .  2
+         | 1   .
+        bl------ br
+        */
+
+        vertices[Tile::BL_1_Y] += t_tile.vertices[Tile::TL_1_Y] - vertices[Tile::BL_1_Y];
+        vertices[Tile::BR_1_Y] += t_tile.vertices[Tile::TR_2_Y] - vertices[Tile::BR_1_Y];
+
+        vertices[Tile::BR_2_Y] += t_tile.vertices[Tile::TR_2_Y] - vertices[Tile::BR_2_Y];
 
         auto normal{ CalcNormal(*tile) };
 
@@ -315,17 +327,29 @@ void sg::map::Map::UpdateN(Tile& t_tile)
     }
 }
 
-void sg::map::Map::UpdateS(Tile& t_tile)
+void sg::map::Map::UpdateSouthNeighbor(Tile& t_tile)
 {
     if (t_tile.s)
     {
         auto& tile{ t_tile.s };
         auto& vertices{ tile->vertices };
 
-        vertices[Tile::TL_1_Y] += 0.5f;
+        /*
+        tl.      tr
+         |  .  2
+         | 1   .
+        bl------ br
 
-        vertices[Tile::TL_2_Y] += 0.5f;
-        vertices[Tile::TR_2_Y] += 0.5f;
+        tl.      tr
+         |  .  2
+         | 1   .
+        bl------ br   Raise
+        */
+
+        vertices[Tile::TL_1_Y] += t_tile.vertices[Tile::BL_1_Y] - vertices[Tile::TL_1_Y];
+
+        vertices[Tile::TL_2_Y] += t_tile.vertices[Tile::BR_1_Y] - vertices[Tile::TL_2_Y];
+        vertices[Tile::TR_2_Y] += t_tile.vertices[Tile::BR_2_Y] - vertices[Tile::TR_2_Y];
 
         auto normal{ CalcNormal(*tile) };
 

@@ -109,9 +109,9 @@ namespace sg::map
 
         glm::vec3 CalcNormal(Tile& t_tile);
 
-        void UpdateAll(Tile& t_tile);
-        void UpdateN(Tile& t_tile);
-        void UpdateS(Tile& t_tile);
+        void UpdateTile(Tile& t_tile);
+        void UpdateNorthNeighbor(Tile& t_tile);
+        void UpdateSouthNeighbor(Tile& t_tile);
         void UpdateW(Tile& t_tile);
         void UpdateE(Tile& t_tile);
         void UpdateVertices(const std::vector<float>& t_vertices, int t_offset) const;

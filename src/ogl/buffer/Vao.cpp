@@ -1,4 +1,5 @@
 #include "Vao.h"
+#include "Vbo.h"
 #include "Assert.h"
 #include "ogl/OpenGL.h"
 
@@ -35,34 +36,30 @@ void sg::ogl::buffer::Vao::Unbind()
 }
 
 //-------------------------------------------------
-// Add Vbo
+// Create Vbo
 //-------------------------------------------------
 
-sg::ogl::buffer::Vbo& sg::ogl::buffer::Vao::AddVbo()
-{
-    return *m_vbos.emplace_back(std::make_unique<Vbo>());
-}
-
-sg::ogl::buffer::Vbo& sg::ogl::buffer::Vao::AddEmptyVbo(const uint32_t t_size, const int32_t t_drawCount)
+void sg::ogl::buffer::Vao::CreateEmptyDynamicVbo(const uint32_t t_size, const int32_t t_drawCount)
 {
     Bind();
 
-    auto& vbo{ AddVbo() };
-    vbo.Bind();
+    m_vbo = std::make_unique<Vbo>();
+    m_vbo->Bind();
+
     glBufferData(GL_ARRAY_BUFFER, t_size, nullptr, GL_DYNAMIC_DRAW);
     Vbo::Unbind();
 
     // enable location 0 (position)
-    vbo.AddFloatAttribute(0, 3, 11, 0);
+    m_vbo->AddFloatAttribute(0, 3, 11, 0);
 
     // enable location 1 (uv)
-    vbo.AddFloatAttribute(1, 2, 11, 3);
+    m_vbo->AddFloatAttribute(1, 2, 11, 3);
 
     // enable location 2 (idColor)
-    vbo.AddFloatAttribute(2, 3, 11, 5);
+    m_vbo->AddFloatAttribute(2, 3, 11, 5);
 
     // enable location 3 (normal)
-    vbo.AddFloatAttribute(3, 3, 11, 8);
+    m_vbo->AddFloatAttribute(3, 3, 11, 8);
 
     Unbind();
 
@@ -70,93 +67,6 @@ sg::ogl::buffer::Vbo& sg::ogl::buffer::Vao::AddEmptyVbo(const uint32_t t_size, c
     {
         drawCount = t_drawCount;
     }
-
-    return vbo;
-}
-
-void sg::ogl::buffer::Vao::Add2DQuadVbo()
-{
-    const float vertices[] =
-    {
-        // pos             // uv
-        0.0f, 0.0f, -1.0f, 0.0f, 1.0f,
-        0.0f, 0.0f,  0.0f, 0.0f, 0.0f,
-        1.0f, 0.0f,  0.0f, 1.0f, 0.0f,
-
-        0.0f, 0.0f, -1.0f, 0.0f, 1.0f,
-        1.0f, 0.0f,  0.0f, 1.0f, 0.0f,
-        1.0f, 0.0f, -1.0f, 1.0f, 1.0f
-    };
-
-    Bind();
-
-    auto& vbo{ AddVbo() };
-    vbo.Bind();
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-    Vbo::Unbind();
-
-    // enable location 0 (position)
-    vbo.AddFloatAttribute(0, 3, 5, 0);
-
-    // enable location 1 (uv)
-    vbo.AddFloatAttribute(1, 2, 5, 3);
-
-    Unbind();
-
-    drawCount = 6;
-}
-
-void sg::ogl::buffer::Vao::AddFloatVbo(const std::vector<float>& t_vertices)
-{
-    const auto numberOfElements{ static_cast<int32_t>(t_vertices.size()) };
-
-    Bind();
-
-    auto& vbo{ AddVbo() };
-    vbo.Bind();
-    glBufferData(GL_ARRAY_BUFFER, numberOfElements * (long)sizeof(float), t_vertices.data(), GL_STATIC_DRAW);
-    Vbo::Unbind();
-
-    // enable location 0 (position)
-    vbo.AddFloatAttribute(0, 3, 8, 0);
-
-    // enable location 1 (uv)
-    vbo.AddFloatAttribute(1, 2, 8, 3);
-
-    // enable location 2 (idColor)
-    vbo.AddFloatAttribute(2, 3, 8, 5);
-
-    Unbind();
-
-    drawCount = numberOfElements;
-}
-
-//-------------------------------------------------
-// Add Ebo
-//-------------------------------------------------
-
-void sg::ogl::buffer::Vao::AddIndexBuffer(const std::vector<uint32_t>& t_indices)
-{
-    const auto numberOfElements{ static_cast<int32_t>(t_indices.size()) };
-
-    if (m_vbos.empty())
-    {
-        Log::SG_LOG_WARN("[Vao::AddIndexBuffer()] The index buffer should be created last.");
-    }
-
-    Bind();
-
-    // Generate a new Ebo.
-    SG_ASSERT(!m_ebo, "[Vao::AddIndexBuffer()] The Ebo already exists.");
-    m_ebo = std::make_unique<Ebo>();
-    m_ebo->Bind();
-
-    // Create and initialize an index buffer.
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, numberOfElements * (long)sizeof(uint32_t), t_indices.data(), GL_STATIC_DRAW);
-
-    Unbind();
-
-    drawCount = numberOfElements;
 }
 
 //-------------------------------------------------
@@ -165,14 +75,7 @@ void sg::ogl::buffer::Vao::AddIndexBuffer(const std::vector<uint32_t>& t_indices
 
 void sg::ogl::buffer::Vao::DrawPrimitives(const uint32_t t_drawMode, const int32_t t_first) const
 {
-    if (m_ebo)
-    {
-        glDrawElements(t_drawMode, drawCount, GL_UNSIGNED_INT, nullptr);
-    }
-    else
-    {
-        glDrawArrays(t_drawMode, t_first, drawCount);
-    }
+    glDrawArrays(t_drawMode, t_first, drawCount);
 }
 
 void sg::ogl::buffer::Vao::DrawPrimitives(const uint32_t t_drawMode) const

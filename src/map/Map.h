@@ -5,6 +5,10 @@
 #include "ogl/Window.h"
 #include "ogl/camera/Camera.h"
 
+//-------------------------------------------------
+// Forward declarations
+//-------------------------------------------------
+
 namespace sg::ogl::buffer
 {
     class Vao;
@@ -21,8 +25,15 @@ namespace sg::ogl::input
     class PickingTexture;
 }
 
+//-------------------------------------------------
+// Map
+//-------------------------------------------------
+
 namespace sg::map
 {
+    /**
+     * Forward declaration class Tile.
+     */
     class Tile;
 
     /**
@@ -36,6 +47,12 @@ namespace sg::map
         //-------------------------------------------------
 
         Map() = delete;
+
+        /**
+         * Constructs a new Map object.
+         *
+         * @param t_tileCount The number of tiles in x and z direction.
+         */
         explicit Map(int t_tileCount);
 
         Map(const Map& t_other) = delete;
@@ -63,15 +80,18 @@ namespace sg::map
         // Member
         //-------------------------------------------------
 
+        /*
+         * The number of tiles in x and z direction.
+         */
         int m_tileCount{ 0 };
 
         /**
-         * A container holding the Tile objects.
+         * An array holding the Tile objects.
          */
         std::vector<std::unique_ptr<Tile>> m_tiles;
 
         /**
-         * A Vao object for the Map.
+         * A Vao object which contains a Vbo with map vertex data.
          */
         std::unique_ptr<ogl::buffer::Vao> m_mapVao;
 

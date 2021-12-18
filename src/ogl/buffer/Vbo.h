@@ -1,8 +1,6 @@
 #pragma once
 
 #include <cstdint>
-#include <glm/mat4x4.hpp>
-#include <vector>
 
 namespace sg::ogl::buffer
 {
@@ -42,27 +40,17 @@ namespace sg::ogl::buffer
         static void Unbind();
 
         //-------------------------------------------------
-        // Store data by calling glBufferData
-        //-------------------------------------------------
-
-        void StoreMat4(const std::vector<glm::mat4>& t_matrices, uint32_t t_usage) const;
-        void StoreMat4(const std::vector<glm::mat4>& t_matrices) const;
-
-        void StoreFloat(const std::vector<float>& t_floats, uint32_t t_usage) const;
-        void StoreFloat(const std::vector<float>& t_floats) const;
-
-        //-------------------------------------------------
         // Attributes
         //-------------------------------------------------
 
-        void AddFloatAttribute(
-            uint32_t t_index,
-            int32_t t_nrOfFloatComponents,
-            int32_t t_nrOfAllFloats,
-            uint64_t t_startPoint,
-            bool t_instancedRendering
-        ) const;
-
+        /**
+         * Specified how OpenGL should interpret the vertex data.
+         *
+         * @param t_index The location of the vertex attribute.
+         * @param t_nrOfFloatComponents The size of the vertex attribute.
+         * @param t_nrOfAllFloats The space between consecutive vertex attributes.
+         * @param t_startPoint The offset of where the position data begins in the buffer.
+         */
         void AddFloatAttribute(
             uint32_t t_index,
             int32_t t_nrOfFloatComponents,

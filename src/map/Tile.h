@@ -64,6 +64,9 @@ namespace sg::map
         Tile* e{ nullptr };
         Tile* w{ nullptr };
 
+        Tile* nw{ nullptr };
+        Tile* ne{ nullptr };
+
         //-------------------------------------------------
         // Ctors. / Dtor.
         //-------------------------------------------------

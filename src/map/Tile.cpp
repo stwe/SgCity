@@ -4,17 +4,17 @@
 // Ctors. / Dtor.
 //-------------------------------------------------
 
-sg::map::Tile::Tile(const float t_mapX, const float t_mapZ, int t_tileCount)
+sg::map::Tile::Tile(const float t_mapX, const float t_mapZ, const int t_mapIndex)
     : mapX{ t_mapX }
     , mapZ{ t_mapZ }
-    , tileCount{ t_tileCount }
+    , mapIndex{ t_mapIndex }
 {
     Init();
 }
 
 sg::map::Tile::~Tile() noexcept
 {
-
+    // ...
 }
 
 //-------------------------------------------------
@@ -28,29 +28,27 @@ void sg::map::Tile::Init()
     const glm::vec3 br{ mapX + 1, DEFAULT_HEIGHT, mapZ + 1 };
     const glm::vec3 tr{ mapX + 1, DEFAULT_HEIGHT, mapZ };
 
-    CreateObjectIdColor();
+    InitObjectIdColor();
 
     vertices =
     {
         // pos            // uv       // id color                      // normal
-        tl.x, tl.y, tl.z, 0.0f, 1.0f, idColor.x, idColor.y, idColor.z, 0.0f, 1.0f, 0.0f, // 1
-        bl.x, bl.y, bl.z, 0.0f, 0.0f, idColor.x, idColor.y, idColor.z, 0.0f, 1.0f, 0.0f, // 12
-        br.x, br.y, br.z, 1.0f, 0.0f, idColor.x, idColor.y, idColor.z, 0.0f, 1.0f, 0.0f, // 23
+        tl.x, tl.y, tl.z, 0.0f, 1.0f, idColor.x, idColor.y, idColor.z, 0.0f, 1.0f, 0.0f,
+        bl.x, bl.y, bl.z, 0.0f, 0.0f, idColor.x, idColor.y, idColor.z, 0.0f, 1.0f, 0.0f,
+        br.x, br.y, br.z, 1.0f, 0.0f, idColor.x, idColor.y, idColor.z, 0.0f, 1.0f, 0.0f,
 
-        tl.x, tl.y, tl.z, 0.0f, 1.0f, idColor.x, idColor.y, idColor.z, 0.0f, 1.0f, 0.0f, // 34
-        br.x, br.y, br.z, 1.0f, 0.0f, idColor.x, idColor.y, idColor.z, 0.0f, 1.0f, 0.0f, // 45
-        tr.x, tr.y, tr.z, 1.0f, 1.0f, idColor.x, idColor.y, idColor.z, 0.0f, 1.0f, 0.0f, // 56
+        tl.x, tl.y, tl.z, 0.0f, 1.0f, idColor.x, idColor.y, idColor.z, 0.0f, 1.0f, 0.0f,
+        br.x, br.y, br.z, 1.0f, 0.0f, idColor.x, idColor.y, idColor.z, 0.0f, 1.0f, 0.0f,
+        tr.x, tr.y, tr.z, 1.0f, 1.0f, idColor.x, idColor.y, idColor.z, 0.0f, 1.0f, 0.0f,
     };
 }
 
-void sg::map::Tile::CreateObjectIdColor()
+void sg::map::Tile::InitObjectIdColor()
 {
-    auto i{ static_cast<int>(mapZ) * tileCount + static_cast<int>(mapX) };
+    // convert index into an RGB color
+    int r = (mapIndex & 0x000000FF) >> 0;
+    int g = (mapIndex & 0x0000FF00) >> 8;
+    int b = (mapIndex & 0x00FF0000) >> 16;
 
-    // convert "i", the integer mesh Id, into an RGB color
-    int r = (i & 0x000000FF) >> 0;
-    int g = (i & 0x0000FF00) >> 8;
-    int b = (i & 0x00FF0000) >> 16;
-
-    idColor = glm::vec3(r / 255.0f, g / 255.0f, b / 255.0f);
+    idColor = glm::vec3(static_cast<float>(r) / 255.0f, static_cast<float>(g) / 255.0f, static_cast<float>(b) / 255.0f);
 }

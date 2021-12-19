@@ -96,11 +96,6 @@ namespace sg::map
         std::unique_ptr<ogl::buffer::Vao> m_mapVao;
 
         /**
-         *
-         */
-        uint32_t m_vboId{ 0 };
-
-        /**
          * A ShaderProgram object used to draw the Map.
          */
         std::unique_ptr<ogl::resource::ShaderProgram> m_mapShaderProgram;
@@ -138,7 +133,6 @@ namespace sg::map
 
         void UpdateNorthWestNeighbor(Tile& t_tile);
         void UpdateNorthEastNeighbor(Tile& t_tile);
-
         void UpdateSouthWestNeighbor(Tile& t_tile);
         void UpdateSouthEastNeighbor(Tile& t_tile);
 

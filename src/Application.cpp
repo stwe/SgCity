@@ -82,7 +82,7 @@ void sg::Application::Input()
     // handle left mouse button
     if (ogl::input::MouseInput::GetInstance().IsLeftButtonPressed() && m_handleMouseEvent)
     {
-        auto id{ m_map->GetTileObjectId() };
+        auto id{ m_map->GetCurrentTileIdxUnderMouse() };
         Log::SG_LOG_DEBUG("Id {}.", id);
 
         // raise tile and his neighbors

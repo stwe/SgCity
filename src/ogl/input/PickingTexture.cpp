@@ -82,7 +82,7 @@ void sg::ogl::input::PickingTexture::DisableWriting()
 // Read
 //-------------------------------------------------
 
-int sg::ogl::input::PickingTexture::ReadId(int t_x, int t_y) const
+int sg::ogl::input::PickingTexture::ReadMapIndex(int t_x, int t_y) const
 {
     glBindFramebuffer(GL_READ_FRAMEBUFFER, m_fboId);
     glReadBuffer(GL_COLOR_ATTACHMENT0);

@@ -38,7 +38,7 @@ namespace sg::ogl::input
         // Read
         //-------------------------------------------------
 
-        [[nodiscard]] int ReadId(int t_x, int t_y) const;
+        [[nodiscard]] int ReadMapIndex(int t_x, int t_y) const;
 
     protected:
 

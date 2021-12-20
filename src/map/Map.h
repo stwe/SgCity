@@ -66,12 +66,43 @@ namespace sg::map
         // Logic
         //-------------------------------------------------
 
+        /**
+         * Renders the Map in a Fbo..
+         *
+         * @param t_window The Window object.
+         * @param t_camera The Camera object.
+         */
         void RenderForMousePicking(const ogl::Window& t_window, const ogl::camera::Camera& t_camera);
+
+        /**
+         * Renders the Map.
+         *
+         * @param t_window The Window object.
+         * @param t_camera The Camera object.
+         */
         void Render(const ogl::Window& t_window, const ogl::camera::Camera& t_camera);
 
-        int GetTileObjectId();
+        //-------------------------------------------------
+        // Tiles
+        //-------------------------------------------------
 
-        void Raise(int t_tileObjectId);
+        /**
+         * Get the mapIndex of the Tile under current mouse position.
+         *
+         * @return The mapIndex.
+         */
+        int GetCurrentTileIdxUnderMouse();
+
+        //-------------------------------------------------
+        // Raise / lower terrain
+        //-------------------------------------------------
+
+        /**
+         * Raise the terrain.
+         *
+         * @param t_mapIndex The map index of the Tile to be raised.
+         */
+        void Raise(int t_mapIndex);
 
     protected:
 
@@ -101,28 +132,52 @@ namespace sg::map
         std::unique_ptr<ogl::resource::ShaderProgram> m_mapShaderProgram;
 
         /**
-         * A ShaderProgram object used for mouse picking.
+         * A ShaderProgram object used to draw the Map for mouse picking.
          */
         std::unique_ptr<ogl::resource::ShaderProgram> m_pickingShaderProgram;
 
         /**
-         *
+         * An object holding the Fbo for mouse picking.
          */
         std::unique_ptr<ogl::input::PickingTexture> m_pickingTexture;
 
+        /**
+         * The texture for each Tile.
+         */
         std::unique_ptr<ogl::resource::Texture> m_tileTexture;
 
         //-------------------------------------------------
         // Init
         //-------------------------------------------------
 
+        /**
+         * Initializes the Map.
+         */
         void Init();
+
+        /**
+         * Create all Tiles.
+         */
+        void CreateTiles();
+
+        /**
+         * Finds the neighbors for every Tile.
+         */
+        void AddTileNeighbors();
+
+        /**
+         * Stores vertices of all Tiles in a Vbo.
+         */
+        void TilesToGpu();
+
+        /**
+         * Initializes Shader and Textures.
+         */
+        void InitResources();
 
         //-------------------------------------------------
         // Helper
         //-------------------------------------------------
-
-        glm::vec3 CalcNormal(Tile& t_tile);
 
         void UpdateTile(Tile& t_tile);
 
@@ -135,8 +190,6 @@ namespace sg::map
         void UpdateNorthEastNeighbor(Tile& t_tile);
         void UpdateSouthWestNeighbor(Tile& t_tile);
         void UpdateSouthEastNeighbor(Tile& t_tile);
-
-        void UpdateVertices(const std::vector<float>& t_vertices, int t_offset) const;
 
         //-------------------------------------------------
         // Clean up

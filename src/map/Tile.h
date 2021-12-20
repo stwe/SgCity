@@ -2,6 +2,7 @@
 
 #include <vector>
 #include <glm/vec3.hpp>
+#include "ogl/buffer/Vao.h"
 
 namespace sg::map
 {
@@ -23,9 +24,19 @@ namespace sg::map
         static constexpr auto BYTES_PER_TILE{ 264 };
 
         /**
+         * Vertices per Tile.
+         */
+        static constexpr auto VERTICES_PER_TILE{ 6 };
+
+        /**
          * The default height of the Tile.
          */
         static constexpr auto DEFAULT_HEIGHT{ 0.0f };
+
+        /**
+         * The Tile is increased by this value.
+         */
+        static constexpr auto RAISE_Y{ 0.5f };
 
         /*
             tl       tr
@@ -125,6 +136,30 @@ namespace sg::map
 
         ~Tile() noexcept;
 
+        //-------------------------------------------------
+        // Raise / lower tile
+        //-------------------------------------------------
+
+        /**
+         * Raises all vertices of this Tile by the value RAISE_Y.
+         */
+        void Raise();
+
+        //-------------------------------------------------
+        // Normal
+        //-------------------------------------------------
+
+        /**
+         * Updates the normals of each vertex.
+         */
+        void UpdateNormal();
+
+        //-------------------------------------------------
+        // Gpu
+        //-------------------------------------------------
+
+        void VerticesToGpu(ogl::buffer::Vao& t_vao);
+
     protected:
 
     private:
@@ -132,7 +167,25 @@ namespace sg::map
         // Init
         //-------------------------------------------------
 
+        /**
+         * Initializes the Tile.
+         */
         void Init();
-        void InitObjectIdColor();
+
+        //-------------------------------------------------
+        // Helper
+        //-------------------------------------------------
+
+        /**
+         * Creates an unique color by mapIndex.
+         */
+        void CreateMapIndexColor();
+
+        /**
+         * Computes a normal from all vertices.
+         *
+         * @return glm::vec3 The normal.
+         */
+        glm::vec3 CalcNormal();
     };
 }

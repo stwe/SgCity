@@ -99,21 +99,29 @@ void sg::map::Map::Render(const ogl::Window& t_window, const ogl::camera::Camera
     ogl::OpenGL::DisableBlending();
 }
 
-int sg::map::Map::GetTileObjectId()
+//-------------------------------------------------
+// Tiles
+//-------------------------------------------------
+
+int sg::map::Map::GetCurrentTileIdxUnderMouse()
 {
-    return m_pickingTexture->ReadId(
+    return m_pickingTexture->ReadMapIndex(
         ogl::input::MouseInput::GetInstance().GetX(),
         ogl::input::MouseInput::GetInstance().GetY());
 }
 
-void sg::map::Map::Raise(int t_tileObjectId)
+//-------------------------------------------------
+// Raise / lower terrain
+//-------------------------------------------------
+
+void sg::map::Map::Raise(int t_mapIndex)
 {
-    if (t_tileObjectId < 0 || t_tileObjectId > m_tiles.size() - 1)
+    if (t_mapIndex < 0 || t_mapIndex > m_tiles.size() - 1)
     {
         return;
     }
 
-    auto& tile{ m_tiles[t_tileObjectId] };
+    auto& tile{ m_tiles[t_mapIndex] };
     UpdateTile(*tile);
 
     UpdateNorthNeighbor(*tile);
@@ -133,6 +141,14 @@ void sg::map::Map::Raise(int t_tileObjectId)
 
 void sg::map::Map::Init()
 {
+    CreateTiles();
+    AddTileNeighbors();
+    TilesToGpu();
+    InitResources();
+}
+
+void sg::map::Map::CreateTiles()
+{
     for (auto z{ 0 }; z < m_tileCount; ++z)
     {
         for (auto x{ 0 }; x < m_tileCount; ++x)
@@ -141,85 +157,85 @@ void sg::map::Map::Init()
                 static_cast<float>(x),
                 static_cast<float>(z),
                 z * m_tileCount + x
-                ) };
+            ) };
 
             m_tiles.push_back(std::move(tile));
         }
     }
+}
 
+void sg::map::Map::AddTileNeighbors()
+{
     for (auto z{ 0 }; z < m_tileCount; ++z)
     {
         for (auto x{ 0 }; x < m_tileCount; ++x)
         {
+            auto i{ static_cast<int>(z) * m_tileCount + static_cast<int>(x) };
+
             // regular grid
             if (z > 0)
             {
-                auto i{ static_cast<int>(z) * m_tileCount + static_cast<int>(x) };
                 m_tiles[i]->n = m_tiles[static_cast<int>(z - 1) * m_tileCount + static_cast<int>(x)].get();
             }
 
             if (z < m_tileCount - 1)
             {
-                auto i{ static_cast<int>(z) * m_tileCount + static_cast<int>(x) };
                 m_tiles[i]->s = m_tiles[static_cast<int>(z + 1) * m_tileCount + static_cast<int>(x)].get();
             }
 
             if (x > 0)
             {
-                auto i{ static_cast<int>(z) * m_tileCount + static_cast<int>(x) };
                 m_tiles[i]->e = m_tiles[static_cast<int>(z) * m_tileCount + static_cast<int>(x - 1)].get();
             }
 
             if (x < m_tileCount - 1)
             {
-                auto i{ static_cast<int>(z) * m_tileCount + static_cast<int>(x) };
                 m_tiles[i]->w = m_tiles[static_cast<int>(z) * m_tileCount + static_cast<int>(x + 1)].get();
             }
 
             // connect diagonally
             if (z > 0 && x < m_tileCount - 1)
             {
-                auto i{ static_cast<int>(z) * m_tileCount + static_cast<int>(x) };
                 m_tiles[i]->ne = m_tiles[static_cast<int>(z - 1) * m_tileCount + static_cast<int>(x + 1)].get();
             }
 
             if (z > 0 && x > 0)
             {
-                auto i{ static_cast<int>(z) * m_tileCount + static_cast<int>(x) };
                 m_tiles[i]->nw = m_tiles[static_cast<int>(z - 1) * m_tileCount + static_cast<int>(x - 1)].get();
             }
 
             if (z < m_tileCount - 1 && x > 0)
             {
-                auto i{ static_cast<int>(z) * m_tileCount + static_cast<int>(x) };
                 m_tiles[i]->sw = m_tiles[static_cast<int>(z + 1) * m_tileCount + static_cast<int>(x - 1)].get();
             }
 
             if (z < m_tileCount - 1 && x < m_tileCount - 1)
             {
-                auto i{ static_cast<int>(z) * m_tileCount + static_cast<int>(x) };
                 m_tiles[i]->se = m_tiles[static_cast<int>(z + 1) * m_tileCount + static_cast<int>(x + 1)].get();
             }
         }
     }
+}
 
+void sg::map::Map::TilesToGpu()
+{
     m_mapVao = std::make_unique<ogl::buffer::Vao>();
+    m_mapVao->CreateEmptyDynamicVbo(m_tileCount * m_tileCount * Tile::BYTES_PER_TILE, m_tileCount * m_tileCount * Tile::VERTICES_PER_TILE);
 
-    // 11 floats per vertex = 11 x 4 bytes pro float = 44 bytes
-    // 6 vertices = 44 x 6 = 264 bytes per Tile
-
-    m_mapVao->CreateEmptyDynamicVbo(m_tileCount * m_tileCount * Tile::BYTES_PER_TILE, m_tileCount * m_tileCount * 6);
-
-    // add vertices to the VBO
     m_mapVao->GetVbo().Bind();
+
     auto offset{ 0 };
     for (const auto& tile : m_tiles)
     {
         glBufferSubData(GL_ARRAY_BUFFER, offset * Tile::BYTES_PER_TILE, Tile::BYTES_PER_TILE, tile->vertices.data());
         offset++;
     }
-    ogl::buffer::Vbo::Unbind();
 
+    ogl::buffer::Vbo::Unbind();
+}
+
+void sg::map::Map::InitResources()
+{
     m_mapShaderProgram = std::make_unique<ogl::resource::ShaderProgram>("/home/steffen/CLionProjects/SgCity/resources/shader/sprite");
     m_mapShaderProgram->Load();
 
@@ -234,71 +250,13 @@ void sg::map::Map::Init()
 // Helper
 //-------------------------------------------------
 
-glm::vec3 sg::map::Map::CalcNormal(Tile& t_tile)
-{
-    auto& vertices{ t_tile.vertices };
-
-    // read out positions
-    auto v0{ glm::vec3(vertices[0], vertices[1], vertices[2]) };
-    auto v1{ glm::vec3(vertices[11], vertices[12], vertices[13]) };
-    auto v2{ glm::vec3(vertices[22], vertices[23], vertices[24]) };
-    auto v3{ glm::vec3(vertices[55], vertices[56], vertices[57]) };
-
-    // store position in array
-    std::vector<glm::vec3> vertex = { v0, v1, v2, v3 };
-
-    // calc normal
-    glm::vec3 normal{ 0.0f, 0.0f, 0.0f };
-    for (auto i{ 0 }; i < 4; ++i)
-    {
-        auto j{ (i + 1) % 4 };
-        normal.x += (vertex[i].y - vertex[j].y) * (vertex[i].z + vertex[j].z);
-        normal.y += (vertex[i].z - vertex[j].z) * (vertex[i].x + vertex[j].x);
-        normal.z += (vertex[i].x - vertex[j].x) * (vertex[i].y + vertex[j].y);
-    }
-
-    return glm::normalize(normal);
-}
-
 void sg::map::Map::UpdateTile(Tile& t_tile)
 {
     auto& vertices{ t_tile.vertices };
 
-    vertices[Tile::TL_1_Y] += 0.5f;
-    vertices[Tile::BL_1_Y] += 0.5f;
-    vertices[Tile::BR_1_Y] += 0.5f;
-
-    vertices[Tile::TL_2_Y] += 0.5f;
-    vertices[Tile::BR_2_Y] += 0.5f;
-    vertices[Tile::TR_2_Y] += 0.5f;
-
-    auto normal{ CalcNormal(t_tile) };
-
-    vertices[Tile::TL_1_N_START_INDEX] = normal.x;
-    vertices[Tile::TL_1_N_START_INDEX + 1] = normal.y;
-    vertices[Tile::TL_1_N_START_INDEX + 2] = normal.z;
-
-    vertices[Tile::BL_1_N_START_INDEX] = normal.x;
-    vertices[Tile::BL_1_N_START_INDEX + 1] = normal.y;
-    vertices[Tile::BL_1_N_START_INDEX + 2] = normal.z;
-
-    vertices[Tile::BR_1_N_START_INDEX] = normal.x;
-    vertices[Tile::BR_1_N_START_INDEX + 1] = normal.y;
-    vertices[Tile::BR_1_N_START_INDEX + 2] = normal.z;
-
-    vertices[Tile::TL_2_N_START_INDEX] = normal.x;
-    vertices[Tile::TL_2_N_START_INDEX + 1] = normal.y;
-    vertices[Tile::TL_2_N_START_INDEX + 2] = normal.z;
-
-    vertices[Tile::BR_2_N_START_INDEX] = normal.x;
-    vertices[Tile::BR_2_N_START_INDEX + 1] = normal.y;
-    vertices[Tile::BR_2_N_START_INDEX + 2] = normal.z;
-
-    vertices[Tile::TR_2_N_START_INDEX] = normal.x;
-    vertices[Tile::TR_2_N_START_INDEX + 1] = normal.y;
-    vertices[Tile::TR_2_N_START_INDEX + 2] = normal.z;
-
-    UpdateVertices(vertices, t_tile.mapIndex);
+    t_tile.Raise();
+    t_tile.UpdateNormal();
+    t_tile.VerticesToGpu(*m_mapVao);
 }
 
 void sg::map::Map::UpdateNorthWestNeighbor(Tile& t_tile)
@@ -311,33 +269,8 @@ void sg::map::Map::UpdateNorthWestNeighbor(Tile& t_tile)
         vertices[Tile::BR_1_Y] += t_tile.vertices[Tile::TL_1_Y] - vertices[Tile::BR_1_Y];
         vertices[Tile::BR_2_Y] += t_tile.vertices[Tile::TL_1_Y] - vertices[Tile::BR_2_Y];
 
-        auto normal{ CalcNormal(*tile) };
-
-        vertices[Tile::TL_1_N_START_INDEX] = normal.x;
-        vertices[Tile::TL_1_N_START_INDEX + 1] = normal.y;
-        vertices[Tile::TL_1_N_START_INDEX + 2] = normal.z;
-
-        vertices[Tile::BL_1_N_START_INDEX] = normal.x;
-        vertices[Tile::BL_1_N_START_INDEX + 1] = normal.y;
-        vertices[Tile::BL_1_N_START_INDEX + 2] = normal.z;
-
-        vertices[Tile::BR_1_N_START_INDEX] = normal.x;
-        vertices[Tile::BR_1_N_START_INDEX + 1] = normal.y;
-        vertices[Tile::BR_1_N_START_INDEX + 2] = normal.z;
-
-        vertices[Tile::TL_2_N_START_INDEX] = normal.x;
-        vertices[Tile::TL_2_N_START_INDEX + 1] = normal.y;
-        vertices[Tile::TL_2_N_START_INDEX + 2] = normal.z;
-
-        vertices[Tile::BR_2_N_START_INDEX] = normal.x;
-        vertices[Tile::BR_2_N_START_INDEX + 1] = normal.y;
-        vertices[Tile::BR_2_N_START_INDEX + 2] = normal.z;
-
-        vertices[Tile::TR_2_N_START_INDEX] = normal.x;
-        vertices[Tile::TR_2_N_START_INDEX + 1] = normal.y;
-        vertices[Tile::TR_2_N_START_INDEX + 2] = normal.z;
-
-        UpdateVertices(vertices, tile->mapIndex);
+        tile->UpdateNormal();
+        tile->VerticesToGpu(*m_mapVao);
     }
 }
 
@@ -362,33 +295,8 @@ void sg::map::Map::UpdateNorthEastNeighbor(Tile& t_tile)
 
         vertices[Tile::BL_1_Y] += t_tile.vertices[Tile::TR_2_Y] - vertices[Tile::BL_1_Y];
 
-        auto normal{ CalcNormal(*tile) };
-
-        vertices[Tile::TL_1_N_START_INDEX] = normal.x;
-        vertices[Tile::TL_1_N_START_INDEX + 1] = normal.y;
-        vertices[Tile::TL_1_N_START_INDEX + 2] = normal.z;
-
-        vertices[Tile::BL_1_N_START_INDEX] = normal.x;
-        vertices[Tile::BL_1_N_START_INDEX + 1] = normal.y;
-        vertices[Tile::BL_1_N_START_INDEX + 2] = normal.z;
-
-        vertices[Tile::BR_1_N_START_INDEX] = normal.x;
-        vertices[Tile::BR_1_N_START_INDEX + 1] = normal.y;
-        vertices[Tile::BR_1_N_START_INDEX + 2] = normal.z;
-
-        vertices[Tile::TL_2_N_START_INDEX] = normal.x;
-        vertices[Tile::TL_2_N_START_INDEX + 1] = normal.y;
-        vertices[Tile::TL_2_N_START_INDEX + 2] = normal.z;
-
-        vertices[Tile::BR_2_N_START_INDEX] = normal.x;
-        vertices[Tile::BR_2_N_START_INDEX + 1] = normal.y;
-        vertices[Tile::BR_2_N_START_INDEX + 2] = normal.z;
-
-        vertices[Tile::TR_2_N_START_INDEX] = normal.x;
-        vertices[Tile::TR_2_N_START_INDEX + 1] = normal.y;
-        vertices[Tile::TR_2_N_START_INDEX + 2] = normal.z;
-
-        UpdateVertices(vertices, tile->mapIndex);
+        tile->UpdateNormal();
+        tile->VerticesToGpu(*m_mapVao);
     }
 }
 
@@ -403,33 +311,8 @@ void sg::map::Map::UpdateSouthWestNeighbor(Tile& t_tile)
 
         vertices[Tile::TR_2_Y] += t_tile.vertices[Tile::BL_1_Y] - vertices[Tile::TR_2_Y];
 
-        auto normal{ CalcNormal(*tile) };
-
-        vertices[Tile::TL_1_N_START_INDEX] = normal.x;
-        vertices[Tile::TL_1_N_START_INDEX + 1] = normal.y;
-        vertices[Tile::TL_1_N_START_INDEX + 2] = normal.z;
-
-        vertices[Tile::BL_1_N_START_INDEX] = normal.x;
-        vertices[Tile::BL_1_N_START_INDEX + 1] = normal.y;
-        vertices[Tile::BL_1_N_START_INDEX + 2] = normal.z;
-
-        vertices[Tile::BR_1_N_START_INDEX] = normal.x;
-        vertices[Tile::BR_1_N_START_INDEX + 1] = normal.y;
-        vertices[Tile::BR_1_N_START_INDEX + 2] = normal.z;
-
-        vertices[Tile::TL_2_N_START_INDEX] = normal.x;
-        vertices[Tile::TL_2_N_START_INDEX + 1] = normal.y;
-        vertices[Tile::TL_2_N_START_INDEX + 2] = normal.z;
-
-        vertices[Tile::BR_2_N_START_INDEX] = normal.x;
-        vertices[Tile::BR_2_N_START_INDEX + 1] = normal.y;
-        vertices[Tile::BR_2_N_START_INDEX + 2] = normal.z;
-
-        vertices[Tile::TR_2_N_START_INDEX] = normal.x;
-        vertices[Tile::TR_2_N_START_INDEX + 1] = normal.y;
-        vertices[Tile::TR_2_N_START_INDEX + 2] = normal.z;
-
-        UpdateVertices(vertices, tile->mapIndex);
+        tile->UpdateNormal();
+        tile->VerticesToGpu(*m_mapVao);
     }
 }
 
@@ -443,33 +326,8 @@ void sg::map::Map::UpdateSouthEastNeighbor(sg::map::Tile& t_tile)
         vertices[Tile::TL_1_Y] += t_tile.vertices[Tile::BR_1_Y] - vertices[Tile::TL_1_Y];
         vertices[Tile::TL_2_Y] += t_tile.vertices[Tile::BR_2_Y] - vertices[Tile::TL_2_Y];
 
-        auto normal{ CalcNormal(*tile) };
-
-        vertices[Tile::TL_1_N_START_INDEX] = normal.x;
-        vertices[Tile::TL_1_N_START_INDEX + 1] = normal.y;
-        vertices[Tile::TL_1_N_START_INDEX + 2] = normal.z;
-
-        vertices[Tile::BL_1_N_START_INDEX] = normal.x;
-        vertices[Tile::BL_1_N_START_INDEX + 1] = normal.y;
-        vertices[Tile::BL_1_N_START_INDEX + 2] = normal.z;
-
-        vertices[Tile::BR_1_N_START_INDEX] = normal.x;
-        vertices[Tile::BR_1_N_START_INDEX + 1] = normal.y;
-        vertices[Tile::BR_1_N_START_INDEX + 2] = normal.z;
-
-        vertices[Tile::TL_2_N_START_INDEX] = normal.x;
-        vertices[Tile::TL_2_N_START_INDEX + 1] = normal.y;
-        vertices[Tile::TL_2_N_START_INDEX + 2] = normal.z;
-
-        vertices[Tile::BR_2_N_START_INDEX] = normal.x;
-        vertices[Tile::BR_2_N_START_INDEX + 1] = normal.y;
-        vertices[Tile::BR_2_N_START_INDEX + 2] = normal.z;
-
-        vertices[Tile::TR_2_N_START_INDEX] = normal.x;
-        vertices[Tile::TR_2_N_START_INDEX + 1] = normal.y;
-        vertices[Tile::TR_2_N_START_INDEX + 2] = normal.z;
-
-        UpdateVertices(vertices, tile->mapIndex);
+        tile->UpdateNormal();
+        tile->VerticesToGpu(*m_mapVao);
     }
 }
 
@@ -497,33 +355,8 @@ void sg::map::Map::UpdateNorthNeighbor(Tile& t_tile)
 
         vertices[Tile::BR_2_Y] += t_tile.vertices[Tile::TR_2_Y] - vertices[Tile::BR_2_Y];
 
-        auto normal{ CalcNormal(*tile) };
-
-        vertices[Tile::TL_1_N_START_INDEX] = normal.x;
-        vertices[Tile::TL_1_N_START_INDEX + 1] = normal.y;
-        vertices[Tile::TL_1_N_START_INDEX + 2] = normal.z;
-
-        vertices[Tile::BL_1_N_START_INDEX] = normal.x;
-        vertices[Tile::BL_1_N_START_INDEX + 1] = normal.y;
-        vertices[Tile::BL_1_N_START_INDEX + 2] = normal.z;
-
-        vertices[Tile::BR_1_N_START_INDEX] = normal.x;
-        vertices[Tile::BR_1_N_START_INDEX + 1] = normal.y;
-        vertices[Tile::BR_1_N_START_INDEX + 2] = normal.z;
-
-        vertices[Tile::TL_2_N_START_INDEX] = normal.x;
-        vertices[Tile::TL_2_N_START_INDEX + 1] = normal.y;
-        vertices[Tile::TL_2_N_START_INDEX + 2] = normal.z;
-
-        vertices[Tile::BR_2_N_START_INDEX] = normal.x;
-        vertices[Tile::BR_2_N_START_INDEX + 1] = normal.y;
-        vertices[Tile::BR_2_N_START_INDEX + 2] = normal.z;
-
-        vertices[Tile::TR_2_N_START_INDEX] = normal.x;
-        vertices[Tile::TR_2_N_START_INDEX + 1] = normal.y;
-        vertices[Tile::TR_2_N_START_INDEX + 2] = normal.z;
-
-        UpdateVertices(vertices, tile->mapIndex);
+        tile->UpdateNormal();
+        tile->VerticesToGpu(*m_mapVao);
     }
 }
 
@@ -551,33 +384,8 @@ void sg::map::Map::UpdateSouthNeighbor(Tile& t_tile)
         vertices[Tile::TL_2_Y] += t_tile.vertices[Tile::BR_1_Y] - vertices[Tile::TL_2_Y];
         vertices[Tile::TR_2_Y] += t_tile.vertices[Tile::BR_2_Y] - vertices[Tile::TR_2_Y];
 
-        auto normal{ CalcNormal(*tile) };
-
-        vertices[Tile::TL_1_N_START_INDEX] = normal.x;
-        vertices[Tile::TL_1_N_START_INDEX + 1] = normal.y;
-        vertices[Tile::TL_1_N_START_INDEX + 2] = normal.z;
-
-        vertices[Tile::BL_1_N_START_INDEX] = normal.x;
-        vertices[Tile::BL_1_N_START_INDEX + 1] = normal.y;
-        vertices[Tile::BL_1_N_START_INDEX + 2] = normal.z;
-
-        vertices[Tile::BR_1_N_START_INDEX] = normal.x;
-        vertices[Tile::BR_1_N_START_INDEX + 1] = normal.y;
-        vertices[Tile::BR_1_N_START_INDEX + 2] = normal.z;
-
-        vertices[Tile::TL_2_N_START_INDEX] = normal.x;
-        vertices[Tile::TL_2_N_START_INDEX + 1] = normal.y;
-        vertices[Tile::TL_2_N_START_INDEX + 2] = normal.z;
-
-        vertices[Tile::BR_2_N_START_INDEX] = normal.x;
-        vertices[Tile::BR_2_N_START_INDEX + 1] = normal.y;
-        vertices[Tile::BR_2_N_START_INDEX + 2] = normal.z;
-
-        vertices[Tile::TR_2_N_START_INDEX] = normal.x;
-        vertices[Tile::TR_2_N_START_INDEX + 1] = normal.y;
-        vertices[Tile::TR_2_N_START_INDEX + 2] = normal.z;
-
-        UpdateVertices(vertices, tile->mapIndex);
+        tile->UpdateNormal();
+        tile->VerticesToGpu(*m_mapVao);
     }
 }
 
@@ -605,33 +413,8 @@ void sg::map::Map::UpdateWestNeighbor(Tile& t_tile)
 
         vertices[Tile::TL_2_Y] += t_tile.vertices[Tile::TR_2_Y] - vertices[Tile::TL_2_Y];
 
-        auto normal{ CalcNormal(*tile) };
-
-        vertices[Tile::TL_1_N_START_INDEX] = normal.x;
-        vertices[Tile::TL_1_N_START_INDEX + 1] = normal.y;
-        vertices[Tile::TL_1_N_START_INDEX + 2] = normal.z;
-
-        vertices[Tile::BL_1_N_START_INDEX] = normal.x;
-        vertices[Tile::BL_1_N_START_INDEX + 1] = normal.y;
-        vertices[Tile::BL_1_N_START_INDEX + 2] = normal.z;
-
-        vertices[Tile::BR_1_N_START_INDEX] = normal.x;
-        vertices[Tile::BR_1_N_START_INDEX + 1] = normal.y;
-        vertices[Tile::BR_1_N_START_INDEX + 2] = normal.z;
-
-        vertices[Tile::TL_2_N_START_INDEX] = normal.x;
-        vertices[Tile::TL_2_N_START_INDEX + 1] = normal.y;
-        vertices[Tile::TL_2_N_START_INDEX + 2] = normal.z;
-
-        vertices[Tile::BR_2_N_START_INDEX] = normal.x;
-        vertices[Tile::BR_2_N_START_INDEX + 1] = normal.y;
-        vertices[Tile::BR_2_N_START_INDEX + 2] = normal.z;
-
-        vertices[Tile::TR_2_N_START_INDEX] = normal.x;
-        vertices[Tile::TR_2_N_START_INDEX + 1] = normal.y;
-        vertices[Tile::TR_2_N_START_INDEX + 2] = normal.z;
-
-        UpdateVertices(vertices, tile->mapIndex);
+        tile->UpdateNormal();
+        tile->VerticesToGpu(*m_mapVao);
     }
 }
 
@@ -647,41 +430,9 @@ void sg::map::Map::UpdateEastNeighbor(Tile& t_tile)
         vertices[Tile::BR_2_Y] += t_tile.vertices[Tile::BL_1_Y] - vertices[Tile::BR_2_Y];
         vertices[Tile::TR_2_Y] += t_tile.vertices[Tile::TL_2_Y] - vertices[Tile::TR_2_Y];
 
-        auto normal{ CalcNormal(*tile) };
-
-        vertices[Tile::TL_1_N_START_INDEX] = normal.x;
-        vertices[Tile::TL_1_N_START_INDEX + 1] = normal.y;
-        vertices[Tile::TL_1_N_START_INDEX + 2] = normal.z;
-
-        vertices[Tile::BL_1_N_START_INDEX] = normal.x;
-        vertices[Tile::BL_1_N_START_INDEX + 1] = normal.y;
-        vertices[Tile::BL_1_N_START_INDEX + 2] = normal.z;
-
-        vertices[Tile::BR_1_N_START_INDEX] = normal.x;
-        vertices[Tile::BR_1_N_START_INDEX + 1] = normal.y;
-        vertices[Tile::BR_1_N_START_INDEX + 2] = normal.z;
-
-        vertices[Tile::TL_2_N_START_INDEX] = normal.x;
-        vertices[Tile::TL_2_N_START_INDEX + 1] = normal.y;
-        vertices[Tile::TL_2_N_START_INDEX + 2] = normal.z;
-
-        vertices[Tile::BR_2_N_START_INDEX] = normal.x;
-        vertices[Tile::BR_2_N_START_INDEX + 1] = normal.y;
-        vertices[Tile::BR_2_N_START_INDEX + 2] = normal.z;
-
-        vertices[Tile::TR_2_N_START_INDEX] = normal.x;
-        vertices[Tile::TR_2_N_START_INDEX + 1] = normal.y;
-        vertices[Tile::TR_2_N_START_INDEX + 2] = normal.z;
-
-        UpdateVertices(vertices, tile->mapIndex);
+        tile->UpdateNormal();
+        tile->VerticesToGpu(*m_mapVao);
     }
-}
-
-void sg::map::Map::UpdateVertices(const std::vector<float>& t_vertices, const int t_offset) const
-{
-    m_mapVao->GetVbo().Bind();
-    glBufferSubData(GL_ARRAY_BUFFER, t_offset * Tile::BYTES_PER_TILE, Tile::BYTES_PER_TILE, t_vertices.data());
-    ogl::buffer::Vbo::Unbind();
 }
 
 //-------------------------------------------------

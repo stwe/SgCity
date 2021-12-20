@@ -222,16 +222,10 @@ void sg::map::Map::TilesToGpu()
     m_mapVao = std::make_unique<ogl::buffer::Vao>();
     m_mapVao->CreateEmptyDynamicVbo(m_tileCount * m_tileCount * Tile::BYTES_PER_TILE, m_tileCount * m_tileCount * Tile::VERTICES_PER_TILE);
 
-    m_mapVao->GetVbo().Bind();
-
-    auto offset{ 0 };
     for (const auto& tile : m_tiles)
     {
-        glBufferSubData(GL_ARRAY_BUFFER, offset * Tile::BYTES_PER_TILE, Tile::BYTES_PER_TILE, tile->vertices.data());
-        offset++;
+        tile->VerticesToGpu(*m_mapVao);
     }
-
-    ogl::buffer::Vbo::Unbind();
 }
 
 void sg::map::Map::InitResources()
@@ -299,8 +293,6 @@ void sg::map::Map::UpdateNorthEastNeighbor(Tile& t_tile)
         tile->VerticesToGpu(*m_mapVao);
     }
 }
-
-// todo
 
 void sg::map::Map::UpdateSouthWestNeighbor(Tile& t_tile)
 {

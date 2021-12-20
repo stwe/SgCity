@@ -69,7 +69,7 @@ void sg::map::Map::RenderForMousePicking(const sg::ogl::Window& t_window, const 
 
 void sg::map::Map::Render(const ogl::Window& t_window, const ogl::camera::Camera& t_camera)
 {
-    ogl::OpenGL::EnableAlphaBlending();
+    //ogl::OpenGL::EnableAlphaBlending();
 
     m_mapVao->Bind();
     m_mapShaderProgram->Bind();
@@ -96,7 +96,7 @@ void sg::map::Map::Render(const ogl::Window& t_window, const ogl::camera::Camera
     m_mapShaderProgram->Unbind();
     m_mapVao->Unbind();
 
-    ogl::OpenGL::DisableBlending();
+    //ogl::OpenGL::DisableBlending();
 }
 
 //-------------------------------------------------
@@ -236,7 +236,7 @@ void sg::map::Map::InitResources()
     m_pickingShaderProgram = std::make_unique<ogl::resource::ShaderProgram>("/home/steffen/CLionProjects/SgCity/resources/shader/picking");
     m_pickingShaderProgram->Load();
 
-    m_tileTexture = std::make_unique<ogl::resource::Texture>("/home/steffen/CLionProjects/SgCity/resources/texture/tile.png");
+    m_tileTexture = std::make_unique<ogl::resource::Texture>("/home/steffen/CLionProjects/SgCity/resources/texture/grass.jpg");
     m_tileTexture->Load();
 }
 

@@ -54,7 +54,7 @@ void sg::Application::Init()
     ogl::input::MouseInput::Init(m_window);
 
     // create && init map
-    m_map = std::make_unique<map::Map>(8);
+    m_map = std::make_unique<map::Map>(64);
 
     Log::SG_LOG_DEBUG("[Application::Init()] The application was successfully initialized.");
 }
@@ -82,11 +82,11 @@ void sg::Application::Input()
     // handle left mouse button
     if (ogl::input::MouseInput::GetInstance().IsLeftButtonPressed() && m_handleMouseEvent)
     {
-        auto id{ m_map->GetCurrentTileIdxUnderMouse() };
-        Log::SG_LOG_DEBUG("Id {}.", id);
+        auto tileIndex{ m_map->GetCurrentTileIdxUnderMouse() };
+        Log::SG_LOG_DEBUG("Id {}.", tileIndex);
 
         // raise tile and his neighbors
-        m_map->Raise(id);
+        m_map->Raise(tileIndex);
 
         // do not run the event again
         m_handleMouseEvent = false;

@@ -65,7 +65,7 @@ namespace sg
         /**
          * A camera to move around the map.
          */
-        ogl::camera::Camera m_camera{ glm::vec3(2.0f, 7.0f, 9.0f), -90.0f, -38.0f };
+        ogl::camera::Camera m_camera{ glm::vec3(32.0f, 7.0f, 32.0f), -90.0f, -45.0f };
 
         /**
          * The map from tiles.

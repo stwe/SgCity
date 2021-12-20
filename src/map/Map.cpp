@@ -126,13 +126,13 @@ void sg::map::Map::Raise(int t_mapIndex)
 
     UpdateNorthNeighbor(*tile);
     UpdateSouthNeighbor(*tile);
-    UpdateWestNeighbor(*tile);
     UpdateEastNeighbor(*tile);
+    UpdateWestNeighbor(*tile);
 
-    UpdateNorthEastNeighbor(*tile);
-    UpdateNorthWestNeighbor(*tile);
-    UpdateSouthEastNeighbor(*tile);
-    UpdateSouthWestNeighbor(*tile);
+    //UpdateNorthEastNeighbor(*tile);
+    //UpdateNorthWestNeighbor(*tile);
+    //UpdateSouthEastNeighbor(*tile);
+    //UpdateSouthWestNeighbor(*tile);
 }
 
 //-------------------------------------------------
@@ -185,12 +185,12 @@ void sg::map::Map::AddTileNeighbors()
 
             if (x > 0)
             {
-                m_tiles[i]->e = m_tiles[static_cast<int>(z) * m_tileCount + static_cast<int>(x - 1)].get();
+                m_tiles[i]->w = m_tiles[static_cast<int>(z) * m_tileCount + static_cast<int>(x - 1)].get();
             }
 
             if (x < m_tileCount - 1)
             {
-                m_tiles[i]->w = m_tiles[static_cast<int>(z) * m_tileCount + static_cast<int>(x + 1)].get();
+                m_tiles[i]->e = m_tiles[static_cast<int>(z) * m_tileCount + static_cast<int>(x + 1)].get();
             }
 
             // connect diagonally
@@ -246,8 +246,6 @@ void sg::map::Map::InitResources()
 
 void sg::map::Map::UpdateTile(Tile& t_tile)
 {
-    auto& vertices{ t_tile.vertices };
-
     t_tile.Raise();
     t_tile.UpdateNormal();
     t_tile.VerticesToGpu(*m_mapVao);
@@ -373,7 +371,7 @@ void sg::map::Map::UpdateSouthNeighbor(Tile& t_tile)
 
         vertices[Tile::TL_1_Y] += t_tile.vertices[Tile::BL_1_Y] - vertices[Tile::TL_1_Y];
 
-        vertices[Tile::TL_2_Y] += t_tile.vertices[Tile::BR_1_Y] - vertices[Tile::TL_2_Y];
+        vertices[Tile::TL_2_Y] += t_tile.vertices[Tile::BL_1_Y] - vertices[Tile::TL_2_Y];
         vertices[Tile::TR_2_Y] += t_tile.vertices[Tile::BR_2_Y] - vertices[Tile::TR_2_Y];
 
         tile->UpdateNormal();
@@ -381,11 +379,11 @@ void sg::map::Map::UpdateSouthNeighbor(Tile& t_tile)
     }
 }
 
-void sg::map::Map::UpdateWestNeighbor(Tile& t_tile)
+void sg::map::Map::UpdateEastNeighbor(Tile& t_tile)
 {
-    if (t_tile.w)
+    if (t_tile.e)
     {
-        auto& tile{ t_tile.w };
+        auto& tile{ t_tile.e };
         auto& vertices{ tile->vertices };
 
         /*
@@ -410,14 +408,14 @@ void sg::map::Map::UpdateWestNeighbor(Tile& t_tile)
     }
 }
 
-void sg::map::Map::UpdateEastNeighbor(Tile& t_tile)
+void sg::map::Map::UpdateWestNeighbor(Tile& t_tile)
 {
-    if (t_tile.e)
+    if (t_tile.w)
     {
-        auto& tile{ t_tile.e };
+        auto& tile{ t_tile.w };
         auto& vertices{ tile->vertices };
 
-        vertices[Tile::BR_1_Y] += t_tile.vertices[Tile::TL_1_Y] - vertices[Tile::BR_1_Y];
+        vertices[Tile::BR_1_Y] += t_tile.vertices[Tile::BL_1_Y] - vertices[Tile::BR_1_Y];
 
         vertices[Tile::BR_2_Y] += t_tile.vertices[Tile::BL_1_Y] - vertices[Tile::BR_2_Y];
         vertices[Tile::TR_2_Y] += t_tile.vertices[Tile::TL_2_Y] - vertices[Tile::TR_2_Y];

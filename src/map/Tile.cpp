@@ -71,7 +71,7 @@ void sg::map::Tile::UpdateNormal()
 // Gpu
 //-------------------------------------------------
 
-void sg::map::Tile::VerticesToGpu(sg::ogl::buffer::Vao& t_vao)
+void sg::map::Tile::VerticesToGpu(ogl::buffer::Vao& t_vao)
 {
     t_vao.GetVbo().Bind();
     glBufferSubData(GL_ARRAY_BUFFER, mapIndex * Tile::BYTES_PER_TILE, Tile::BYTES_PER_TILE, vertices.data());

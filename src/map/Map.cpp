@@ -114,7 +114,7 @@ int sg::map::Map::GetCurrentTileIdxUnderMouse()
 // Raise / lower terrain
 //-------------------------------------------------
 
-void sg::map::Map::Raise(int t_mapIndex)
+void sg::map::Map::HandleTileUpdate(int t_mapIndex, bool t_raise)
 {
     if (t_mapIndex < 0 || t_mapIndex > m_tiles.size() - 1)
     {
@@ -122,7 +122,11 @@ void sg::map::Map::Raise(int t_mapIndex)
     }
 
     auto& tile{ m_tiles[t_mapIndex] };
-    UpdateTile(*tile);
+
+    t_raise ? tile->Raise() : tile->Lower();
+
+    tile->UpdateNormal();
+    tile->VerticesToGpu(*m_mapVao); // todo: das muss nur 1x ausgeführt werden
 
     UpdateNorthNeighbor(*tile);
     UpdateSouthNeighbor(*tile);
@@ -243,13 +247,6 @@ void sg::map::Map::InitResources()
 //-------------------------------------------------
 // Helper
 //-------------------------------------------------
-
-void sg::map::Map::UpdateTile(Tile& t_tile)
-{
-    t_tile.Raise();
-    t_tile.UpdateNormal();
-    t_tile.VerticesToGpu(*m_mapVao);
-}
 
 void sg::map::Map::UpdateNorthWestNeighbor(Tile& t_tile)
 {

@@ -85,8 +85,8 @@ void sg::Application::Input()
         auto tileIndex{ m_map->GetCurrentTileIdxUnderMouse() };
         Log::SG_LOG_DEBUG("Id {}.", tileIndex);
 
-        // raise tile and his neighbors
-        m_map->Raise(tileIndex);
+        // raise/lower tile and his neighbors
+        m_map->HandleTileUpdate(tileIndex, false);
 
         // do not run the event again
         m_handleMouseEvent = false;

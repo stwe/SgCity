@@ -145,6 +145,11 @@ namespace sg::map
          */
         void Raise();
 
+        /**
+         * Lower all vertices of this Tile by the value RAISE_Y.
+         */
+        void Lower();
+
         //-------------------------------------------------
         // Normal
         //-------------------------------------------------

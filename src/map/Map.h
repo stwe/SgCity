@@ -98,11 +98,12 @@ namespace sg::map
         //-------------------------------------------------
 
         /**
-         * Raise the terrain.
+         * Raise and lower the terrain.
          *
-         * @param t_mapIndex The map index of the Tile to be raised.
+         * @param t_mapIndex The map index of the Tile to be raised/lowered.
+         * @param t_raise True if raise.
          */
-        void Raise(int t_mapIndex);
+        void HandleTileUpdate(int t_mapIndex, bool t_raise);
 
     protected:
 
@@ -178,8 +179,6 @@ namespace sg::map
         //-------------------------------------------------
         // Helper
         //-------------------------------------------------
-
-        void UpdateTile(Tile& t_tile);
 
         void UpdateNorthNeighbor(Tile& t_tile);
         void UpdateSouthNeighbor(Tile& t_tile);

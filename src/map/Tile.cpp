@@ -16,11 +16,19 @@ sg::map::Tile::Tile(const float t_mapX, const float t_mapZ, const int t_mapIndex
 
 sg::map::Tile::~Tile() noexcept
 {
-    // ...
+    delete n;
+    delete s;
+    delete e;
+    delete w;
+
+    delete nw;
+    delete ne;
+    delete sw;
+    delete se;
 }
 
 //-------------------------------------------------
-// Raise / lower tile
+// Raise / lower tile vertices
 //-------------------------------------------------
 
 void sg::map::Tile::Raise()
@@ -32,6 +40,17 @@ void sg::map::Tile::Raise()
     vertices[Tile::TL_2_Y] += RAISE_Y;
     vertices[Tile::BR_2_Y] += RAISE_Y;
     vertices[Tile::TR_2_Y] += RAISE_Y;
+}
+
+void sg::map::Tile::Lower()
+{
+    vertices[Tile::TL_1_Y] -= RAISE_Y;
+    vertices[Tile::BL_1_Y] -= RAISE_Y;
+    vertices[Tile::BR_1_Y] -= RAISE_Y;
+
+    vertices[Tile::TL_2_Y] -= RAISE_Y;
+    vertices[Tile::BR_2_Y] -= RAISE_Y;
+    vertices[Tile::TR_2_Y] -= RAISE_Y;
 }
 
 //-------------------------------------------------

@@ -40,6 +40,8 @@ void sg::ogl::buffer::Vao::Unbind()
 
 void sg::ogl::buffer::Vao::CreateEmptyDynamicVbo(const uint32_t t_size, const int32_t t_drawCount)
 {
+    SG_ASSERT(!m_vbo, "[Vao::CreateEmptyDynamicVbo()] Vbo already exists.")
+
     Bind();
 
     m_vbo = std::make_unique<Vbo>();
@@ -59,6 +61,32 @@ void sg::ogl::buffer::Vao::CreateEmptyDynamicVbo(const uint32_t t_size, const in
 
     // enable location 3 (normal)
     m_vbo->AddFloatAttribute(3, 3, 11, 8);
+
+    Unbind();
+
+    if (t_drawCount > 0)
+    {
+        drawCount = t_drawCount;
+    }
+}
+
+void sg::ogl::buffer::Vao::CreateStaticVbo(const std::vector<float>& t_vertices, int32_t t_drawCount)
+{
+    SG_ASSERT(!m_vbo, "[Vao::CreateStaticVbo()] Vbo already exists.")
+
+    Bind();
+
+    m_vbo = std::make_unique<Vbo>();
+    m_vbo->Bind();
+
+    glBufferData(GL_ARRAY_BUFFER, t_drawCount * 5 * (uint32_t)sizeof(float), t_vertices.data(), GL_STATIC_DRAW);
+    Vbo::Unbind();
+
+    // enable location 0 (position)
+    m_vbo->AddFloatAttribute(0, 3, 5, 0);
+
+    // enable location 1 (uv)
+    m_vbo->AddFloatAttribute(1, 2, 5, 3);
 
     Unbind();
 

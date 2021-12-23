@@ -18,6 +18,7 @@ namespace sg::ogl::resource
 {
     class ShaderProgram;
     class Texture;
+    class Model;
 }
 
 namespace sg::ogl::input
@@ -43,6 +44,15 @@ namespace sg::map
     {
     public:
         //-------------------------------------------------
+        // Constants
+        //-------------------------------------------------
+
+        /**
+         * The position of the Map in world space.
+         */
+        static constexpr auto MAP_POSITION{ glm::vec3(0.0f) };
+
+        //-------------------------------------------------
         // Ctors. / Dtor.
         //-------------------------------------------------
 
@@ -67,7 +77,7 @@ namespace sg::map
         //-------------------------------------------------
 
         /**
-         * Renders the Map in a Fbo..
+         * Renders the Map in a Fbo.
          *
          * @param t_window The Window object.
          * @param t_camera The Camera object.
@@ -81,6 +91,14 @@ namespace sg::map
          * @param t_camera The Camera object.
          */
         void Render(const ogl::Window& t_window, const ogl::camera::Camera& t_camera);
+
+        /**
+         * Renders an Obj-Model.
+         *
+         * @param t_window The Window object.
+         * @param t_camera The Camera object.
+         */
+        void RenderModel(const ogl::Window& t_window, const ogl::camera::Camera& t_camera);
 
         //-------------------------------------------------
         // Tiles
@@ -138,6 +156,11 @@ namespace sg::map
         std::unique_ptr<ogl::resource::ShaderProgram> m_pickingShaderProgram;
 
         /**
+         * A ShaderProgram object used to draw a Obj-Model.
+         */
+        std::unique_ptr<ogl::resource::ShaderProgram> m_modelShaderProgram;
+
+        /**
          * An object holding the Fbo for mouse picking.
          */
         std::unique_ptr<ogl::input::PickingTexture> m_pickingTexture;
@@ -146,6 +169,16 @@ namespace sg::map
          * The texture for each Tile.
          */
         std::unique_ptr<ogl::resource::Texture> m_tileTexture;
+
+        /**
+         * An Obj-Model for testing.
+         */
+        std::unique_ptr<ogl::resource::Model> m_treeModel;
+
+        /**
+         * A texture for the Obj-Model.
+         */
+        std::unique_ptr<ogl::resource::Texture> m_modelTexture;
 
         //-------------------------------------------------
         // Init

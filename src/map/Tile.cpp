@@ -90,7 +90,7 @@ void sg::map::Tile::UpdateNormal()
 // Gpu
 //-------------------------------------------------
 
-void sg::map::Tile::VerticesToGpu(ogl::buffer::Vao& t_vao)
+void sg::map::Tile::VerticesToGpu(ogl::buffer::Vao& t_vao) const
 {
     t_vao.GetVbo().Bind();
     glBufferSubData(GL_ARRAY_BUFFER, mapIndex * Tile::BYTES_PER_TILE, Tile::BYTES_PER_TILE, vertices.data());
@@ -137,7 +137,7 @@ void sg::map::Tile::CreateMapIndexColor()
     idColor = glm::vec3(static_cast<float>(r) / 255.0f, static_cast<float>(g) / 255.0f, static_cast<float>(b) / 255.0f);
 }
 
-glm::vec3 sg::map::Tile::CalcNormal()
+glm::vec3 sg::map::Tile::CalcNormal() const
 {
     // read out positions
     auto v0{ glm::vec3(vertices[0], vertices[1], vertices[2]) };

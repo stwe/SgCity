@@ -16,7 +16,7 @@ sg::ogl::Window::Window()
     m_height = MIN_HEIGHT;
 }
 
-sg::ogl::Window::Window(int t_width, int t_height, std::string t_title)
+sg::ogl::Window::Window(const int t_width, const int t_height, std::string t_title)
     : m_title{ std::move(t_title) }
     , m_width{ t_width }
     , m_height{ t_height }
@@ -108,7 +108,7 @@ bool sg::ogl::Window::WindowShouldClose()
 // Input
 //-------------------------------------------------
 
-bool sg::ogl::Window::IsKeyPressed(int t_keyCode)
+bool sg::ogl::Window::IsKeyPressed(const int t_keyCode)
 {
     return glfwGetKey(m_windowHandle, t_keyCode) == GLFW_PRESS;
 }

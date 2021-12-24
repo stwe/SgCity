@@ -26,7 +26,7 @@ sg::ogl::input::PickingTexture::~PickingTexture() noexcept
 // Init
 //-------------------------------------------------
 
-void sg::ogl::input::PickingTexture::Init(int t_width, int t_height)
+void sg::ogl::input::PickingTexture::Init(const int t_width, const int t_height)
 {
     // store width && height
     m_width = t_width;
@@ -82,7 +82,7 @@ void sg::ogl::input::PickingTexture::DisableWriting()
 // Read
 //-------------------------------------------------
 
-int sg::ogl::input::PickingTexture::ReadMapIndex(int t_x, int t_y) const
+int sg::ogl::input::PickingTexture::ReadMapIndex(const int t_x, const int t_y) const
 {
     glBindFramebuffer(GL_READ_FRAMEBUFFER, m_fboId);
     glReadBuffer(GL_COLOR_ATTACHMENT0);

@@ -55,8 +55,8 @@ namespace sg::ogl::camera
         // Setter
         //-------------------------------------------------
 
-        void SetCameraSpeed(const float t_speed) { m_movementSpeed = t_speed; }
-        void SetMouseSensitivity(const float t_sensitivity) { m_mouseSensitivity = t_sensitivity; }
+        void SetCameraSpeed(float t_speed) { m_movementSpeed = t_speed; }
+        void SetMouseSensitivity(float t_sensitivity) { m_mouseSensitivity = t_sensitivity; }
         void SetPosition(const glm::vec3& t_position) { m_position = t_position; }
 
         //-------------------------------------------------

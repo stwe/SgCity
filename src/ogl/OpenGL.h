@@ -53,11 +53,17 @@ namespace sg::ogl
             glDisable(GL_BLEND);
         }
 
+        /**
+         * Enable wireframe mode.
+         */
         static void EnableWireframeMode()
         {
             glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
         }
 
+        /**
+         * Disable wireframe mode.
+         */
         static void DisableWireframeMode()
         {
             glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);

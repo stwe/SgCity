@@ -163,7 +163,7 @@ namespace sg::map
         // Gpu
         //-------------------------------------------------
 
-        void VerticesToGpu(ogl::buffer::Vao& t_vao);
+        void VerticesToGpu(ogl::buffer::Vao& t_vao) const;
 
     protected:
 
@@ -191,6 +191,6 @@ namespace sg::map
          *
          * @return glm::vec3 The normal.
          */
-        glm::vec3 CalcNormal();
+        [[nodiscard]] glm::vec3 CalcNormal() const;
     };
 }

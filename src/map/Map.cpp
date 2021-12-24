@@ -69,7 +69,7 @@ void sg::map::Map::RenderForMousePicking(const sg::ogl::Window& t_window, const 
     m_pickingTexture->DisableWriting();
 }
 
-void sg::map::Map::Render(const ogl::Window& t_window, const ogl::camera::Camera& t_camera)
+void sg::map::Map::Render(const ogl::Window& t_window, const ogl::camera::Camera& t_camera) const
 {
     //ogl::OpenGL::EnableAlphaBlending();
 
@@ -102,7 +102,7 @@ void sg::map::Map::Render(const ogl::Window& t_window, const ogl::camera::Camera
     //ogl::OpenGL::DisableBlending();
 }
 
-void sg::map::Map::RenderModel(const sg::ogl::Window& t_window, const sg::ogl::camera::Camera& t_camera)
+void sg::map::Map::RenderModel(const sg::ogl::Window& t_window, const sg::ogl::camera::Camera& t_camera) const
 {
     if (m_treeModel->GetVaos().empty())
     {
@@ -150,7 +150,7 @@ int sg::map::Map::GetCurrentTileIdxUnderMouse()
 // Raise / lower terrain
 //-------------------------------------------------
 
-void sg::map::Map::HandleTileUpdate(int t_mapIndex, bool t_raise)
+void sg::map::Map::HandleTileUpdate(const int t_mapIndex, const bool t_raise)
 {
     if (t_mapIndex < 0 || t_mapIndex > m_tiles.size() - 1)
     {

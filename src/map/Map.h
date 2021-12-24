@@ -90,7 +90,7 @@ namespace sg::map
          * @param t_window The Window object.
          * @param t_camera The Camera object.
          */
-        void Render(const ogl::Window& t_window, const ogl::camera::Camera& t_camera);
+        void Render(const ogl::Window& t_window, const ogl::camera::Camera& t_camera) const;
 
         /**
          * Renders an Obj-Model.
@@ -98,7 +98,7 @@ namespace sg::map
          * @param t_window The Window object.
          * @param t_camera The Camera object.
          */
-        void RenderModel(const ogl::Window& t_window, const ogl::camera::Camera& t_camera);
+        void RenderModel(const ogl::Window& t_window, const ogl::camera::Camera& t_camera) const;
 
         //-------------------------------------------------
         // Tiles

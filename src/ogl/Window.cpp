@@ -3,6 +3,8 @@
 #include "OpenGL.h"
 #include "Log.h"
 #include "SgException.h"
+#include "imgui/imgui_impl_opengl3.h"
+#include "imgui/imgui_impl_glfw.h"
 
 //-------------------------------------------------
 // Ctors. / Dtor.
@@ -85,6 +87,7 @@ void sg::ogl::Window::Init()
 
     InitWindow();
     InitProjectionMatrix();
+    InitImGui();
 
     Log::SG_LOG_DEBUG("[Window::Init()] The window was successfully initialized.");
 }
@@ -119,6 +122,23 @@ void sg::ogl::Window::CloseIfEscKeyPressed()
     {
         glfwSetWindowShouldClose(m_windowHandle, true);
     }
+}
+
+//-------------------------------------------------
+// ImGui
+//-------------------------------------------------
+
+void sg::ogl::Window::ImGuiBegin()
+{
+    ImGui_ImplOpenGL3_NewFrame();
+    ImGui_ImplGlfw_NewFrame();
+    ImGui::NewFrame();
+}
+
+void sg::ogl::Window::ImGuiEnd()
+{
+    ImGui::Render();
+    ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 }
 
 //-------------------------------------------------
@@ -203,6 +223,24 @@ void sg::ogl::Window::InitProjectionMatrix()
     UpdateOrthographicProjectionMatrix();
 }
 
+void sg::ogl::Window::InitImGui() const
+{
+    Log::SG_LOG_DEBUG("[Window::InitImGui()] Initializing ImGui.");
+
+    // setup ImGui context
+    IMGUI_CHECKVERSION();
+    ImGui::CreateContext();
+    auto& io{ ImGui::GetIO() };
+    (void)io;
+
+    // setup renderer bindings
+    ImGui_ImplGlfw_InitForOpenGL(m_windowHandle, true);
+    ImGui_ImplOpenGL3_Init("#version 330 core");
+
+    // setup style
+    ImGui::StyleColorsDark();
+}
+
 //-------------------------------------------------
 // Projection matrix
 //-------------------------------------------------
@@ -238,6 +276,10 @@ void sg::ogl::Window::UpdateOrthographicProjectionMatrix()
 
 void sg::ogl::Window::CleanUp() const
 {
+    ImGui_ImplOpenGL3_Shutdown();
+    ImGui_ImplGlfw_Shutdown();
+    ImGui::DestroyContext();
+
     glfwDestroyWindow(m_windowHandle);
     glfwTerminate();
 }

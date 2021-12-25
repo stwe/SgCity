@@ -3,7 +3,15 @@
 #include <glm/mat4x4.hpp>
 #include <string>
 
+//-------------------------------------------------
+// Forward declarations
+//-------------------------------------------------
+
 struct GLFWwindow;
+
+//-------------------------------------------------
+// Window
+//-------------------------------------------------
 
 namespace sg::ogl
 {
@@ -47,6 +55,14 @@ namespace sg::ogl
         //-------------------------------------------------
 
         Window();
+
+        /**
+         * Constructs a new Window object.
+         *
+         * @param t_width The width of the window.
+         * @param t_height The height of the window.
+         * @param t_title The title of the window.
+         */
         Window(int t_width, int t_height, std::string t_title);
 
         Window(const Window& t_other) = delete;
@@ -110,6 +126,13 @@ namespace sg::ogl
          */
         void CloseIfEscKeyPressed();
 
+        //-------------------------------------------------
+        // ImGui
+        //-------------------------------------------------
+
+        static void ImGuiBegin();
+        static void ImGuiEnd();
+
     protected:
 
     private:
@@ -160,6 +183,11 @@ namespace sg::ogl
          * Init projection matrices.
          */
         void InitProjectionMatrix();
+
+        /**
+         * Initializing ImGui.
+         */
+        void InitImGui() const;
 
         //-------------------------------------------------
         // Projection matrix

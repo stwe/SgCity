@@ -1,4 +1,5 @@
 #include <sstream>
+#include <imgui.h>
 #include "Application.h"
 #include "Log.h"
 #include "ogl/OpenGL.h"
@@ -147,6 +148,17 @@ void sg::Application::Render()
     //m_map->RenderModel(m_window, m_camera);
     m_map->Render(m_window, m_camera);
     m_map->RenderWater(m_window, m_camera);
+
+    // (3) render ImGui
+    ogl::Window::ImGuiBegin();
+    ImGui::Begin("Game Debug");
+    ImGui::Text("Press the Escape key to exit.");
+    ImGui::Spacing();
+    ImGui::Text("Mouse x: %d", ogl::input::MouseInput::GetInstance().GetX());
+    ImGui::Text("Mouse y: %d", ogl::input::MouseInput::GetInstance().GetY());
+    ImGui::End();
+    ogl::Window::ImGuiEnd();
+
     EndFrame();
 }
 

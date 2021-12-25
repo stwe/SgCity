@@ -52,11 +52,6 @@ namespace sg::map
          */
         static constexpr auto MAP_POSITION{ glm::vec3(0.0f) };
 
-        /**
-         * The water is at this depth.
-         */
-        static constexpr auto WATER_POSITION_Y{ -0.8f };
-
         //-------------------------------------------------
         // Ctors. / Dtor.
         //-------------------------------------------------
@@ -105,14 +100,6 @@ namespace sg::map
          */
         void RenderModel(const ogl::Window& t_window, const ogl::camera::Camera& t_camera) const;
 
-        /**
-         * Renders a water surface.
-         *
-         * @param t_window The Window object.
-         * @param t_camera The Camera object.
-         */
-        void RenderWater(const ogl::Window& t_window, const ogl::camera::Camera& t_camera) const;
-
         //-------------------------------------------------
         // Tiles
         //-------------------------------------------------
@@ -159,11 +146,6 @@ namespace sg::map
         std::unique_ptr<ogl::buffer::Vao> m_mapVao;
 
         /**
-         * A Vao object which contains a Vbo with water vertex data.
-         */
-        std::unique_ptr<ogl::buffer::Vao> m_waterVao;
-
-        /**
          * A ShaderProgram object used to draw the Map.
          */
         std::unique_ptr<ogl::resource::ShaderProgram> m_mapShaderProgram;
@@ -177,11 +159,6 @@ namespace sg::map
          * A ShaderProgram object used to draw a Obj-Model.
          */
         std::unique_ptr<ogl::resource::ShaderProgram> m_modelShaderProgram;
-
-        /**
-         * A ShaderProgram object used to draw the water surface.
-         */
-        std::unique_ptr<ogl::resource::ShaderProgram> m_waterShaderProgram;
 
         /**
          * An object holding the Fbo for mouse picking.

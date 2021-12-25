@@ -12,6 +12,7 @@
 namespace sg::map
 {
     class Map;
+    class Water;
 }
 
 //-------------------------------------------------
@@ -77,6 +78,11 @@ namespace sg
          * The map from tiles.
          */
         std::unique_ptr<map::Map> m_map;
+
+        /**
+         * The water surface.
+         */
+        std::unique_ptr<map::Water> m_water;
 
         /**
          * Render widgets to edit the map.

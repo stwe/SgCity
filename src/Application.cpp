@@ -9,6 +9,7 @@
 #include "ogl/input/MouseInput.h"
 #include "ogl/input/PickingTexture.h"
 #include "map/Map.h"
+#include "map/Water.h"
 
 //-------------------------------------------------
 // Ctors. / Dtor.
@@ -56,6 +57,11 @@ void sg::Application::Init()
 
     // create && init map
     m_map = std::make_unique<map::Map>(TILE_COUNT);
+
+    /**
+     * create && init water
+     */
+    m_water = std::make_unique<map::Water>(TILE_COUNT);
 
     Log::SG_LOG_DEBUG("[Application::Init()] The application was successfully initialized.");
 }
@@ -155,7 +161,7 @@ void sg::Application::Render()
     // (2) render scene
     //m_map->RenderModel(m_window, m_camera);
     m_map->Render(m_window, m_camera);
-    m_map->RenderWater(m_window, m_camera);
+    m_water->Render(m_window, m_camera);
 
     // (3) render gui
     ogl::Window::ImGuiBegin();

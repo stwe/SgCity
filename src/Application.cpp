@@ -144,8 +144,9 @@ void sg::Application::Render()
 
     // (2) render scene
     StartFrame();
+    //m_map->RenderModel(m_window, m_camera);
     m_map->Render(m_window, m_camera);
-    m_map->RenderModel(m_window, m_camera);
+    m_map->RenderWater(m_window, m_camera);
     EndFrame();
 }
 

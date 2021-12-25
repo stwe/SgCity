@@ -192,6 +192,9 @@ void sg::ogl::Window::InitWindow()
 
     // Make the window visible.
     glfwShowWindow(GetWindowHandle());
+
+    // enable depth && stencil buffer
+    ogl::OpenGL::EnableDepthAndStencilTesting();
 }
 
 void sg::ogl::Window::InitProjectionMatrix()

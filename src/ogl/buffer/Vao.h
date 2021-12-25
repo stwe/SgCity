@@ -86,6 +86,15 @@ namespace sg::ogl::buffer
          */
         void CreateStaticVbo(const std::vector<float>& t_vertices, int32_t t_drawCount = 0);
 
+        /**
+         * Binds this Vao and creates a static Vbo.
+         *
+         * Bufferlayout
+         * ------------
+         * location 0 (position) 2 floats
+         */
+        void CreateStaticWaterVbo();
+
         //-------------------------------------------------
         // Draw
         //-------------------------------------------------

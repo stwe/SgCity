@@ -79,7 +79,9 @@ void sg::ogl::buffer::Vao::CreateStaticVbo(const std::vector<float>& t_vertices,
     m_vbo = std::make_unique<Vbo>();
     m_vbo->Bind();
 
-    glBufferData(GL_ARRAY_BUFFER, t_drawCount * 5 * (uint32_t)sizeof(float), t_vertices.data(), GL_STATIC_DRAW);
+    uint32_t floatsPerVertex{ 5 };
+
+    glBufferData(GL_ARRAY_BUFFER, t_drawCount * floatsPerVertex * (uint32_t)sizeof(float), t_vertices.data(), GL_STATIC_DRAW);
     Vbo::Unbind();
 
     // enable location 0 (position)
@@ -94,6 +96,38 @@ void sg::ogl::buffer::Vao::CreateStaticVbo(const std::vector<float>& t_vertices,
     {
         drawCount = t_drawCount;
     }
+}
+
+void sg::ogl::buffer::Vao::CreateStaticWaterVbo()
+{
+    SG_ASSERT(!m_vbo, "[Vao::CreateWaterVbo()] Vbo already exists.")
+
+    Bind();
+
+    m_vbo = std::make_unique<Vbo>();
+    m_vbo->Bind();
+
+    // x and z vertex positions, y is set to 0.0 in the vertex shader
+    std::vector<float> vertices =
+    {
+         0.0f, 0.0f, // tl
+         0.0f, 1.0f, // bl
+         1.0f, 1.0f, // br
+         0.0f, 0.0f, // tl
+         1.0f, 1.0f, // br
+         1.0f, 0.0f  // tr
+    };
+
+    drawCount = 6;
+    uint32_t floatsPerVertex{ 2 };
+
+    glBufferData(GL_ARRAY_BUFFER, drawCount * floatsPerVertex * (uint32_t)sizeof(float), vertices.data(), GL_STATIC_DRAW);
+    Vbo::Unbind();
+
+    // enable location 0 (position)
+    m_vbo->AddFloatAttribute(0, 2, 2, 0);
+
+    Unbind();
 }
 
 //-------------------------------------------------

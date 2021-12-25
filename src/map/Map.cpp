@@ -54,7 +54,7 @@ void sg::map::Map::RenderForMousePicking(const sg::ogl::Window& t_window, const 
     auto modelMatrix{ogl::math::Transform::CreateModelMatrix(
         MAP_POSITION,
         glm::vec3(0.0f),
-        glm::vec3(1.0f, 1.0f, 1.0f)
+        glm::vec3(1.0f)
     )};
 
     m_pickingShaderProgram->SetUniform("model", modelMatrix);
@@ -71,7 +71,7 @@ void sg::map::Map::RenderForMousePicking(const sg::ogl::Window& t_window, const 
 
 void sg::map::Map::Render(const ogl::Window& t_window, const ogl::camera::Camera& t_camera) const
 {
-    //ogl::OpenGL::EnableAlphaBlending();
+    ogl::OpenGL::EnableFaceCulling();
 
     m_mapVao->Bind();
     m_mapShaderProgram->Bind();
@@ -80,7 +80,7 @@ void sg::map::Map::Render(const ogl::Window& t_window, const ogl::camera::Camera
     auto modelMatrix{ogl::math::Transform::CreateModelMatrix(
         MAP_POSITION,
         glm::vec3(0.0f),
-        glm::vec3(1.0f, 1.0f, 1.0f)
+        glm::vec3(1.0f)
     )};
 
     m_mapShaderProgram->SetUniform("model", modelMatrix);
@@ -99,7 +99,7 @@ void sg::map::Map::Render(const ogl::Window& t_window, const ogl::camera::Camera
     m_mapShaderProgram->Unbind();
     m_mapVao->Unbind();
 
-    //ogl::OpenGL::DisableBlending();
+    ogl::OpenGL::DisableFaceCulling();
 }
 
 void sg::map::Map::RenderModel(const sg::ogl::Window& t_window, const sg::ogl::camera::Camera& t_camera) const
@@ -133,6 +133,31 @@ void sg::map::Map::RenderModel(const sg::ogl::Window& t_window, const sg::ogl::c
     m_treeModel->GetVaos()[0]->Unbind();
 
     ogl::OpenGL::DisableBlending();
+}
+
+void sg::map::Map::RenderWater(const sg::ogl::Window& t_window, const sg::ogl::camera::Camera& t_camera) const
+{
+    ogl::OpenGL::EnableFaceCulling();
+
+    m_waterVao->Bind();
+    m_waterShaderProgram->Bind();
+
+    auto modelMatrix{ogl::math::Transform::CreateModelMatrix(
+        glm::vec3(0.0f, WATER_POSITION_Y, 0.0f),
+        glm::vec3(0.0f),
+        glm::vec3(static_cast<float>(m_tileCount))
+    )};
+
+    m_waterShaderProgram->SetUniform("model", modelMatrix);
+    m_waterShaderProgram->SetUniform("view", t_camera.GetViewMatrix());
+    m_waterShaderProgram->SetUniform("projection", t_window.GetProjectionMatrix());
+
+    m_waterVao->DrawPrimitives();
+
+    m_waterShaderProgram->Unbind();
+    m_waterVao->Unbind();
+
+    ogl::OpenGL::DisableFaceCulling();
 }
 
 //-------------------------------------------------
@@ -281,6 +306,9 @@ void sg::map::Map::InitResources()
     m_modelShaderProgram = std::make_unique<ogl::resource::ShaderProgram>("/home/steffen/CLionProjects/SgCity/resources/shader/model");
     m_modelShaderProgram->Load();
 
+    m_waterShaderProgram = std::make_unique<ogl::resource::ShaderProgram>("/home/steffen/CLionProjects/SgCity/resources/shader/water");
+    m_waterShaderProgram->Load();
+
     // texture
 
     m_tileTexture = std::make_unique<ogl::resource::Texture>("/home/steffen/CLionProjects/SgCity/resources/texture/grass.jpg");
@@ -293,6 +321,11 @@ void sg::map::Map::InitResources()
 
     m_treeModel = std::make_unique<ogl::resource::Model>("/home/steffen/CLionProjects/SgCity/resources/model/Tree_01/billboardmodel.obj");
     m_treeModel->Load();
+
+    // water
+
+    m_waterVao = std::make_unique<ogl::buffer::Vao>();
+    m_waterVao->CreateStaticWaterVbo();
 }
 
 //-------------------------------------------------

@@ -69,6 +69,36 @@ namespace sg::ogl
             glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
         }
 
+        /**
+         * Enable face culling.
+         */
+        static void EnableFaceCulling()
+        {
+            // On a freshly created OpenGL Context, the default front face is GL_CCW.
+            // All the faces that are not front-faces are discarded.
+            glFrontFace(GL_CCW);
+            glCullFace(GL_BACK);
+            glEnable(GL_CULL_FACE);
+        }
+
+        /**
+         * Disable face culling.
+         */
+        static void DisableFaceCulling()
+        {
+            glDisable(GL_CULL_FACE);
+        }
+
+        /**
+         * Enable depth and stencil buffer.
+         */
+        static void EnableDepthAndStencilTesting()
+        {
+            glEnable(GL_DEPTH_TEST);
+            glEnable(GL_STENCIL_TEST);
+            glProvokingVertex(GL_FIRST_VERTEX_CONVENTION);
+        }
+
     protected:
 
     private:

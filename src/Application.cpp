@@ -55,13 +55,16 @@ void sg::Application::Init()
     ogl::input::MouseInput::Init(m_window);
 
     // create && init map
-    m_map = std::make_unique<map::Map>(64);
+    m_map = std::make_unique<map::Map>(TILE_COUNT);
 
     Log::SG_LOG_DEBUG("[Application::Init()] The application was successfully initialized.");
 }
 
 void sg::Application::Input()
 {
+    // Esc key closes the app
+    m_window.CloseIfEscKeyPressed();
+
     // do nothing when the mouse is over the ImGui window
     if (ImGui::GetIO().WantCaptureMouse)
     {
@@ -70,9 +73,6 @@ void sg::Application::Input()
 
     // updated mouse stuff
     ogl::input::MouseInput::GetInstance().Input();
-
-    // Esc key closes the app
-    m_window.CloseIfEscKeyPressed();
 
     // handle right mouse button
     if (ogl::input::MouseInput::GetInstance().IsRightButtonPressed())
@@ -89,11 +89,12 @@ void sg::Application::Input()
     // handle left mouse button
     if (ogl::input::MouseInput::GetInstance().IsLeftButtonPressed() && m_handleMouseEvent)
     {
+        // show tile index
         auto tileIndex{ m_map->GetCurrentTileIdxUnderMouse() };
-        Log::SG_LOG_DEBUG("Id {}.", tileIndex);
+        Log::SG_LOG_DEBUG("Tile index {}.", tileIndex);
 
         // raise/lower tile and his neighbors
-        m_map->HandleTileUpdate(tileIndex, false);
+        m_map->HandleTileUpdate(tileIndex, m_mapEditGui.raise);
 
         // do not run the event again
         m_handleMouseEvent = false;
@@ -146,23 +147,19 @@ void sg::Application::Update()
 
 void sg::Application::Render()
 {
-    // (1) renders all tiles in a different color in an Fbo for mousepicking
+    // (1) render for mousepicking
     m_map->RenderForMousePicking(m_window, m_camera);
 
-    // (2) render scene
     StartFrame();
+
+    // (2) render scene
     //m_map->RenderModel(m_window, m_camera);
     m_map->Render(m_window, m_camera);
     m_map->RenderWater(m_window, m_camera);
 
-    // (3) render ImGui
+    // (3) render gui
     ogl::Window::ImGuiBegin();
-    ImGui::Begin("Game Debug");
-    ImGui::Text("Press the Escape key to exit.");
-    ImGui::Spacing();
-    ImGui::Text("Mouse x: %d", ogl::input::MouseInput::GetInstance().GetX());
-    ImGui::Text("Mouse y: %d", ogl::input::MouseInput::GetInstance().GetY());
-    ImGui::End();
+    m_mapEditGui.Render();
     ogl::Window::ImGuiEnd();
 
     EndFrame();

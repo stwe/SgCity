@@ -3,6 +3,7 @@
 #include <memory>
 #include "ogl/Window.h"
 #include "ogl/camera/Camera.h"
+#include "gui/MapEditGui.h"
 
 //-------------------------------------------------
 // Forward declarations
@@ -30,6 +31,11 @@ namespace sg
         //-------------------------------------------------
 
         static constexpr auto FRAME_TIME{ 1.0 / 60.0 };
+
+        /**
+         * The number of tiles in x and z direction.
+         */
+        static constexpr auto TILE_COUNT{ 64 };
 
         //-------------------------------------------------
         // Ctors. / Dtor.
@@ -71,6 +77,11 @@ namespace sg
          * The map from tiles.
          */
         std::unique_ptr<map::Map> m_map;
+
+        /**
+         * Render widgets to edit the map.
+         */
+        gui::MapEditGui m_mapEditGui;
 
         /**
          * So that events are only executed once.

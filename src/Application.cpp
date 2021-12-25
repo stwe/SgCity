@@ -62,6 +62,12 @@ void sg::Application::Init()
 
 void sg::Application::Input()
 {
+    // do nothing when the mouse is over the ImGui window
+    if (ImGui::GetIO().WantCaptureMouse)
+    {
+        return;
+    }
+
     // updated mouse stuff
     ogl::input::MouseInput::GetInstance().Input();
 

@@ -18,7 +18,6 @@ namespace sg::ogl::resource
 {
     class ShaderProgram;
     class Texture;
-    class Model;
 }
 
 namespace sg::ogl::input
@@ -92,14 +91,6 @@ namespace sg::map
          */
         void Render(const ogl::Window& t_window, const ogl::camera::Camera& t_camera) const;
 
-        /**
-         * Renders an Obj-Model.
-         *
-         * @param t_window The Window object.
-         * @param t_camera The Camera object.
-         */
-        void RenderModel(const ogl::Window& t_window, const ogl::camera::Camera& t_camera) const;
-
         //-------------------------------------------------
         // Tiles
         //-------------------------------------------------
@@ -156,11 +147,6 @@ namespace sg::map
         std::unique_ptr<ogl::resource::ShaderProgram> m_pickingShaderProgram;
 
         /**
-         * A ShaderProgram object used to draw a Obj-Model.
-         */
-        std::unique_ptr<ogl::resource::ShaderProgram> m_modelShaderProgram;
-
-        /**
          * An object holding the Fbo for mouse picking.
          */
         std::unique_ptr<ogl::input::PickingTexture> m_pickingTexture;
@@ -169,16 +155,6 @@ namespace sg::map
          * The texture for each Tile.
          */
         std::unique_ptr<ogl::resource::Texture> m_tileTexture;
-
-        /**
-         * An Obj-Model for testing.
-         */
-        std::unique_ptr<ogl::resource::Model> m_treeModel;
-
-        /**
-         * A texture for the Obj-Model.
-         */
-        std::unique_ptr<ogl::resource::Texture> m_modelTexture;
 
         //-------------------------------------------------
         // Init

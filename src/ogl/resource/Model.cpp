@@ -1,7 +1,11 @@
 #include "Model.h"
 #include "SgException.h"
 #include "Log.h"
+#include "ogl/OpenGL.h"
 #include "ogl/buffer/Vao.h"
+#include "ogl/resource/ShaderProgram.h"
+#include "ogl/resource/Texture.h"
+#include "ogl/math/Transform.h"
 
 #define TINYOBJLOADER_IMPLEMENTATION
 #include "tiny_obj_loader.h"
@@ -14,6 +18,8 @@ sg::ogl::resource::Model::Model(std::string t_path)
     : m_path{ std::move(t_path) }
 {
     Log::SG_LOG_DEBUG("[Model::Model()] Create Model.");
+
+    Init();
 }
 
 sg::ogl::resource::Model::~Model() noexcept
@@ -24,10 +30,47 @@ sg::ogl::resource::Model::~Model() noexcept
 }
 
 //-------------------------------------------------
-// Load
+// Logic
 //-------------------------------------------------
 
-void sg::ogl::resource::Model::Load()
+void sg::ogl::resource::Model::Render(const Window& t_window, const camera::Camera& t_camera) const
+{
+    if (m_vaos.empty())
+    {
+        return;
+    }
+
+    ogl::OpenGL::EnableAlphaBlending();
+
+    m_vaos[0]->Bind(); // todo [0]
+    m_modelShaderProgram->Bind();
+
+    auto modelMatrix{ ogl::math::Transform::CreateModelMatrix(
+        glm::vec3(14.0f, 0.0f, 9.0f),
+        glm::vec3(0.0f, 0.0f, 0.0f),
+        glm::vec3(1.0f)
+    ) };
+
+    m_modelShaderProgram->SetUniform("model", modelMatrix);
+    m_modelShaderProgram->SetUniform("view", t_camera.GetViewMatrix());
+    m_modelShaderProgram->SetUniform("projection", t_window.GetProjectionMatrix());
+
+    m_modelTexture->BindForReading(GL_TEXTURE0);
+    m_modelShaderProgram->SetUniform("diffuseMap", 0);
+
+    m_vaos[0]->DrawPrimitives();
+
+    m_modelShaderProgram->Unbind();
+    m_vaos[0]->Unbind();
+
+    ogl::OpenGL::DisableBlending();
+}
+
+//-------------------------------------------------
+// Init
+//-------------------------------------------------
+
+void sg::ogl::resource::Model::Init()
 {
     tinyobj::ObjReaderConfig reader_config;
     reader_config.mtl_search_path = "";
@@ -38,13 +81,13 @@ void sg::ogl::resource::Model::Load()
     {
         if (!reader.Error().empty())
         {
-            throw SG_EXCEPTION("[Model::Load()] Error: " + reader.Error());
+            throw SG_EXCEPTION("[Model::Init()] Error: " + reader.Error());
         }
     }
 
     if (!reader.Warning().empty())
     {
-        Log::SG_LOG_WARN("[Model::Load()] Warning: {}.", reader.Warning());
+        Log::SG_LOG_WARN("[Model::Init()] Warning: {}.", reader.Warning());
     }
 
     auto& attrib = reader.GetAttrib();
@@ -94,6 +137,12 @@ void sg::ogl::resource::Model::Load()
         auto vao{ std::make_unique<ogl::buffer::Vao>() };
         vao->CreateStaticVbo(vertices, 4 * 4); // todo: drawCount
         m_vaos.push_back(std::move(vao));
+
+        m_modelShaderProgram = std::make_unique<ogl::resource::ShaderProgram>("/home/steffen/CLionProjects/SgCity/resources/shader/model");
+        m_modelShaderProgram->Load();
+
+        m_modelTexture = std::make_unique<ogl::resource::Texture>("/home/steffen/CLionProjects/SgCity/resources/model/Tree_01/billboard0.png");
+        m_modelTexture->Load();
     }
 }
 

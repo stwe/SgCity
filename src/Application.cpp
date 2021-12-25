@@ -6,6 +6,7 @@
 #include "ogl/buffer/Vao.h"
 #include "ogl/resource/Texture.h"
 #include "ogl/resource/ShaderProgram.h"
+#include "ogl/resource/Model.h"
 #include "ogl/input/MouseInput.h"
 #include "ogl/input/PickingTexture.h"
 #include "map/Map.h"
@@ -58,10 +59,11 @@ void sg::Application::Init()
     // create && init map
     m_map = std::make_unique<map::Map>(TILE_COUNT);
 
-    /**
-     * create && init water
-     */
+    // create && init water
     m_water = std::make_unique<map::Water>(TILE_COUNT);
+
+    // create && init a tree model
+    m_treeModel = std::make_unique<ogl::resource::Model>("/home/steffen/CLionProjects/SgCity/resources/model/Tree_01/billboardmodel.obj");
 
     Log::SG_LOG_DEBUG("[Application::Init()] The application was successfully initialized.");
 }
@@ -159,8 +161,8 @@ void sg::Application::Render()
     StartFrame();
 
     // (2) render scene
-    //m_map->RenderModel(m_window, m_camera);
     m_map->Render(m_window, m_camera);
+    m_treeModel->Render(m_window, m_camera);
     m_water->Render(m_window, m_camera);
 
     // (3) render gui

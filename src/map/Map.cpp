@@ -6,7 +6,6 @@
 #include "ogl/buffer/Vao.h"
 #include "ogl/resource/ShaderProgram.h"
 #include "ogl/resource/Texture.h"
-#include "ogl/resource/Model.h"
 #include "ogl/math/Transform.h"
 #include "ogl/input/PickingTexture.h"
 #include "ogl/input/MouseInput.h"
@@ -51,11 +50,11 @@ void sg::map::Map::RenderForMousePicking(const sg::ogl::Window& t_window, const 
     m_pickingShaderProgram->Bind();
 
     // todo: nur einmal erstellen
-    auto modelMatrix{ogl::math::Transform::CreateModelMatrix(
+    auto modelMatrix{ ogl::math::Transform::CreateModelMatrix(
         MAP_POSITION,
         glm::vec3(0.0f),
         glm::vec3(1.0f)
-    )};
+    ) };
 
     m_pickingShaderProgram->SetUniform("model", modelMatrix);
     m_pickingShaderProgram->SetUniform("view", t_camera.GetViewMatrix());
@@ -77,11 +76,11 @@ void sg::map::Map::Render(const ogl::Window& t_window, const ogl::camera::Camera
     m_mapShaderProgram->Bind();
 
     // todo: nur einmal erstellen
-    auto modelMatrix{ogl::math::Transform::CreateModelMatrix(
+    auto modelMatrix{ ogl::math::Transform::CreateModelMatrix(
         MAP_POSITION,
         glm::vec3(0.0f),
         glm::vec3(1.0f)
-    )};
+    ) };
 
     m_mapShaderProgram->SetUniform("model", modelMatrix);
     m_mapShaderProgram->SetUniform("view", t_camera.GetViewMatrix());
@@ -100,39 +99,6 @@ void sg::map::Map::Render(const ogl::Window& t_window, const ogl::camera::Camera
     m_mapVao->Unbind();
 
     ogl::OpenGL::DisableFaceCulling();
-}
-
-void sg::map::Map::RenderModel(const sg::ogl::Window& t_window, const sg::ogl::camera::Camera& t_camera) const
-{
-    if (m_treeModel->GetVaos().empty())
-    {
-        return;
-    }
-
-    ogl::OpenGL::EnableAlphaBlending();
-
-    m_treeModel->GetVaos()[0]->Bind();
-    m_modelShaderProgram->Bind();
-
-    auto modelMatrix{ogl::math::Transform::CreateModelMatrix(
-        glm::vec3(14.0f, 0.0f, 9.0f),
-        glm::vec3(0.0f, 0.0f, 0.0f),
-        glm::vec3(1.0f)
-    )};
-
-    m_modelShaderProgram->SetUniform("model", modelMatrix);
-    m_modelShaderProgram->SetUniform("view", t_camera.GetViewMatrix());
-    m_modelShaderProgram->SetUniform("projection", t_window.GetProjectionMatrix());
-
-    m_modelTexture->BindForReading(GL_TEXTURE0);
-    m_modelShaderProgram->SetUniform("diffuseMap", 0);
-
-    m_treeModel->GetVaos()[0]->DrawPrimitives();
-
-    m_modelShaderProgram->Unbind();
-    m_treeModel->GetVaos()[0]->Unbind();
-
-    ogl::OpenGL::DisableBlending();
 }
 
 //-------------------------------------------------
@@ -278,21 +244,10 @@ void sg::map::Map::InitResources()
     m_pickingShaderProgram = std::make_unique<ogl::resource::ShaderProgram>("/home/steffen/CLionProjects/SgCity/resources/shader/picking");
     m_pickingShaderProgram->Load();
 
-    m_modelShaderProgram = std::make_unique<ogl::resource::ShaderProgram>("/home/steffen/CLionProjects/SgCity/resources/shader/model");
-    m_modelShaderProgram->Load();
-
     // texture
 
     m_tileTexture = std::make_unique<ogl::resource::Texture>("/home/steffen/CLionProjects/SgCity/resources/texture/grass.jpg");
     m_tileTexture->Load();
-
-    m_modelTexture = std::make_unique<ogl::resource::Texture>("/home/steffen/CLionProjects/SgCity/resources/model/Tree_01/billboard0.png");
-    m_modelTexture->Load();
-
-    // model
-
-    m_treeModel = std::make_unique<ogl::resource::Model>("/home/steffen/CLionProjects/SgCity/resources/model/Tree_01/billboardmodel.obj");
-    m_treeModel->Load();
 }
 
 //-------------------------------------------------

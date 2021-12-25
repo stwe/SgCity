@@ -15,6 +15,11 @@ namespace sg::map
     class Water;
 }
 
+namespace sg::ogl::resource
+{
+    class Model;
+}
+
 //-------------------------------------------------
 // Application
 //-------------------------------------------------
@@ -83,6 +88,11 @@ namespace sg
          * The water surface.
          */
         std::unique_ptr<map::Water> m_water;
+
+        /**
+         * A tree obj model.
+         */
+        std::unique_ptr<ogl::resource::Model> m_treeModel;
 
         /**
          * Render widgets to edit the map.

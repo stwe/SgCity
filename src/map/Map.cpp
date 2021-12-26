@@ -161,6 +161,12 @@ void sg::map::Map::CreateTiles()
                 z * m_tileCount + x
             ) };
 
+            // todo: temp code
+            if (x == 1)
+            {
+                tile->type = Tile::TileType::TRAFFIC;
+            }
+
             m_tiles.push_back(std::move(tile));
         }
     }

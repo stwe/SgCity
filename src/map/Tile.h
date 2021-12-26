@@ -138,7 +138,7 @@ namespace sg::map
         // Ctors. / Dtor.
         //-------------------------------------------------
 
-        Tile() = delete;
+        Tile();
 
         /**
          * Constructs a new Tile object.

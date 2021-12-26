@@ -166,12 +166,13 @@ void sg::Application::Render()
 
     // (2) render scene
     m_map->Render(m_window, m_camera);
+    m_roadNetwork->Render(m_window, m_camera);
     //m_treeModel->Render(m_window, m_camera);
-    m_water->Render(m_window, m_camera);
+    //m_water->Render(m_window, m_camera);
 
     // (3) render gui
     ogl::Window::ImGuiBegin();
-    m_mapEditGui.Render();
+    //m_mapEditGui.Render();
     ogl::Window::ImGuiEnd();
 
     EndFrame();

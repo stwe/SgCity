@@ -6,6 +6,11 @@
 // Ctors. / Dtor.
 //-------------------------------------------------
 
+sg::map::Tile::Tile()
+{
+    // ...
+}
+
 sg::map::Tile::Tile(const float t_mapX, const float t_mapZ, const int t_mapIndex)
     : mapX{ t_mapX }
     , mapZ{ t_mapZ }

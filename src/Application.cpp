@@ -11,6 +11,7 @@
 #include "ogl/input/PickingTexture.h"
 #include "map/Map.h"
 #include "map/Water.h"
+#include "map/RoadNetwork.h"
 
 //-------------------------------------------------
 // Ctors. / Dtor.
@@ -56,7 +57,7 @@ void sg::Application::Init()
     // init mouse
     ogl::input::MouseInput::Init(m_window);
 
-    // create && init map
+    // create && init map tiles
     m_map = std::make_unique<map::Map>(TILE_COUNT);
 
     // create && init water
@@ -64,6 +65,9 @@ void sg::Application::Init()
 
     // create && init a tree model
     m_treeModel = std::make_unique<ogl::resource::Model>("/home/steffen/CLionProjects/SgCity/resources/model/Tree_01/billboardmodel.obj");
+
+    // create && init road tiles
+    m_roadNetwork = std::make_unique<map::RoadNetwork>(*m_map);
 
     Log::SG_LOG_DEBUG("[Application::Init()] The application was successfully initialized.");
 }

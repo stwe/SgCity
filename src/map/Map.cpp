@@ -91,7 +91,7 @@ void sg::map::Map::Render(const ogl::Window& t_window, const ogl::camera::Camera
 // Tiles
 //-------------------------------------------------
 
-int sg::map::Map::GetCurrentTileIdxUnderMouse()
+int sg::map::Map::GetCurrentTileIdxUnderMouse() const
 {
     return m_pickingTexture->ReadMapIndex(
         ogl::input::MouseInput::GetInstance().GetX(),
@@ -114,7 +114,7 @@ void sg::map::Map::HandleTileUpdate(const int t_mapIndex, const bool t_raise)
     t_raise ? tile->Raise() : tile->Lower();
 
     tile->UpdateNormal();
-    tile->VerticesToGpu(*m_mapVao); // todo: das muss nur 1x ausgeführt werden
+    tile->VerticesToGpu(*m_mapVao);
 
     UpdateNorthNeighbor(*tile);
     UpdateSouthNeighbor(*tile);
@@ -133,6 +133,8 @@ void sg::map::Map::HandleTileUpdate(const int t_mapIndex, const bool t_raise)
 
 void sg::map::Map::Init()
 {
+    Log::SG_LOG_DEBUG("[Map::Init()] Initialize the map.");
+
     m_mapModelMatrix = ogl::math::Transform::CreateModelMatrix(
         MAP_POSITION,
         glm::vec3(0.0f),
@@ -143,6 +145,8 @@ void sg::map::Map::Init()
     AddTileNeighbors();
     TilesToGpu();
     InitResources();
+
+    Log::SG_LOG_DEBUG("[Map::Init()] The map was successfully initialized.");
 }
 
 void sg::map::Map::CreateTiles()

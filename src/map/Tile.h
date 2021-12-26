@@ -76,6 +76,19 @@ namespace sg::map
         static constexpr auto TR_2_N_START_INDEX{ 63 };
 
         //-------------------------------------------------
+        // Types
+        //-------------------------------------------------
+
+        enum class TileType
+        {
+            NONE,
+            RESIDENTIAL,
+            COMMERCIAL,
+            INDUSTRIAL,
+            TRAFFIC
+        };
+
+        //-------------------------------------------------
         // Member
         //-------------------------------------------------
 
@@ -115,6 +128,11 @@ namespace sg::map
         int ne{ NO_NEIGHBOR };
         int sw{ NO_NEIGHBOR };
         int se{ NO_NEIGHBOR };
+
+        /**
+         * The type of the Tile.
+         */
+        TileType type{ TileType::NONE };
 
         //-------------------------------------------------
         // Ctors. / Dtor.

@@ -72,6 +72,12 @@ namespace sg::map
         ~Map() noexcept;
 
         //-------------------------------------------------
+        // Getter
+        //-------------------------------------------------
+
+        [[nodiscard]] const auto& GetTiles() const { return m_tiles; }
+
+        //-------------------------------------------------
         // Logic
         //-------------------------------------------------
 
@@ -100,7 +106,7 @@ namespace sg::map
          *
          * @return The mapIndex.
          */
-        int GetCurrentTileIdxUnderMouse();
+        [[nodiscard]] int GetCurrentTileIdxUnderMouse() const;
 
         //-------------------------------------------------
         // Raise / lower terrain

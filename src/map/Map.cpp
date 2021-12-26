@@ -109,7 +109,7 @@ void sg::map::Map::HandleTileUpdate(const int t_mapIndex, const bool t_raise)
         return;
     }
 
-    auto& tile{ m_tiles[t_mapIndex] };
+    const auto& tile{ m_tiles[t_mapIndex] };
 
     t_raise ? tile->Raise() : tile->Lower();
 
@@ -168,48 +168,48 @@ void sg::map::Map::AddTileNeighbors()
     {
         for (auto x{ 0 }; x < m_tileCount; ++x)
         {
-            auto i{ static_cast<int>(z) * m_tileCount + static_cast<int>(x) };
+            const auto i{ static_cast<int>(z) * m_tileCount + static_cast<int>(x) };
 
             // regular grid
             if (z > 0)
             {
-                m_tiles[i]->n = m_tiles[static_cast<int>(z - 1) * m_tileCount + static_cast<int>(x)].get();
+                m_tiles[i]->n = static_cast<int>(z - 1) * m_tileCount + static_cast<int>(x);
             }
 
             if (z < m_tileCount - 1)
             {
-                m_tiles[i]->s = m_tiles[static_cast<int>(z + 1) * m_tileCount + static_cast<int>(x)].get();
+                m_tiles[i]->s = static_cast<int>(z + 1) * m_tileCount + static_cast<int>(x);
             }
 
             if (x > 0)
             {
-                m_tiles[i]->w = m_tiles[static_cast<int>(z) * m_tileCount + static_cast<int>(x - 1)].get();
+                m_tiles[i]->w = static_cast<int>(z) * m_tileCount + static_cast<int>(x - 1);
             }
 
             if (x < m_tileCount - 1)
             {
-                m_tiles[i]->e = m_tiles[static_cast<int>(z) * m_tileCount + static_cast<int>(x + 1)].get();
+                m_tiles[i]->e = static_cast<int>(z) * m_tileCount + static_cast<int>(x + 1);
             }
 
             // connect diagonally
             if (z > 0 && x < m_tileCount - 1)
             {
-                m_tiles[i]->ne = m_tiles[static_cast<int>(z - 1) * m_tileCount + static_cast<int>(x + 1)].get();
+                m_tiles[i]->ne = static_cast<int>(z - 1) * m_tileCount + static_cast<int>(x + 1);
             }
 
             if (z > 0 && x > 0)
             {
-                m_tiles[i]->nw = m_tiles[static_cast<int>(z - 1) * m_tileCount + static_cast<int>(x - 1)].get();
+                m_tiles[i]->nw = static_cast<int>(z - 1) * m_tileCount + static_cast<int>(x - 1);
             }
 
             if (z < m_tileCount - 1 && x > 0)
             {
-                m_tiles[i]->sw = m_tiles[static_cast<int>(z + 1) * m_tileCount + static_cast<int>(x - 1)].get();
+                m_tiles[i]->sw = static_cast<int>(z + 1) * m_tileCount + static_cast<int>(x - 1);
             }
 
             if (z < m_tileCount - 1 && x < m_tileCount - 1)
             {
-                m_tiles[i]->se = m_tiles[static_cast<int>(z + 1) * m_tileCount + static_cast<int>(x + 1)].get();
+                m_tiles[i]->se = static_cast<int>(z + 1) * m_tileCount + static_cast<int>(x + 1);
             }
         }
     }
@@ -248,9 +248,9 @@ void sg::map::Map::InitResources()
 
 void sg::map::Map::UpdateNorthWestNeighbor(Tile& t_tile)
 {
-    if (t_tile.nw)
+    if (t_tile.nw != Tile::NO_NEIGHBOR)
     {
-        auto& tile{ t_tile.nw };
+        const auto& tile{ m_tiles[t_tile.nw] };
         auto& vertices{ tile->vertices };
 
         vertices[Tile::BR_1_Y] += t_tile.vertices[Tile::TL_1_Y] - vertices[Tile::BR_1_Y];
@@ -263,9 +263,9 @@ void sg::map::Map::UpdateNorthWestNeighbor(Tile& t_tile)
 
 void sg::map::Map::UpdateNorthEastNeighbor(Tile& t_tile)
 {
-    if (t_tile.ne)
+    if (t_tile.ne != Tile::NO_NEIGHBOR)
     {
-        auto& tile{ t_tile.ne };
+        const auto& tile{ m_tiles[t_tile.ne] };
         auto& vertices{ tile->vertices };
 
         vertices[Tile::BL_1_Y] += t_tile.vertices[Tile::TR_2_Y] - vertices[Tile::BL_1_Y];
@@ -277,9 +277,9 @@ void sg::map::Map::UpdateNorthEastNeighbor(Tile& t_tile)
 
 void sg::map::Map::UpdateSouthWestNeighbor(Tile& t_tile)
 {
-    if (t_tile.sw)
+    if (t_tile.sw != Tile::NO_NEIGHBOR)
     {
-        auto& tile{ t_tile.sw };
+        const auto& tile{ m_tiles[t_tile.sw] };
         auto& vertices{ tile->vertices };
 
         vertices[Tile::TR_2_Y] += t_tile.vertices[Tile::BL_1_Y] - vertices[Tile::TR_2_Y];
@@ -291,9 +291,9 @@ void sg::map::Map::UpdateSouthWestNeighbor(Tile& t_tile)
 
 void sg::map::Map::UpdateSouthEastNeighbor(sg::map::Tile& t_tile)
 {
-    if (t_tile.se)
+    if (t_tile.se != Tile::NO_NEIGHBOR)
     {
-        auto& tile{ t_tile.se };
+        const auto& tile{ m_tiles[t_tile.se] };
         auto& vertices{ tile->vertices };
 
         vertices[Tile::TL_1_Y] += t_tile.vertices[Tile::BR_1_Y] - vertices[Tile::TL_1_Y];
@@ -306,9 +306,9 @@ void sg::map::Map::UpdateSouthEastNeighbor(sg::map::Tile& t_tile)
 
 void sg::map::Map::UpdateNorthNeighbor(Tile& t_tile)
 {
-    if (t_tile.n)
+    if (t_tile.n != Tile::NO_NEIGHBOR)
     {
-        auto& tile{ t_tile.n };
+        const auto& tile{ m_tiles[t_tile.n] };
         auto& vertices{ tile->vertices };
 
         /*
@@ -335,9 +335,9 @@ void sg::map::Map::UpdateNorthNeighbor(Tile& t_tile)
 
 void sg::map::Map::UpdateSouthNeighbor(Tile& t_tile)
 {
-    if (t_tile.s)
+    if (t_tile.s != Tile::NO_NEIGHBOR)
     {
-        auto& tile{ t_tile.s };
+        const auto& tile{ m_tiles[t_tile.s] };
         auto& vertices{ tile->vertices };
 
         /*
@@ -364,9 +364,9 @@ void sg::map::Map::UpdateSouthNeighbor(Tile& t_tile)
 
 void sg::map::Map::UpdateEastNeighbor(Tile& t_tile)
 {
-    if (t_tile.e)
+    if (t_tile.e != Tile::NO_NEIGHBOR)
     {
-        auto& tile{ t_tile.e };
+        const auto& tile{ m_tiles[t_tile.e] };
         auto& vertices{ tile->vertices };
 
         /*
@@ -393,9 +393,9 @@ void sg::map::Map::UpdateEastNeighbor(Tile& t_tile)
 
 void sg::map::Map::UpdateWestNeighbor(Tile& t_tile)
 {
-    if (t_tile.w)
+    if (t_tile.w != Tile::NO_NEIGHBOR)
     {
-        auto& tile{ t_tile.w };
+        const auto& tile{ m_tiles[t_tile.w] };
         auto& vertices{ tile->vertices };
 
         vertices[Tile::BR_1_Y] += t_tile.vertices[Tile::BL_1_Y] - vertices[Tile::BR_1_Y];

@@ -1,6 +1,5 @@
 #pragma once
 
-#include <vector>
 #include <glm/vec3.hpp>
 #include "ogl/buffer/Vao.h"
 
@@ -34,9 +33,14 @@ namespace sg::map
         static constexpr auto DEFAULT_HEIGHT{ 0.0f };
 
         /**
-         * The Tile is increased by this value.
+         * The Tile is increased/lowered by this value.
          */
         static constexpr auto RAISE_Y{ 0.5f };
+
+        /**
+         * The value is used when the tile has no neighbor in a specific direction.
+         */
+        static constexpr auto NO_NEIGHBOR{ -1 };
 
         /*
             tl       tr
@@ -102,17 +106,15 @@ namespace sg::map
 
         // Neighbors
 
-        // todo: -> shared_ptr statt raw pointer
+        int n{ NO_NEIGHBOR };
+        int s{ NO_NEIGHBOR };
+        int e{ NO_NEIGHBOR };
+        int w{ NO_NEIGHBOR };
 
-        Tile* n{ nullptr };
-        Tile* s{ nullptr };
-        Tile* e{ nullptr };
-        Tile* w{ nullptr };
-
-        Tile* nw{ nullptr };
-        Tile* ne{ nullptr };
-        Tile* sw{ nullptr };
-        Tile* se{ nullptr };
+        int nw{ NO_NEIGHBOR };
+        int ne{ NO_NEIGHBOR };
+        int sw{ NO_NEIGHBOR };
+        int se{ NO_NEIGHBOR };
 
         //-------------------------------------------------
         // Ctors. / Dtor.

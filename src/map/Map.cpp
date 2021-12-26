@@ -49,14 +49,7 @@ void sg::map::Map::RenderForMousePicking(const sg::ogl::Window& t_window, const 
     m_mapVao->Bind();
     m_pickingShaderProgram->Bind();
 
-    // todo: nur einmal erstellen
-    auto modelMatrix{ ogl::math::Transform::CreateModelMatrix(
-        MAP_POSITION,
-        glm::vec3(0.0f),
-        glm::vec3(1.0f)
-    ) };
-
-    m_pickingShaderProgram->SetUniform("model", modelMatrix);
+    m_pickingShaderProgram->SetUniform("model", m_mapModelMatrix);
     m_pickingShaderProgram->SetUniform("view", t_camera.GetViewMatrix());
     m_pickingShaderProgram->SetUniform("projection", t_window.GetProjectionMatrix());
 
@@ -75,18 +68,11 @@ void sg::map::Map::Render(const ogl::Window& t_window, const ogl::camera::Camera
     m_mapVao->Bind();
     m_mapShaderProgram->Bind();
 
-    // todo: nur einmal erstellen
-    auto modelMatrix{ ogl::math::Transform::CreateModelMatrix(
-        MAP_POSITION,
-        glm::vec3(0.0f),
-        glm::vec3(1.0f)
-    ) };
-
-    m_mapShaderProgram->SetUniform("model", modelMatrix);
+    m_mapShaderProgram->SetUniform("model", m_mapModelMatrix);
     m_mapShaderProgram->SetUniform("view", t_camera.GetViewMatrix());
     m_mapShaderProgram->SetUniform("projection", t_window.GetProjectionMatrix());
 
-    const auto mv{ t_camera.GetViewMatrix() * modelMatrix };
+    const auto mv{ t_camera.GetViewMatrix() * m_mapModelMatrix };
     const auto n{ glm::inverseTranspose(glm::mat3(mv)) };
     m_mapShaderProgram->SetUniform("normalMatrix", n);
 
@@ -147,6 +133,12 @@ void sg::map::Map::HandleTileUpdate(const int t_mapIndex, const bool t_raise)
 
 void sg::map::Map::Init()
 {
+    m_mapModelMatrix = ogl::math::Transform::CreateModelMatrix(
+        MAP_POSITION,
+        glm::vec3(0.0f),
+        glm::vec3(1.0f)
+    );
+
     CreateTiles();
     AddTileNeighbors();
     TilesToGpu();

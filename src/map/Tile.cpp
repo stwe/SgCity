@@ -16,15 +16,7 @@ sg::map::Tile::Tile(const float t_mapX, const float t_mapZ, const int t_mapIndex
 
 sg::map::Tile::~Tile() noexcept
 {
-    delete n;
-    delete s;
-    delete e;
-    delete w;
-
-    delete nw;
-    delete ne;
-    delete sw;
-    delete se;
+    // ...
 }
 
 //-------------------------------------------------

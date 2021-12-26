@@ -156,6 +156,11 @@ namespace sg::map
          */
         std::unique_ptr<ogl::resource::Texture> m_tileTexture;
 
+        /**
+         * The model matrix of the Map.
+         */
+        glm::mat4 m_mapModelMatrix{ glm::mat4(1.0f) };
+
         //-------------------------------------------------
         // Init
         //-------------------------------------------------

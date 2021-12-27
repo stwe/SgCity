@@ -154,7 +154,7 @@ namespace sg::map
         Tile& operator=(const Tile& t_other) = delete;
         Tile& operator=(Tile&& t_other) noexcept = delete;
 
-        ~Tile() noexcept;
+        virtual ~Tile() noexcept;
 
         //-------------------------------------------------
         // Raise / lower tile

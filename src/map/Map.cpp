@@ -155,10 +155,11 @@ void sg::map::Map::CreateTiles()
     {
         for (auto x{ 0 }; x < m_tileCount; ++x)
         {
+            auto index{ z * m_tileCount + x };
             auto tile{ std::make_unique<Tile>(
                 static_cast<float>(x),
                 static_cast<float>(z),
-                z * m_tileCount + x
+                index
             ) };
 
             // todo: temp code

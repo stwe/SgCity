@@ -3,15 +3,9 @@
 #include "Application.h"
 #include "Log.h"
 #include "ogl/OpenGL.h"
-#include "ogl/buffer/Vao.h"
-#include "ogl/resource/Texture.h"
-#include "ogl/resource/ShaderProgram.h"
 #include "ogl/resource/Model.h"
 #include "ogl/input/MouseInput.h"
-#include "ogl/input/PickingTexture.h"
 #include "map/Map.h"
-#include "map/Water.h"
-#include "map/RoadNetwork.h"
 
 //-------------------------------------------------
 // Ctors. / Dtor.
@@ -60,15 +54,6 @@ void sg::Application::Init()
     // create && init map tiles
     m_map = std::make_unique<map::Map>(TILE_COUNT);
 
-    // create && init water
-    m_water = std::make_unique<map::Water>(TILE_COUNT);
-
-    // create && init a tree model
-    m_treeModel = std::make_unique<ogl::resource::Model>("/home/steffen/CLionProjects/SgCity/resources/model/Tree_01/billboardmodel.obj");
-
-    // create && init road tiles
-    m_roadNetwork = std::make_unique<map::RoadNetwork>(*m_map);
-
     Log::SG_LOG_DEBUG("[Application::Init()] The application was successfully initialized.");
 }
 
@@ -101,12 +86,7 @@ void sg::Application::Input()
     // handle left mouse button
     if (ogl::input::MouseInput::GetInstance().IsLeftButtonPressed() && m_handleMouseEvent)
     {
-        // show tile index
-        auto tileIndex{ m_map->GetCurrentTileIdxUnderMouse() };
-        Log::SG_LOG_DEBUG("Tile index {}.", tileIndex);
-
-        // raise/lower tile and his neighbors
-        m_map->HandleTileUpdate(tileIndex, m_mapEditGui.raise);
+        m_map->Update(m_mapEditGui.raise);
 
         // do not run the event again
         m_handleMouseEvent = false;
@@ -166,13 +146,12 @@ void sg::Application::Render()
 
     // (2) render scene
     m_map->Render(m_window, m_camera);
-    m_roadNetwork->Render(m_window, m_camera);
+    //m_roadNetwork->Render(m_window, m_camera);
     //m_treeModel->Render(m_window, m_camera);
-    //m_water->Render(m_window, m_camera);
 
     // (3) render gui
     ogl::Window::ImGuiBegin();
-    //m_mapEditGui.Render();
+    m_mapEditGui.Render();
     ogl::Window::ImGuiEnd();
 
     EndFrame();

@@ -1,29 +1,8 @@
 #pragma once
 
-#include <vector>
 #include <memory>
 #include "ogl/Window.h"
 #include "ogl/camera/Camera.h"
-
-//-------------------------------------------------
-// Forward declarations
-//-------------------------------------------------
-
-namespace sg::ogl::buffer
-{
-    class Vao;
-}
-
-namespace sg::ogl::resource
-{
-    class ShaderProgram;
-    class Texture;
-}
-
-namespace sg::ogl::input
-{
-    class PickingTexture;
-}
 
 //-------------------------------------------------
 // Map
@@ -32,9 +11,19 @@ namespace sg::ogl::input
 namespace sg::map
 {
     /**
-     * Forward declaration class Tile.
+     * Forward declaration class WaterLayer.
      */
-    class Tile;
+    class WaterLayer;
+
+    /**
+     * Forward declaration class TerrainLayer.
+     */
+    class TerrainLayer;
+
+    /**
+     * Forward declaration class RoadsLayer.
+     */
+    class RoadsLayer;
 
     /**
      * Represents the Map.
@@ -42,15 +31,6 @@ namespace sg::map
     class Map
     {
     public:
-        //-------------------------------------------------
-        // Constants
-        //-------------------------------------------------
-
-        /**
-         * The position of the Map in world space.
-         */
-        static constexpr auto MAP_POSITION{ glm::vec3(0.0f) };
-
         //-------------------------------------------------
         // Ctors. / Dtor.
         //-------------------------------------------------
@@ -72,53 +52,12 @@ namespace sg::map
         ~Map() noexcept;
 
         //-------------------------------------------------
-        // Getter
-        //-------------------------------------------------
-
-        [[nodiscard]] const auto& GetTiles() const { return m_tiles; }
-
-        //-------------------------------------------------
         // Logic
         //-------------------------------------------------
 
-        /**
-         * Renders the Map in a Fbo.
-         *
-         * @param t_window The Window object.
-         * @param t_camera The Camera object.
-         */
-        void RenderForMousePicking(const ogl::Window& t_window, const ogl::camera::Camera& t_camera);
-
-        /**
-         * Renders the Map.
-         *
-         * @param t_window The Window object.
-         * @param t_camera The Camera object.
-         */
+        void Update(bool t_raise);
+        void RenderForMousePicking(const ogl::Window& t_window, const ogl::camera::Camera& t_camera) const;
         void Render(const ogl::Window& t_window, const ogl::camera::Camera& t_camera) const;
-
-        //-------------------------------------------------
-        // Tiles
-        //-------------------------------------------------
-
-        /**
-         * Get the mapIndex of the Tile under current mouse position.
-         *
-         * @return The mapIndex.
-         */
-        [[nodiscard]] int GetCurrentTileIdxUnderMouse() const;
-
-        //-------------------------------------------------
-        // Raise / lower terrain
-        //-------------------------------------------------
-
-        /**
-         * Raise and lower the terrain.
-         *
-         * @param t_mapIndex The map index of the Tile to be raised/lowered.
-         * @param t_raise True if raise.
-         */
-        void HandleTileUpdate(int t_mapIndex, bool t_raise);
 
     protected:
 
@@ -133,39 +72,19 @@ namespace sg::map
         int m_tileCount{ 0 };
 
         /**
-         * An array holding the Tile objects.
+         * The water surface.
          */
-        std::vector<std::unique_ptr<Tile>> m_tiles;
+        std::unique_ptr<WaterLayer> m_waterLayer;
 
         /**
-         * A Vao object which contains a Vbo with map vertex data.
+         * The Terrain Layer.
          */
-        std::unique_ptr<ogl::buffer::Vao> m_mapVao;
+        std::unique_ptr<TerrainLayer> m_terrainLayer;
 
         /**
-         * A ShaderProgram object used to draw the Map.
+         * Roads as a new Layer.
          */
-        std::unique_ptr<ogl::resource::ShaderProgram> m_mapShaderProgram;
-
-        /**
-         * A ShaderProgram object used to draw the Map for mouse picking.
-         */
-        std::unique_ptr<ogl::resource::ShaderProgram> m_pickingShaderProgram;
-
-        /**
-         * An object holding the Fbo for mouse picking.
-         */
-        std::unique_ptr<ogl::input::PickingTexture> m_pickingTexture;
-
-        /**
-         * The texture for each Tile.
-         */
-        std::unique_ptr<ogl::resource::Texture> m_tileTexture;
-
-        /**
-         * The model matrix of the Map.
-         */
-        glm::mat4 m_mapModelMatrix{ glm::mat4(1.0f) };
+        std::unique_ptr<RoadsLayer> m_roadsLayer;
 
         //-------------------------------------------------
         // Init
@@ -175,40 +94,6 @@ namespace sg::map
          * Initializes the Map.
          */
         void Init();
-
-        /**
-         * Create all Tiles.
-         */
-        void CreateTiles();
-
-        /**
-         * Finds the neighbors for every Tile.
-         */
-        void AddTileNeighbors();
-
-        /**
-         * Stores vertices of all Tiles in a Vbo.
-         */
-        void TilesToGpu();
-
-        /**
-         * Initializes Shader and Textures.
-         */
-        void InitResources();
-
-        //-------------------------------------------------
-        // Helper
-        //-------------------------------------------------
-
-        void UpdateNorthNeighbor(Tile& t_tile);
-        void UpdateSouthNeighbor(Tile& t_tile);
-        void UpdateWestNeighbor(Tile& t_tile);
-        void UpdateEastNeighbor(Tile& t_tile);
-
-        void UpdateNorthWestNeighbor(Tile& t_tile);
-        void UpdateNorthEastNeighbor(Tile& t_tile);
-        void UpdateSouthWestNeighbor(Tile& t_tile);
-        void UpdateSouthEastNeighbor(Tile& t_tile);
 
         //-------------------------------------------------
         // Clean up

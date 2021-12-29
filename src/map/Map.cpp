@@ -1,14 +1,8 @@
-#include <glm/gtc/matrix_inverse.hpp>
 #include "Map.h"
-#include "Tile.h"
 #include "Log.h"
-#include "ogl/OpenGL.h"
-#include "ogl/buffer/Vao.h"
-#include "ogl/resource/ShaderProgram.h"
-#include "ogl/resource/Texture.h"
-#include "ogl/math/Transform.h"
-#include "ogl/input/PickingTexture.h"
-#include "ogl/input/MouseInput.h"
+#include "WaterLayer.h"
+#include "TerrainLayer.h"
+#include "RoadsLayer.h"
 
 //-------------------------------------------------
 // Ctors. / Dtor.
@@ -18,14 +12,12 @@ sg::map::Map::Map(const int t_tileCount)
     : m_tileCount{ t_tileCount }
 {
     Log::SG_LOG_DEBUG("[Map::Map()] Create Map.");
-
     Init();
 }
 
 sg::map::Map::~Map() noexcept
 {
     Log::SG_LOG_DEBUG("[Map::~Map()] Destruct Map.");
-
     CleanUp();
 }
 
@@ -33,98 +25,20 @@ sg::map::Map::~Map() noexcept
 // Logic
 //-------------------------------------------------
 
-void sg::map::Map::RenderForMousePicking(const sg::ogl::Window& t_window, const sg::ogl::camera::Camera& t_camera)
+void sg::map::Map::Update(bool t_raise)
 {
-    if (!m_pickingTexture)
-    {
-        m_pickingTexture = std::make_unique<ogl::input::PickingTexture>();
-        m_pickingTexture->Init(t_window.GetWidth(), t_window.GetHeight());
-    }
+    m_terrainLayer->Update(t_raise);
+}
 
-    m_pickingTexture->EnableWriting();
-
-    ogl::OpenGL::SetClearColor(1.0f, 1.0f, 1.0f, 1.0f);
-    ogl::OpenGL::Clear();
-
-    m_mapVao->Bind();
-    m_pickingShaderProgram->Bind();
-
-    m_pickingShaderProgram->SetUniform("model", m_mapModelMatrix);
-    m_pickingShaderProgram->SetUniform("view", t_camera.GetViewMatrix());
-    m_pickingShaderProgram->SetUniform("projection", t_window.GetProjectionMatrix());
-
-    m_mapVao->DrawPrimitives();
-
-    m_pickingShaderProgram->Unbind();
-    m_mapVao->Unbind();
-
-    m_pickingTexture->DisableWriting();
+void sg::map::Map::RenderForMousePicking(const sg::ogl::Window& t_window, const sg::ogl::camera::Camera& t_camera) const
+{
+    m_terrainLayer->RenderForMousePicking(t_window, t_camera);
 }
 
 void sg::map::Map::Render(const ogl::Window& t_window, const ogl::camera::Camera& t_camera) const
 {
-    ogl::OpenGL::EnableFaceCulling();
-
-    m_mapVao->Bind();
-    m_mapShaderProgram->Bind();
-
-    m_mapShaderProgram->SetUniform("model", m_mapModelMatrix);
-    m_mapShaderProgram->SetUniform("view", t_camera.GetViewMatrix());
-    m_mapShaderProgram->SetUniform("projection", t_window.GetProjectionMatrix());
-
-    const auto mv{ t_camera.GetViewMatrix() * m_mapModelMatrix };
-    const auto n{ glm::inverseTranspose(glm::mat3(mv)) };
-    m_mapShaderProgram->SetUniform("normalMatrix", n);
-
-    m_tileTexture->BindForReading(GL_TEXTURE0);
-    m_mapShaderProgram->SetUniform("diffuseMap", 0);
-
-    m_mapVao->DrawPrimitives();
-
-    m_mapShaderProgram->Unbind();
-    m_mapVao->Unbind();
-
-    ogl::OpenGL::DisableFaceCulling();
-}
-
-//-------------------------------------------------
-// Tiles
-//-------------------------------------------------
-
-int sg::map::Map::GetCurrentTileIdxUnderMouse() const
-{
-    return m_pickingTexture->ReadMapIndex(
-        ogl::input::MouseInput::GetInstance().GetX(),
-        ogl::input::MouseInput::GetInstance().GetY());
-}
-
-//-------------------------------------------------
-// Raise / lower terrain
-//-------------------------------------------------
-
-void sg::map::Map::HandleTileUpdate(const int t_mapIndex, const bool t_raise)
-{
-    if (t_mapIndex < 0 || t_mapIndex > m_tiles.size() - 1)
-    {
-        return;
-    }
-
-    const auto& tile{ m_tiles[t_mapIndex] };
-
-    t_raise ? tile->Raise() : tile->Lower();
-
-    tile->UpdateNormal();
-    tile->VerticesToGpu(*m_mapVao);
-
-    UpdateNorthNeighbor(*tile);
-    UpdateSouthNeighbor(*tile);
-    UpdateEastNeighbor(*tile);
-    UpdateWestNeighbor(*tile);
-
-    UpdateNorthEastNeighbor(*tile);
-    UpdateNorthWestNeighbor(*tile);
-    UpdateSouthEastNeighbor(*tile);
-    UpdateSouthWestNeighbor(*tile);
+    m_terrainLayer->Render(t_window, t_camera);
+    m_waterLayer->Render(t_window, t_camera);
 }
 
 //-------------------------------------------------
@@ -135,288 +49,13 @@ void sg::map::Map::Init()
 {
     Log::SG_LOG_DEBUG("[Map::Init()] Initialize the map.");
 
-    m_mapModelMatrix = ogl::math::Transform::CreateModelMatrix(
-        MAP_POSITION,
-        glm::vec3(0.0f),
-        glm::vec3(1.0f)
-    );
+    m_waterLayer = std::make_unique<WaterLayer>(m_tileCount);
+    m_terrainLayer = std::make_unique<TerrainLayer>(m_tileCount);
 
-    CreateTiles();
-    AddTileNeighbors();
-    TilesToGpu();
-    InitResources();
+    // todo: use same tiles as terrain
+    m_roadsLayer = std::make_unique<RoadsLayer>(m_terrainLayer->tiles);
 
     Log::SG_LOG_DEBUG("[Map::Init()] The map was successfully initialized.");
-}
-
-void sg::map::Map::CreateTiles()
-{
-    for (auto z{ 0 }; z < m_tileCount; ++z)
-    {
-        for (auto x{ 0 }; x < m_tileCount; ++x)
-        {
-            auto index{ z * m_tileCount + x };
-            auto tile{ std::make_unique<Tile>(
-                static_cast<float>(x),
-                static_cast<float>(z),
-                index
-            ) };
-
-            // todo: temp code
-            if (x == 1)
-            {
-                tile->type = Tile::TileType::TRAFFIC;
-            }
-
-            m_tiles.push_back(std::move(tile));
-        }
-    }
-}
-
-void sg::map::Map::AddTileNeighbors()
-{
-    for (auto z{ 0 }; z < m_tileCount; ++z)
-    {
-        for (auto x{ 0 }; x < m_tileCount; ++x)
-        {
-            const auto i{ static_cast<int>(z) * m_tileCount + static_cast<int>(x) };
-
-            // regular grid
-            if (z > 0)
-            {
-                m_tiles[i]->n = static_cast<int>(z - 1) * m_tileCount + static_cast<int>(x);
-            }
-
-            if (z < m_tileCount - 1)
-            {
-                m_tiles[i]->s = static_cast<int>(z + 1) * m_tileCount + static_cast<int>(x);
-            }
-
-            if (x > 0)
-            {
-                m_tiles[i]->w = static_cast<int>(z) * m_tileCount + static_cast<int>(x - 1);
-            }
-
-            if (x < m_tileCount - 1)
-            {
-                m_tiles[i]->e = static_cast<int>(z) * m_tileCount + static_cast<int>(x + 1);
-            }
-
-            // connect diagonally
-            if (z > 0 && x < m_tileCount - 1)
-            {
-                m_tiles[i]->ne = static_cast<int>(z - 1) * m_tileCount + static_cast<int>(x + 1);
-            }
-
-            if (z > 0 && x > 0)
-            {
-                m_tiles[i]->nw = static_cast<int>(z - 1) * m_tileCount + static_cast<int>(x - 1);
-            }
-
-            if (z < m_tileCount - 1 && x > 0)
-            {
-                m_tiles[i]->sw = static_cast<int>(z + 1) * m_tileCount + static_cast<int>(x - 1);
-            }
-
-            if (z < m_tileCount - 1 && x < m_tileCount - 1)
-            {
-                m_tiles[i]->se = static_cast<int>(z + 1) * m_tileCount + static_cast<int>(x + 1);
-            }
-        }
-    }
-}
-
-void sg::map::Map::TilesToGpu()
-{
-    m_mapVao = std::make_unique<ogl::buffer::Vao>();
-    m_mapVao->CreateEmptyDynamicVbo(m_tileCount * m_tileCount * Tile::BYTES_PER_TILE, m_tileCount * m_tileCount * Tile::VERTICES_PER_TILE);
-
-    for (const auto& tile : m_tiles)
-    {
-        tile->VerticesToGpu(*m_mapVao);
-    }
-}
-
-void sg::map::Map::InitResources()
-{
-    // shader
-
-    m_mapShaderProgram = std::make_unique<ogl::resource::ShaderProgram>("/home/steffen/CLionProjects/SgCity/resources/shader/map");
-    m_mapShaderProgram->Load();
-
-    m_pickingShaderProgram = std::make_unique<ogl::resource::ShaderProgram>("/home/steffen/CLionProjects/SgCity/resources/shader/picking");
-    m_pickingShaderProgram->Load();
-
-    // texture
-
-    m_tileTexture = std::make_unique<ogl::resource::Texture>("/home/steffen/CLionProjects/SgCity/resources/texture/grass.jpg");
-    m_tileTexture->Load();
-}
-
-//-------------------------------------------------
-// Helper
-//-------------------------------------------------
-
-void sg::map::Map::UpdateNorthWestNeighbor(Tile& t_tile)
-{
-    if (t_tile.nw != Tile::NO_NEIGHBOR)
-    {
-        const auto& tile{ m_tiles[t_tile.nw] };
-        auto& vertices{ tile->vertices };
-
-        vertices[Tile::BR_1_Y] += t_tile.vertices[Tile::TL_1_Y] - vertices[Tile::BR_1_Y];
-        vertices[Tile::BR_2_Y] += t_tile.vertices[Tile::TL_2_Y] - vertices[Tile::BR_2_Y];
-
-        tile->UpdateNormal();
-        tile->VerticesToGpu(*m_mapVao);
-    }
-}
-
-void sg::map::Map::UpdateNorthEastNeighbor(Tile& t_tile)
-{
-    if (t_tile.ne != Tile::NO_NEIGHBOR)
-    {
-        const auto& tile{ m_tiles[t_tile.ne] };
-        auto& vertices{ tile->vertices };
-
-        vertices[Tile::BL_1_Y] += t_tile.vertices[Tile::TR_2_Y] - vertices[Tile::BL_1_Y];
-
-        tile->UpdateNormal();
-        tile->VerticesToGpu(*m_mapVao);
-    }
-}
-
-void sg::map::Map::UpdateSouthWestNeighbor(Tile& t_tile)
-{
-    if (t_tile.sw != Tile::NO_NEIGHBOR)
-    {
-        const auto& tile{ m_tiles[t_tile.sw] };
-        auto& vertices{ tile->vertices };
-
-        vertices[Tile::TR_2_Y] += t_tile.vertices[Tile::BL_1_Y] - vertices[Tile::TR_2_Y];
-
-        tile->UpdateNormal();
-        tile->VerticesToGpu(*m_mapVao);
-    }
-}
-
-void sg::map::Map::UpdateSouthEastNeighbor(sg::map::Tile& t_tile)
-{
-    if (t_tile.se != Tile::NO_NEIGHBOR)
-    {
-        const auto& tile{ m_tiles[t_tile.se] };
-        auto& vertices{ tile->vertices };
-
-        vertices[Tile::TL_1_Y] += t_tile.vertices[Tile::BR_1_Y] - vertices[Tile::TL_1_Y];
-        vertices[Tile::TL_2_Y] += t_tile.vertices[Tile::BR_2_Y] - vertices[Tile::TL_2_Y];
-
-        tile->UpdateNormal();
-        tile->VerticesToGpu(*m_mapVao);
-    }
-}
-
-void sg::map::Map::UpdateNorthNeighbor(Tile& t_tile)
-{
-    if (t_tile.n != Tile::NO_NEIGHBOR)
-    {
-        const auto& tile{ m_tiles[t_tile.n] };
-        auto& vertices{ tile->vertices };
-
-        /*
-        tl.      tr
-         |  .  2
-         | 1   .
-        bl------ br   Raise
-
-        tl.      tr
-         |  .  2
-         | 1   .
-        bl------ br
-        */
-
-        vertices[Tile::BL_1_Y] += t_tile.vertices[Tile::TL_1_Y] - vertices[Tile::BL_1_Y];
-        vertices[Tile::BR_1_Y] += t_tile.vertices[Tile::TR_2_Y] - vertices[Tile::BR_1_Y];
-
-        vertices[Tile::BR_2_Y] += t_tile.vertices[Tile::TR_2_Y] - vertices[Tile::BR_2_Y];
-
-        tile->UpdateNormal();
-        tile->VerticesToGpu(*m_mapVao);
-    }
-}
-
-void sg::map::Map::UpdateSouthNeighbor(Tile& t_tile)
-{
-    if (t_tile.s != Tile::NO_NEIGHBOR)
-    {
-        const auto& tile{ m_tiles[t_tile.s] };
-        auto& vertices{ tile->vertices };
-
-        /*
-        tl.      tr
-         |  .  2
-         | 1   .
-        bl------ br
-
-        tl.      tr
-         |  .  2
-         | 1   .
-        bl------ br   Raise
-        */
-
-        vertices[Tile::TL_1_Y] += t_tile.vertices[Tile::BL_1_Y] - vertices[Tile::TL_1_Y];
-
-        vertices[Tile::TL_2_Y] += t_tile.vertices[Tile::BL_1_Y] - vertices[Tile::TL_2_Y];
-        vertices[Tile::TR_2_Y] += t_tile.vertices[Tile::BR_2_Y] - vertices[Tile::TR_2_Y];
-
-        tile->UpdateNormal();
-        tile->VerticesToGpu(*m_mapVao);
-    }
-}
-
-void sg::map::Map::UpdateEastNeighbor(Tile& t_tile)
-{
-    if (t_tile.e != Tile::NO_NEIGHBOR)
-    {
-        const auto& tile{ m_tiles[t_tile.e] };
-        auto& vertices{ tile->vertices };
-
-        /*
-        tl.      tr   tl
-         |  .  2            raise
-         | 1   .
-        bl------ br   bl
-
-        tl.      tr
-         |  .  2
-         | 1   .
-        bl------ br   Raise
-        */
-
-        vertices[Tile::TL_1_Y] += t_tile.vertices[Tile::TR_2_Y] - vertices[Tile::TL_1_Y];
-        vertices[Tile::BL_1_Y] += t_tile.vertices[Tile::BR_1_Y] - vertices[Tile::BL_1_Y];
-
-        vertices[Tile::TL_2_Y] += t_tile.vertices[Tile::TR_2_Y] - vertices[Tile::TL_2_Y];
-
-        tile->UpdateNormal();
-        tile->VerticesToGpu(*m_mapVao);
-    }
-}
-
-void sg::map::Map::UpdateWestNeighbor(Tile& t_tile)
-{
-    if (t_tile.w != Tile::NO_NEIGHBOR)
-    {
-        const auto& tile{ m_tiles[t_tile.w] };
-        auto& vertices{ tile->vertices };
-
-        vertices[Tile::BR_1_Y] += t_tile.vertices[Tile::BL_1_Y] - vertices[Tile::BR_1_Y];
-
-        vertices[Tile::BR_2_Y] += t_tile.vertices[Tile::BL_1_Y] - vertices[Tile::BR_2_Y];
-        vertices[Tile::TR_2_Y] += t_tile.vertices[Tile::TL_2_Y] - vertices[Tile::TR_2_Y];
-
-        tile->UpdateNormal();
-        tile->VerticesToGpu(*m_mapVao);
-    }
 }
 
 //-------------------------------------------------

@@ -12,13 +12,6 @@
 namespace sg::map
 {
     class Map;
-    class Water;
-    class RoadNetwork;
-}
-
-namespace sg::ogl::resource
-{
-    class Model;
 }
 
 //-------------------------------------------------
@@ -84,21 +77,6 @@ namespace sg
          * The map from tiles.
          */
         std::unique_ptr<map::Map> m_map;
-
-        /**
-         * The water surface.
-         */
-        std::unique_ptr<map::Water> m_water;
-
-        /**
-         * A tree obj model.
-         */
-        std::unique_ptr<ogl::resource::Model> m_treeModel;
-
-        /**
-         * The roads.
-         */
-        std::unique_ptr<map::RoadNetwork> m_roadNetwork;
 
         /**
          * Render widgets to edit the map.

@@ -82,6 +82,7 @@ void sg::map::RoadNetwork::CreateTiles(const sg::map::Map& t_map)
     std::vector<float> roadNetworkVertices;
 
     auto i{ 0 };
+    /*
     for (auto& tile : t_map.GetTiles())
     {
         if (tile->type == Tile::TileType::TRAFFIC)
@@ -127,6 +128,7 @@ void sg::map::RoadNetwork::CreateTiles(const sg::map::Map& t_map)
             i++;
         }
     }
+    */
 }
 
 void sg::map::RoadNetwork::TilesToGpu()

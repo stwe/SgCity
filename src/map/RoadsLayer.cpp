@@ -28,6 +28,31 @@ sg::map::RoadsLayer::~RoadsLayer() noexcept
 // Logic
 //-------------------------------------------------
 
+void sg::map::RoadsLayer::Update(sg::gui::MapEditGui::Action t_action, const int t_tileIndex)
+{
+    Log::SG_LOG_DEBUG("[RoadsLayer::Update()] Update Tile to a road {}.", t_tileIndex);
+
+    const auto& tile{ *tiles[t_tileIndex] };
+    auto i = m_roadTiles.size();
+    m_roadTiles.push_back(std::move(CreateRoadTile(tile, i)));
+
+    if (!vao)
+    {
+        vao = std::make_unique<ogl::buffer::Vao>();
+        vao->CreateEmptyDynamicVbo(tileCount * tileCount * Tile::BYTES_PER_TILE, static_cast<int>(m_roadTiles.size()) * Tile::VERTICES_PER_TILE);
+    }
+
+    if (vao)
+    {
+        for (const auto& roadTile : m_roadTiles)
+        {
+            roadTile->VerticesToGpu(*vao);
+        }
+
+        vao->drawCount = static_cast<int>(m_roadTiles.size()) * Tile::VERTICES_PER_TILE;
+    }
+}
+
 void sg::map::RoadsLayer::Render(const sg::ogl::Window& t_window, const sg::ogl::camera::Camera& t_camera) const
 {
     if (!vao)
@@ -92,51 +117,9 @@ void sg::map::RoadsLayer::CreateRoadTiles()
     auto i{ 0 };
     for (const auto& tile : tiles)
     {
-        if (tile->mapX == 1 && tile->mapZ == 1)
-        {
-            tile->type = Tile::TileType::TRAFFIC;
-        }
-
         if (tile->type == Tile::TileType::TRAFFIC)
         {
-            auto roadTile{ std::make_unique<RoadTile>() };
-            roadTile->vertices = tile->vertices;
-
-            // y
-            roadTile->vertices[Tile::TL_1_Y] += 0.01f;
-            roadTile->vertices[Tile::BL_1_Y] += 0.01f;
-            roadTile->vertices[Tile::BR_1_Y] += 0.01f;
-
-            roadTile->vertices[Tile::TL_2_Y] += 0.01f;
-            roadTile->vertices[Tile::BR_2_Y] += 0.01f;
-            roadTile->vertices[Tile::TR_2_Y] += 0.01f;
-
-            // uv
-            roadTile->vertices[4] = 1.0f / 4.0f;
-            roadTile->vertices[25] = 1.0f / 4.0f;
-
-            roadTile->vertices[37] = 1.0f / 4.0f;
-            roadTile->vertices[47] = 1.0f / 4.0f;
-            roadTile->vertices[58] = 1.0f / 4.0f;
-            roadTile->vertices[59] = 1.0f / 4.0f;
-
-            roadTile->mapX = tile->mapX;
-            roadTile->mapZ = tile->mapZ;
-            roadTile->mapIndex = i;
-
-            roadTile->n = tile->n;
-            roadTile->s = tile->s;
-            roadTile->e = tile->e;
-            roadTile->w = tile->w;
-            roadTile->nw = tile->nw;
-            roadTile->ne = tile->ne;
-            roadTile->sw = tile->sw;
-            roadTile->se = tile->se;
-
-            roadTile->type = Tile::TileType::TRAFFIC;
-
-            m_roadTiles.push_back(std::move(roadTile));
-
+            m_roadTiles.push_back(std::move(CreateRoadTile(*tile, i)));
             i++;
         }
     }
@@ -156,4 +139,49 @@ void sg::map::RoadsLayer::RoadTilesToGpu()
     {
         roadTile->VerticesToGpu(*vao);
     }
+}
+
+//-------------------------------------------------
+// Helper
+//-------------------------------------------------
+
+std::unique_ptr<sg::map::RoadTile> sg::map::RoadsLayer::CreateRoadTile(const sg::map::Tile& t_tile, const int t_index)
+{
+    auto roadTile{ std::make_unique<RoadTile>() };
+    roadTile->vertices = t_tile.vertices;
+
+    // y
+    roadTile->vertices[Tile::TL_1_Y] += 0.01f;
+    roadTile->vertices[Tile::BL_1_Y] += 0.01f;
+    roadTile->vertices[Tile::BR_1_Y] += 0.01f;
+
+    roadTile->vertices[Tile::TL_2_Y] += 0.01f;
+    roadTile->vertices[Tile::BR_2_Y] += 0.01f;
+    roadTile->vertices[Tile::TR_2_Y] += 0.01f;
+
+    // uv
+    roadTile->vertices[4] = 1.0f / 4.0f;
+    roadTile->vertices[25] = 1.0f / 4.0f;
+
+    roadTile->vertices[37] = 1.0f / 4.0f;
+    roadTile->vertices[47] = 1.0f / 4.0f;
+    roadTile->vertices[58] = 1.0f / 4.0f;
+    roadTile->vertices[59] = 1.0f / 4.0f;
+
+    roadTile->mapX = t_tile.mapX;
+    roadTile->mapZ = t_tile.mapZ;
+    roadTile->mapIndex = t_index;
+
+    roadTile->n = t_tile.n;
+    roadTile->s = t_tile.s;
+    roadTile->e = t_tile.e;
+    roadTile->w = t_tile.w;
+    roadTile->nw = t_tile.nw;
+    roadTile->ne = t_tile.ne;
+    roadTile->sw = t_tile.sw;
+    roadTile->se = t_tile.se;
+
+    roadTile->type = Tile::TileType::TRAFFIC;
+
+    return roadTile;
 }

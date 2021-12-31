@@ -30,12 +30,12 @@ sg::map::TerrainLayer::~TerrainLayer() noexcept
 // Logic
 //-------------------------------------------------
 
-void sg::map::TerrainLayer::Update(gui::MapEditGui::Action t_action)
+int sg::map::TerrainLayer::Update(gui::MapEditGui::Action t_action)
 {
     auto index{ GetCurrentTileIdxUnderMouse() };
     if (index < 0 || index > tiles.size() - 1)
     {
-        return;
+        return -1; // todo: constant
     }
 
     auto& tile{ *tiles[index] };
@@ -43,7 +43,7 @@ void sg::map::TerrainLayer::Update(gui::MapEditGui::Action t_action)
     if (t_action == gui::MapEditGui::Action::SET_TRAFFIC)
     {
         tile.type = Tile::TileType::TRAFFIC;
-        return;
+        return index;
     }
 
     if (t_action == gui::MapEditGui::Action::RAISE)
@@ -68,6 +68,8 @@ void sg::map::TerrainLayer::Update(gui::MapEditGui::Action t_action)
     UpdateNorthWestNeighbor(tile);
     UpdateSouthEastNeighbor(tile);
     UpdateSouthWestNeighbor(tile);
+
+    return index;
 }
 
 void sg::map::TerrainLayer::RenderForMousePicking(const sg::ogl::Window& t_window, const sg::ogl::camera::Camera& t_camera)

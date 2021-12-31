@@ -2,6 +2,7 @@
 
 #include "Layer.h"
 #include "RoadTile.h"
+#include "gui/MapEditGui.h"
 
 //-------------------------------------------------
 // Forward declarations
@@ -39,6 +40,7 @@ namespace sg::map
         // Logic
         //-------------------------------------------------
 
+        void Update(gui::MapEditGui::Action t_action, int t_tileIndex);
         void Render(const ogl::Window& t_window, const ogl::camera::Camera& t_camera) const override;
 
     protected:
@@ -67,11 +69,20 @@ namespace sg::map
          */
         void Init();
 
+        /**
+         * Create all RoadTiles.
+         */
         void CreateRoadTiles();
 
         /**
          * Stores vertices of all RoadTiles in a Vbo.
          */
         void RoadTilesToGpu();
+
+        //-------------------------------------------------
+        // Helper
+        //-------------------------------------------------
+
+        static std::unique_ptr<RoadTile> CreateRoadTile(const Tile& t_tile, int t_index);
     };
 }

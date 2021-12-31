@@ -29,7 +29,14 @@ sg::map::Map::~Map() noexcept
 
 void sg::map::Map::Update(gui::MapEditGui::Action t_action)
 {
-    m_terrainLayer->Update(t_action);
+    // terrain layer handles all actions - returns the index of the clicked tile
+    const auto idx{ m_terrainLayer->Update(t_action) };
+
+    // add a traffic tile if action: SET_TRAFFIC
+    if (idx != INVALID_TILE_INDEX && t_action == gui::MapEditGui::Action::SET_TRAFFIC)
+    {
+        m_roadsLayer->Update(t_action, idx);
+    }
 }
 
 void sg::map::Map::RenderForMousePicking(const sg::ogl::Window& t_window, const sg::ogl::camera::Camera& t_camera) const

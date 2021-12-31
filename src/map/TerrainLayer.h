@@ -44,7 +44,7 @@ namespace sg::map
         // Logic
         //-------------------------------------------------
 
-        void Update(gui::MapEditGui::Action t_action);
+        int Update(gui::MapEditGui::Action t_action);
         void RenderForMousePicking(const ogl::Window& t_window, const ogl::camera::Camera& t_camera);
         void Render(const ogl::Window& t_window, const ogl::camera::Camera& t_camera) const override;
 

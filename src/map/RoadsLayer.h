@@ -3,6 +3,15 @@
 #include "Layer.h"
 
 //-------------------------------------------------
+// Forward declarations
+//-------------------------------------------------
+
+namespace sg::ogl::resource
+{
+    class Texture;
+}
+
+//-------------------------------------------------
 // RoadsLayer
 //-------------------------------------------------
 
@@ -16,7 +25,7 @@ namespace sg::map
         //-------------------------------------------------
 
         RoadsLayer() = delete;
-        explicit RoadsLayer(std::vector<std::shared_ptr<Tile>> t_tiles);
+        RoadsLayer(int t_tileCount, std::vector<std::shared_ptr<Tile>> t_tiles);
 
         RoadsLayer(const RoadsLayer& t_other) = delete;
         RoadsLayer(RoadsLayer&& t_other) noexcept = delete;
@@ -35,9 +44,26 @@ namespace sg::map
 
     private:
         //-------------------------------------------------
+        // Member
+        //-------------------------------------------------
+
+        /**
+         * The roads texture atlas.
+         */
+        std::unique_ptr<ogl::resource::Texture> m_roadsTexture;
+
+        //-------------------------------------------------
         // Init
         //-------------------------------------------------
 
+        /**
+         * Initializes the class.
+         */
         void Init();
+
+        /**
+         * Stores vertices of all Tiles in a Vbo.
+         */
+        void TilesToGpu();
     };
 }

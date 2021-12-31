@@ -12,12 +12,14 @@ sg::map::Map::Map(const int t_tileCount)
     : m_tileCount{ t_tileCount }
 {
     Log::SG_LOG_DEBUG("[Map::Map()] Create Map.");
+
     Init();
 }
 
 sg::map::Map::~Map() noexcept
 {
     Log::SG_LOG_DEBUG("[Map::~Map()] Destruct Map.");
+
     CleanUp();
 }
 
@@ -39,6 +41,7 @@ void sg::map::Map::Render(const ogl::Window& t_window, const ogl::camera::Camera
 {
     m_terrainLayer->Render(t_window, t_camera);
     m_waterLayer->Render(t_window, t_camera);
+    m_roadsLayer->Render(t_window, t_camera);
 }
 
 //-------------------------------------------------
@@ -51,9 +54,7 @@ void sg::map::Map::Init()
 
     m_waterLayer = std::make_unique<WaterLayer>(m_tileCount);
     m_terrainLayer = std::make_unique<TerrainLayer>(m_tileCount);
-
-    // todo: use same tiles as terrain
-    m_roadsLayer = std::make_unique<RoadsLayer>(m_terrainLayer->tiles);
+    m_roadsLayer = std::make_unique<RoadsLayer>(m_tileCount, m_terrainLayer->tiles);
 
     Log::SG_LOG_DEBUG("[Map::Init()] The map was successfully initialized.");
 }

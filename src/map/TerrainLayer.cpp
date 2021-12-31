@@ -13,11 +13,11 @@
 // Ctors. / Dtor.
 //-------------------------------------------------
 
-sg::map::TerrainLayer::TerrainLayer(int t_tileCount)
+sg::map::TerrainLayer::TerrainLayer(const int t_tileCount)
+    : Layer(t_tileCount)
 {
-    tileCount = t_tileCount;
-
     Log::SG_LOG_DEBUG("[TerrainLayer::TerrainLayer()] Create TerrainLayer.");
+
     Init();
 }
 

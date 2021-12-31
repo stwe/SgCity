@@ -9,11 +9,11 @@
 // Ctors. / Dtor.
 //-------------------------------------------------
 
-sg::map::WaterLayer::WaterLayer(int t_tileCount)
+sg::map::WaterLayer::WaterLayer(const int t_tileCount)
+    : Layer(t_tileCount)
 {
     Log::SG_LOG_DEBUG("[WaterLayer::WaterLayer()] Create WaterLayer.");
 
-    tileCount = t_tileCount;
     Init();
 }
 

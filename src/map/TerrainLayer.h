@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Layer.h"
+#include "gui/MapEditGui.h"
 
 //-------------------------------------------------
 // Forward declarations
@@ -43,9 +44,20 @@ namespace sg::map
         // Logic
         //-------------------------------------------------
 
-        void Update(bool t_raise);
+        void Update(gui::MapEditGui::Action t_action);
         void RenderForMousePicking(const ogl::Window& t_window, const ogl::camera::Camera& t_camera);
         void Render(const ogl::Window& t_window, const ogl::camera::Camera& t_camera) const override;
+
+        //-------------------------------------------------
+        // Mouse picking
+        //-------------------------------------------------
+
+        /**
+         * Get the mapIndex of the Tile under current mouse position.
+         *
+         * @return The mapIndex.
+         */
+        [[nodiscard]] int GetCurrentTileIdxUnderMouse() const;
 
     protected:
 
@@ -96,13 +108,6 @@ namespace sg::map
         //-------------------------------------------------
         // Helper
         //-------------------------------------------------
-
-        /**
-         * Get the mapIndex of the Tile under current mouse position.
-         *
-         * @return The mapIndex.
-         */
-        [[nodiscard]] int GetCurrentTileIdxUnderMouse() const;
 
         void UpdateNorthNeighbor(Tile& t_tile);
         void UpdateSouthNeighbor(Tile& t_tile);

@@ -27,9 +27,9 @@ sg::map::Map::~Map() noexcept
 // Logic
 //-------------------------------------------------
 
-void sg::map::Map::Update(bool t_raise)
+void sg::map::Map::Update(gui::MapEditGui::Action t_action)
 {
-    m_terrainLayer->Update(t_raise);
+    m_terrainLayer->Update(t_action);
 }
 
 void sg::map::Map::RenderForMousePicking(const sg::ogl::Window& t_window, const sg::ogl::camera::Camera& t_camera) const

@@ -30,31 +30,44 @@ sg::map::TerrainLayer::~TerrainLayer() noexcept
 // Logic
 //-------------------------------------------------
 
-void sg::map::TerrainLayer::Update(bool t_raise)
+void sg::map::TerrainLayer::Update(gui::MapEditGui::Action t_action)
 {
     auto index{ GetCurrentTileIdxUnderMouse() };
-
     if (index < 0 || index > tiles.size() - 1)
     {
         return;
     }
 
-    const auto& tile{ tiles[index] };
+    auto& tile{ *tiles[index] };
 
-    t_raise ? tile->Raise() : tile->Lower();
+    if (t_action == gui::MapEditGui::Action::SET_TRAFFIC)
+    {
+        tile.type = Tile::TileType::TRAFFIC;
+        return;
+    }
 
-    tile->UpdateNormal();
-    tile->VerticesToGpu(*vao);
+    if (t_action == gui::MapEditGui::Action::RAISE)
+    {
+        tile.Raise();
+    }
 
-    UpdateNorthNeighbor(*tile);
-    UpdateSouthNeighbor(*tile);
-    UpdateEastNeighbor(*tile);
-    UpdateWestNeighbor(*tile);
+    if (t_action == gui::MapEditGui::Action::LOWER)
+    {
+        tile.Lower();
+    }
 
-    UpdateNorthEastNeighbor(*tile);
-    UpdateNorthWestNeighbor(*tile);
-    UpdateSouthEastNeighbor(*tile);
-    UpdateSouthWestNeighbor(*tile);
+    tile.UpdateNormal();
+    tile.VerticesToGpu(*vao);
+
+    UpdateNorthNeighbor(tile);
+    UpdateSouthNeighbor(tile);
+    UpdateEastNeighbor(tile);
+    UpdateWestNeighbor(tile);
+
+    UpdateNorthEastNeighbor(tile);
+    UpdateNorthWestNeighbor(tile);
+    UpdateSouthEastNeighbor(tile);
+    UpdateSouthWestNeighbor(tile);
 }
 
 void sg::map::TerrainLayer::RenderForMousePicking(const sg::ogl::Window& t_window, const sg::ogl::camera::Camera& t_camera)
@@ -112,6 +125,17 @@ void sg::map::TerrainLayer::Render(const sg::ogl::Window& t_window, const sg::og
 }
 
 //-------------------------------------------------
+// Mouse picking
+//-------------------------------------------------
+
+int sg::map::TerrainLayer::GetCurrentTileIdxUnderMouse() const
+{
+    return m_pickingTexture->ReadMapIndex(
+        ogl::input::MouseInput::GetInstance().GetX(),
+        ogl::input::MouseInput::GetInstance().GetY());
+}
+
+//-------------------------------------------------
 // Init
 //-------------------------------------------------
 
@@ -150,7 +174,7 @@ void sg::map::TerrainLayer::CreateTiles()
         for (auto x{ 0 }; x < tileCount; ++x)
         {
             auto index{ z * tileCount + x };
-            auto tile{ std::make_unique<Tile>( // stored as shared_ptr
+            auto tile{ std::make_unique<Tile>( // is stored as shared_ptr later
                 static_cast<float>(x),
                 static_cast<float>(z),
                 index
@@ -228,13 +252,6 @@ void sg::map::TerrainLayer::TilesToGpu()
 //-------------------------------------------------
 // Helper
 //-------------------------------------------------
-
-int sg::map::TerrainLayer::GetCurrentTileIdxUnderMouse() const
-{
-    return m_pickingTexture->ReadMapIndex(
-        ogl::input::MouseInput::GetInstance().GetX(),
-        ogl::input::MouseInput::GetInstance().GetY());
-}
 
 void sg::map::TerrainLayer::UpdateNorthNeighbor(sg::map::Tile& t_tile)
 {

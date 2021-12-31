@@ -1,6 +1,7 @@
 #pragma once
 
 #include <memory>
+#include "gui/MapEditGui.h"
 #include "ogl/Window.h"
 #include "ogl/camera/Camera.h"
 
@@ -55,7 +56,7 @@ namespace sg::map
         // Logic
         //-------------------------------------------------
 
-        void Update(bool t_raise);
+        void Update(gui::MapEditGui::Action t_action);
         void RenderForMousePicking(const ogl::Window& t_window, const ogl::camera::Camera& t_camera) const;
         void Render(const ogl::Window& t_window, const ogl::camera::Camera& t_camera) const;
 

@@ -3,7 +3,6 @@
 #include <memory>
 #include "ogl/Window.h"
 #include "ogl/camera/Camera.h"
-#include "gui/MapEditGui.h"
 
 //-------------------------------------------------
 // Forward declarations
@@ -12,6 +11,11 @@
 namespace sg::map
 {
     class Map;
+}
+
+namespace sg::gui
+{
+    class MapEditGui;
 }
 
 //-------------------------------------------------
@@ -74,14 +78,14 @@ namespace sg
         ogl::camera::Camera m_camera{ glm::vec3(1.0f, 2.0f, 37.0f), -88.0f, -34.0f };
 
         /**
-         * The map from tiles.
+         * The Map object.
          */
         std::unique_ptr<map::Map> m_map;
 
         /**
-         * Render widgets to edit the map.
+         * Widgets to edit the map layers.
          */
-        gui::MapEditGui m_mapEditGui;
+        std::unique_ptr<gui::MapEditGui> m_mapEditGui;
 
         /**
          * So that events are only executed once.

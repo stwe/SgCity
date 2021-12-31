@@ -2,6 +2,10 @@
 #include "MapEditGui.h"
 #include "ogl/input/MouseInput.h"
 
+//-------------------------------------------------
+// Logic
+//-------------------------------------------------
+
 void sg::gui::MapEditGui::Render()
 {
     ImGui::Begin("Game Debug");
@@ -14,12 +18,17 @@ void sg::gui::MapEditGui::Render()
 
     if (ImGui::Button("Raise terrain"))
     {
-        raise = true;
+        action = Action::RAISE;
     }
 
     if (ImGui::Button("Lower terrain"))
     {
-        raise = false;
+        action = Action::LOWER;
+    }
+
+    if (ImGui::Button("Set Traffic type"))
+    {
+        action = Action::SET_TRAFFIC;
     }
 
     ImGui::End();

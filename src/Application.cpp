@@ -3,9 +3,9 @@
 #include "Application.h"
 #include "Log.h"
 #include "ogl/OpenGL.h"
-#include "ogl/resource/Model.h"
 #include "ogl/input/MouseInput.h"
 #include "map/Map.h"
+#include "gui/MapEditGui.h"
 
 //-------------------------------------------------
 // Ctors. / Dtor.
@@ -54,6 +54,9 @@ void sg::Application::Init()
     // create && init map tiles
     m_map = std::make_unique<map::Map>(TILE_COUNT);
 
+    // create gui
+    m_mapEditGui = std::make_unique<gui::MapEditGui>();
+
     Log::SG_LOG_DEBUG("[Application::Init()] The application was successfully initialized.");
 }
 
@@ -86,7 +89,7 @@ void sg::Application::Input()
     // handle left mouse button
     if (ogl::input::MouseInput::GetInstance().IsLeftButtonPressed() && m_handleMouseEvent)
     {
-        m_map->Update(m_mapEditGui.raise);
+        m_map->Update(m_mapEditGui->action);
 
         // do not run the event again
         m_handleMouseEvent = false;
@@ -151,7 +154,7 @@ void sg::Application::Render()
 
     // (3) render gui
     ogl::Window::ImGuiBegin();
-    m_mapEditGui.Render();
+    m_mapEditGui->Render();
     ogl::Window::ImGuiEnd();
 
     EndFrame();

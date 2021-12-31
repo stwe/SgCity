@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Layer.h"
+#include "RoadTile.h"
 
 //-------------------------------------------------
 // Forward declarations
@@ -52,6 +53,11 @@ namespace sg::map
          */
         std::unique_ptr<ogl::resource::Texture> m_roadsTexture;
 
+        /**
+         * An array holding the RoadTile objects.
+         */
+        std::vector<std::shared_ptr<RoadTile>> m_roadTiles;
+
         //-------------------------------------------------
         // Init
         //-------------------------------------------------
@@ -61,9 +67,11 @@ namespace sg::map
          */
         void Init();
 
+        void CreateRoadTiles();
+
         /**
-         * Stores vertices of all Tiles in a Vbo.
+         * Stores vertices of all RoadTiles in a Vbo.
          */
-        void TilesToGpu();
+        void RoadTilesToGpu();
     };
 }

@@ -51,16 +51,14 @@ namespace sg::map
         // Ctors. / Dtor.
         //-------------------------------------------------
 
-        RoadTile() = delete;
-
-        RoadTile(float t_mapX, float t_mapZ);
+        RoadTile();
 
         RoadTile(const RoadTile& t_other) = delete;
         RoadTile(RoadTile&& t_other) noexcept = delete;
         RoadTile& operator=(const RoadTile& t_other) = delete;
         RoadTile& operator=(RoadTile&& t_other) noexcept = delete;
 
-        virtual ~RoadTile() noexcept;
+        ~RoadTile() noexcept override;
 
     protected:
 

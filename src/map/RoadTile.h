@@ -60,6 +60,16 @@ namespace sg::map
 
         ~RoadTile() noexcept override;
 
+        //-------------------------------------------------
+        // Helper
+        //-------------------------------------------------
+
+        /**
+         * Determines the correct RoadType for this Tile depending on the neighbors.
+         * @return True if the type has changed.
+         */
+        bool DetermineRoadType();
+
     protected:
 
     private:

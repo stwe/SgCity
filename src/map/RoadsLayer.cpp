@@ -150,7 +150,6 @@ std::unique_ptr<sg::map::RoadTile> sg::map::RoadsLayer::CreateRoadTile(const sg:
     auto roadTile{ std::make_unique<RoadTile>() };
     roadTile->vertices = t_tile.vertices;
 
-    // y
     roadTile->vertices[Tile::TL_1_Y] += 0.01f;
     roadTile->vertices[Tile::BL_1_Y] += 0.01f;
     roadTile->vertices[Tile::BR_1_Y] += 0.01f;
@@ -158,15 +157,6 @@ std::unique_ptr<sg::map::RoadTile> sg::map::RoadsLayer::CreateRoadTile(const sg:
     roadTile->vertices[Tile::TL_2_Y] += 0.01f;
     roadTile->vertices[Tile::BR_2_Y] += 0.01f;
     roadTile->vertices[Tile::TR_2_Y] += 0.01f;
-
-    // uv
-    roadTile->vertices[4] = 1.0f / 4.0f;
-    roadTile->vertices[25] = 1.0f / 4.0f;
-
-    roadTile->vertices[37] = 1.0f / 4.0f;
-    roadTile->vertices[47] = 1.0f / 4.0f;
-    roadTile->vertices[58] = 1.0f / 4.0f;
-    roadTile->vertices[59] = 1.0f / 4.0f;
 
     roadTile->mapX = t_tile.mapX;
     roadTile->mapZ = t_tile.mapZ;
@@ -182,6 +172,40 @@ std::unique_ptr<sg::map::RoadTile> sg::map::RoadsLayer::CreateRoadTile(const sg:
     roadTile->se = t_tile.se;
 
     roadTile->type = Tile::TileType::TRAFFIC;
+    roadTile->DetermineRoadType();
+
+    // uv
+    const auto roadType{ static_cast<int>(roadTile->roadType) };
+
+    const auto column{ roadType % 4 };
+    const auto xOffset{ static_cast<float>(column) / 4.0f };
+
+    const auto row{ roadType / 4 };
+    const auto yOffset{ 1.0f - static_cast<float>(row) / 4.0f };
+
+    // tl 1
+    roadTile->vertices[3] = xOffset;
+    roadTile->vertices[4] = (1.0f / 4.0f) + yOffset;
+
+    // bl
+    roadTile->vertices[14] = xOffset;
+    roadTile->vertices[15] = yOffset;
+
+    // br 1
+    roadTile->vertices[25] = (1.0f / 4.0f) + xOffset;
+    roadTile->vertices[26] = yOffset;
+
+    // tl 2
+    roadTile->vertices[36] = xOffset;
+    roadTile->vertices[37] = (1.0f / 4.0f) + yOffset;
+
+    // br 2
+    roadTile->vertices[47] = (1.0f / 4.0f) + xOffset;
+    roadTile->vertices[48] = yOffset;
+
+    // tr
+    roadTile->vertices[58] = (1.0f / 4.0f) + xOffset;
+    roadTile->vertices[59] = (1.0f / 4.0f) + yOffset;
 
     return roadTile;
 }

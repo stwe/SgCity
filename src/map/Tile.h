@@ -37,11 +37,6 @@ namespace sg::map
          */
         static constexpr auto RAISE_Y{ 0.5f };
 
-        /**
-         * The value is used when the tile has no neighbor in a specific direction.
-         */
-        static constexpr auto NO_NEIGHBOR{ -1 };
-
         /*
             tl       tr
             +--------+
@@ -119,15 +114,15 @@ namespace sg::map
 
         // Neighbors
 
-        int n{ NO_NEIGHBOR };
-        int s{ NO_NEIGHBOR };
-        int e{ NO_NEIGHBOR };
-        int w{ NO_NEIGHBOR };
+        std::shared_ptr<Tile> n;
+        std::shared_ptr<Tile> s;
+        std::shared_ptr<Tile> e;
+        std::shared_ptr<Tile> w;
 
-        int nw{ NO_NEIGHBOR };
-        int ne{ NO_NEIGHBOR };
-        int sw{ NO_NEIGHBOR };
-        int se{ NO_NEIGHBOR };
+        std::shared_ptr<Tile> nw;
+        std::shared_ptr<Tile> ne;
+        std::shared_ptr<Tile> sw;
+        std::shared_ptr<Tile> se;
 
         /**
          * The type of the Tile.

@@ -198,43 +198,43 @@ void sg::map::TerrainLayer::AddTileNeighbors()
             // regular grid
             if (z > 0)
             {
-                tiles[i]->n = static_cast<int>(z - 1) * tileCount + static_cast<int>(x);
+                tiles[i]->n = tiles[static_cast<int>(z - 1) * tileCount + static_cast<int>(x)];
             }
 
             if (z < tileCount - 1)
             {
-                tiles[i]->s = static_cast<int>(z + 1) * tileCount + static_cast<int>(x);
+                tiles[i]->s = tiles[static_cast<int>(z + 1) * tileCount + static_cast<int>(x)];
             }
 
             if (x > 0)
             {
-                tiles[i]->w = static_cast<int>(z) * tileCount + static_cast<int>(x - 1);
+                tiles[i]->w = tiles[static_cast<int>(z) * tileCount + static_cast<int>(x - 1)];
             }
 
             if (x < tileCount - 1)
             {
-                tiles[i]->e = static_cast<int>(z) * tileCount + static_cast<int>(x + 1);
+                tiles[i]->e = tiles[static_cast<int>(z) * tileCount + static_cast<int>(x + 1)];
             }
 
             // connect diagonally
             if (z > 0 && x < tileCount - 1)
             {
-                tiles[i]->ne = static_cast<int>(z - 1) * tileCount + static_cast<int>(x + 1);
+                tiles[i]->ne = tiles[static_cast<int>(z - 1) * tileCount + static_cast<int>(x + 1)];
             }
 
             if (z > 0 && x > 0)
             {
-                tiles[i]->nw = static_cast<int>(z - 1) * tileCount + static_cast<int>(x - 1);
+                tiles[i]->nw = tiles[static_cast<int>(z - 1) * tileCount + static_cast<int>(x - 1)];
             }
 
             if (z < tileCount - 1 && x > 0)
             {
-                tiles[i]->sw = static_cast<int>(z + 1) * tileCount + static_cast<int>(x - 1);
+                tiles[i]->sw = tiles[static_cast<int>(z + 1) * tileCount + static_cast<int>(x - 1)];
             }
 
             if (z < tileCount - 1 && x < tileCount - 1)
             {
-                tiles[i]->se = static_cast<int>(z + 1) * tileCount + static_cast<int>(x + 1);
+                tiles[i]->se = tiles[static_cast<int>(z + 1) * tileCount + static_cast<int>(x + 1)];
             }
         }
     }
@@ -257,9 +257,9 @@ void sg::map::TerrainLayer::TilesToGpu()
 
 void sg::map::TerrainLayer::UpdateNorthNeighbor(sg::map::Tile& t_tile)
 {
-    if (t_tile.n != Tile::NO_NEIGHBOR)
+    if (t_tile.n)
     {
-        const auto& tile{ tiles[t_tile.n] };
+        const auto& tile{ t_tile.n };
         auto& vertices{ tile->vertices };
 
         /*
@@ -286,9 +286,9 @@ void sg::map::TerrainLayer::UpdateNorthNeighbor(sg::map::Tile& t_tile)
 
 void sg::map::TerrainLayer::UpdateSouthNeighbor(sg::map::Tile& t_tile)
 {
-    if (t_tile.s != Tile::NO_NEIGHBOR)
+    if (t_tile.s)
     {
-        const auto& tile{ tiles[t_tile.s] };
+        const auto& tile{ t_tile.s };
         auto& vertices{ tile->vertices };
 
         /*
@@ -315,9 +315,9 @@ void sg::map::TerrainLayer::UpdateSouthNeighbor(sg::map::Tile& t_tile)
 
 void sg::map::TerrainLayer::UpdateWestNeighbor(sg::map::Tile& t_tile)
 {
-    if (t_tile.w != Tile::NO_NEIGHBOR)
+    if (t_tile.w)
     {
-        const auto& tile{ tiles[t_tile.w] };
+        const auto& tile{ t_tile.w };
         auto& vertices{ tile->vertices };
 
         vertices[Tile::BR_1_Y] += t_tile.vertices[Tile::BL_1_Y] - vertices[Tile::BR_1_Y];
@@ -332,9 +332,9 @@ void sg::map::TerrainLayer::UpdateWestNeighbor(sg::map::Tile& t_tile)
 
 void sg::map::TerrainLayer::UpdateEastNeighbor(sg::map::Tile& t_tile)
 {
-    if (t_tile.e != Tile::NO_NEIGHBOR)
+    if (t_tile.e)
     {
-        const auto& tile{ tiles[t_tile.e] };
+        const auto& tile{ t_tile.e };
         auto& vertices{ tile->vertices };
 
         /*
@@ -361,9 +361,9 @@ void sg::map::TerrainLayer::UpdateEastNeighbor(sg::map::Tile& t_tile)
 
 void sg::map::TerrainLayer::UpdateNorthWestNeighbor(sg::map::Tile& t_tile)
 {
-    if (t_tile.nw != Tile::NO_NEIGHBOR)
+    if (t_tile.nw)
     {
-        const auto& tile{ tiles[t_tile.nw] };
+        const auto& tile{ t_tile.nw };
         auto& vertices{ tile->vertices };
 
         vertices[Tile::BR_1_Y] += t_tile.vertices[Tile::TL_1_Y] - vertices[Tile::BR_1_Y];
@@ -376,9 +376,9 @@ void sg::map::TerrainLayer::UpdateNorthWestNeighbor(sg::map::Tile& t_tile)
 
 void sg::map::TerrainLayer::UpdateNorthEastNeighbor(sg::map::Tile& t_tile)
 {
-    if (t_tile.ne != Tile::NO_NEIGHBOR)
+    if (t_tile.ne)
     {
-        const auto& tile{ tiles[t_tile.ne] };
+        const auto& tile{ t_tile.ne };
         auto& vertices{ tile->vertices };
 
         vertices[Tile::BL_1_Y] += t_tile.vertices[Tile::TR_2_Y] - vertices[Tile::BL_1_Y];
@@ -390,9 +390,9 @@ void sg::map::TerrainLayer::UpdateNorthEastNeighbor(sg::map::Tile& t_tile)
 
 void sg::map::TerrainLayer::UpdateSouthWestNeighbor(sg::map::Tile& t_tile)
 {
-    if (t_tile.sw != Tile::NO_NEIGHBOR)
+    if (t_tile.sw)
     {
-        const auto& tile{ tiles[t_tile.sw] };
+        const auto& tile{ t_tile.sw };
         auto& vertices{ tile->vertices };
 
         vertices[Tile::TR_2_Y] += t_tile.vertices[Tile::BL_1_Y] - vertices[Tile::TR_2_Y];
@@ -404,9 +404,9 @@ void sg::map::TerrainLayer::UpdateSouthWestNeighbor(sg::map::Tile& t_tile)
 
 void sg::map::TerrainLayer::UpdateSouthEastNeighbor(sg::map::Tile& t_tile)
 {
-    if (t_tile.se != Tile::NO_NEIGHBOR)
+    if (t_tile.se)
     {
-        const auto& tile{ tiles[t_tile.se] };
+        const auto& tile{ t_tile.se };
         auto& vertices{ tile->vertices };
 
         vertices[Tile::TL_1_Y] += t_tile.vertices[Tile::BR_1_Y] - vertices[Tile::TL_1_Y];

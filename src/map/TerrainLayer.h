@@ -27,6 +27,12 @@ namespace sg::map
     {
     public:
         //-------------------------------------------------
+        // Constants
+        //-------------------------------------------------
+
+        static constexpr auto INVALID_TILE_INDEX{ -1 };
+
+        //-------------------------------------------------
         // Ctors. / Dtor.
         //-------------------------------------------------
 
@@ -55,7 +61,7 @@ namespace sg::map
         /**
          * Get the mapIndex of the Tile under current mouse position.
          *
-         * @return The mapIndex.
+         * @return The mapIndex or INVALID_TILE_INDEX if invalid.
          */
         [[nodiscard]] int GetCurrentTileIdxUnderMouse() const;
 

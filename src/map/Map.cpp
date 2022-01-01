@@ -33,7 +33,7 @@ void sg::map::Map::Update(gui::MapEditGui::Action t_action)
     const auto idx{ m_terrainLayer->Update(t_action) };
 
     // add a traffic tile if action: SET_TRAFFIC
-    if (idx != INVALID_TILE_INDEX && t_action == gui::MapEditGui::Action::SET_TRAFFIC)
+    if (idx != TerrainLayer::INVALID_TILE_INDEX && t_action == gui::MapEditGui::Action::SET_TRAFFIC)
     {
         m_roadsLayer->Update(t_action, idx);
     }

@@ -95,7 +95,7 @@ namespace sg::ogl
         /**
          * Swaps the front and back buffers and checks if any events are triggered.
          */
-        void Update();
+        void Update() const;
 
         //-------------------------------------------------
         // Helper
@@ -106,7 +106,7 @@ namespace sg::ogl
          *
          * @return boolean
          */
-        bool WindowShouldClose();
+        [[nodiscard]] bool WindowShouldClose() const;
 
         //-------------------------------------------------
         // Input
@@ -119,12 +119,12 @@ namespace sg::ogl
          *
          * @return true if GLFW_PRESS
          */
-        bool IsKeyPressed(int t_keyCode);
+        [[nodiscard]] bool IsKeyPressed(int t_keyCode) const;
 
         /**
          * Close if Esc key was pressed.
          */
-        void CloseIfEscKeyPressed();
+        void CloseIfEscKeyPressed() const;
 
         //-------------------------------------------------
         // ImGui
@@ -148,12 +148,12 @@ namespace sg::ogl
         /**
          * The width of the window.
          */
-        int m_width{ 0 };
+        int m_width{ MIN_WIDTH };
 
         /**
          * The height of the window.
          */
-        int m_height{ 0 };
+        int m_height{ MIN_HEIGHT };
 
         /**
          * The projection matrix.

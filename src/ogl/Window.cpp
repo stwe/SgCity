@@ -13,9 +13,6 @@
 sg::ogl::Window::Window()
 {
     Log::SG_LOG_DEBUG("[Window::Window()] Create Window.");
-
-    m_width = MIN_WIDTH;
-    m_height = MIN_HEIGHT;
 }
 
 sg::ogl::Window::Window(const int t_width, const int t_height, std::string t_title)
@@ -92,7 +89,7 @@ void sg::ogl::Window::Init()
     Log::SG_LOG_DEBUG("[Window::Init()] The window was successfully initialized.");
 }
 
-void sg::ogl::Window::Update()
+void sg::ogl::Window::Update() const
 {
     glfwSwapBuffers(m_windowHandle);
     glfwPollEvents();
@@ -102,7 +99,7 @@ void sg::ogl::Window::Update()
 // Helper
 //-------------------------------------------------
 
-bool sg::ogl::Window::WindowShouldClose()
+bool sg::ogl::Window::WindowShouldClose() const
 {
     return glfwWindowShouldClose(m_windowHandle);
 }
@@ -111,12 +108,12 @@ bool sg::ogl::Window::WindowShouldClose()
 // Input
 //-------------------------------------------------
 
-bool sg::ogl::Window::IsKeyPressed(const int t_keyCode)
+bool sg::ogl::Window::IsKeyPressed(const int t_keyCode) const
 {
     return glfwGetKey(m_windowHandle, t_keyCode) == GLFW_PRESS;
 }
 
-void sg::ogl::Window::CloseIfEscKeyPressed()
+void sg::ogl::Window::CloseIfEscKeyPressed() const
 {
     if (IsKeyPressed(GLFW_KEY_ESCAPE))
     {

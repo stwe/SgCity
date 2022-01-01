@@ -34,6 +34,9 @@ namespace sg
         // Constants
         //-------------------------------------------------
 
+        /**
+         * 60 updates per second.
+         */
         static constexpr auto FRAME_TIME{ 1.0 / 60.0 };
 
         /**
@@ -99,7 +102,7 @@ namespace sg
         void Init();
         void Input();
         void Update();
-        void Render();
+        void Render() const;
 
         //-------------------------------------------------
         // Game loop
@@ -111,8 +114,8 @@ namespace sg
         // Frame
         //-------------------------------------------------
 
-        void StartFrame();
-        void EndFrame();
+        static void StartFrame();
+        void EndFrame() const;
 
         //-------------------------------------------------
         // Clean up

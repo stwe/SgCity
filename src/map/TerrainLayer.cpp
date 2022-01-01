@@ -35,7 +35,7 @@ int sg::map::TerrainLayer::Update(gui::MapEditGui::Action t_action)
     auto index{ GetCurrentTileIdxUnderMouse() };
     if (index < 0 || index > tiles.size() - 1)
     {
-        return -1; // todo: constant
+        return INVALID_TILE_INDEX;
     }
 
     auto& tile{ *tiles[index] };

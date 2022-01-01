@@ -140,7 +140,7 @@ void sg::Application::Update()
     }
 }
 
-void sg::Application::Render()
+void sg::Application::Render() const
 {
     // (1) render for mousepicking
     m_map->RenderForMousePicking(m_window, m_camera);
@@ -217,13 +217,11 @@ void sg::Application::StartFrame()
 {
     ogl::OpenGL::SetClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     ogl::OpenGL::Clear();
-    //ogl::OpenGL::EnableWireframeMode();
 }
 
-void sg::Application::EndFrame()
+void sg::Application::EndFrame() const
 {
     m_window.Update();
-    //ogl::OpenGL::DisableWireframeMode();
 }
 
 //-------------------------------------------------

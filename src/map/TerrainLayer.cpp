@@ -41,7 +41,7 @@ int sg::map::TerrainLayer::Update(gui::Action t_action)
 
     auto& tile{ *tiles[index] };
 
-    if (t_action == gui::Action::SET_TRAFFIC)
+    if (t_action == gui::Action::SET_TRAFFIC || tile.type == Tile::TileType::TRAFFIC)
     {
         return index;
     }

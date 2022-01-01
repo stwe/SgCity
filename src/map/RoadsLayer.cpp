@@ -30,25 +30,38 @@ sg::map::RoadsLayer::~RoadsLayer() noexcept
 
 void sg::map::RoadsLayer::Update(sg::gui::MapEditGui::Action t_action, const int t_tileIndex)
 {
-    Log::SG_LOG_DEBUG("[RoadsLayer::Update()] Update Tile to a road {}.", t_tileIndex);
+    auto& terrainTile{ *tiles[t_tileIndex] };
+    if (terrainTile.type == Tile::TileType::TRAFFIC)
+    {
+        return;
+    }
 
-    const auto& tile{ *tiles[t_tileIndex] };
-    auto i = m_roadTiles.size();
-    m_roadTiles.push_back(std::move(CreateRoadTile(tile, i)));
+    terrainTile.type = Tile::TileType::TRAFFIC;
 
+    Log::SG_LOG_DEBUG("[RoadsLayer::Update()] Create a road {}.", t_tileIndex);
+
+    // create road tile
+    auto i{ static_cast<int>(m_roadTiles.size()) };
+    m_roadTiles.push_back(std::move(CreateRoadTile(terrainTile, i)));
+
+    // create a Vao if necessary
     if (!vao)
     {
         vao = std::make_unique<ogl::buffer::Vao>();
         vao->CreateEmptyDynamicVbo(tileCount * tileCount * Tile::BYTES_PER_TILE, static_cast<int>(m_roadTiles.size()) * Tile::VERTICES_PER_TILE);
     }
 
+    // store all tiles in Vao
     if (vao)
     {
+        // vertices to Gpu
         for (const auto& roadTile : m_roadTiles)
         {
+            UpdateTexture(*roadTile);
             roadTile->VerticesToGpu(*vao);
         }
 
+        // update draw count
         vao->drawCount = static_cast<int>(m_roadTiles.size()) * Tile::VERTICES_PER_TILE;
     }
 }
@@ -172,10 +185,17 @@ std::unique_ptr<sg::map::RoadTile> sg::map::RoadsLayer::CreateRoadTile(const sg:
     roadTile->se = t_tile.se;
 
     roadTile->type = Tile::TileType::TRAFFIC;
-    roadTile->DetermineRoadType();
 
-    // uv
-    const auto roadType{ static_cast<int>(roadTile->roadType) };
+    UpdateTexture(*roadTile);
+
+    return roadTile;
+}
+
+void sg::map::RoadsLayer::UpdateTexture(RoadTile& t_roadTile)
+{
+    t_roadTile.DetermineRoadType();
+
+    const auto roadType{ static_cast<int>(t_roadTile.roadType) };
 
     const auto column{ roadType % 4 };
     const auto xOffset{ static_cast<float>(column) / 4.0f };
@@ -184,28 +204,26 @@ std::unique_ptr<sg::map::RoadTile> sg::map::RoadsLayer::CreateRoadTile(const sg:
     const auto yOffset{ 1.0f - static_cast<float>(row) / 4.0f };
 
     // tl 1
-    roadTile->vertices[3] = xOffset;
-    roadTile->vertices[4] = (1.0f / 4.0f) + yOffset;
+    t_roadTile.vertices[3] = xOffset;
+    t_roadTile.vertices[4] = (1.0f / 4.0f) + yOffset;
 
     // bl
-    roadTile->vertices[14] = xOffset;
-    roadTile->vertices[15] = yOffset;
+    t_roadTile.vertices[14] = xOffset;
+    t_roadTile.vertices[15] = yOffset;
 
     // br 1
-    roadTile->vertices[25] = (1.0f / 4.0f) + xOffset;
-    roadTile->vertices[26] = yOffset;
+    t_roadTile.vertices[25] = (1.0f / 4.0f) + xOffset;
+    t_roadTile.vertices[26] = yOffset;
 
     // tl 2
-    roadTile->vertices[36] = xOffset;
-    roadTile->vertices[37] = (1.0f / 4.0f) + yOffset;
+    t_roadTile.vertices[36] = xOffset;
+    t_roadTile.vertices[37] = (1.0f / 4.0f) + yOffset;
 
     // br 2
-    roadTile->vertices[47] = (1.0f / 4.0f) + xOffset;
-    roadTile->vertices[48] = yOffset;
+    t_roadTile.vertices[47] = (1.0f / 4.0f) + xOffset;
+    t_roadTile.vertices[48] = yOffset;
 
     // tr
-    roadTile->vertices[58] = (1.0f / 4.0f) + xOffset;
-    roadTile->vertices[59] = (1.0f / 4.0f) + yOffset;
-
-    return roadTile;
+    t_roadTile.vertices[58] = (1.0f / 4.0f) + xOffset;
+    t_roadTile.vertices[59] = (1.0f / 4.0f) + yOffset;
 }

@@ -42,7 +42,6 @@ int sg::map::TerrainLayer::Update(gui::MapEditGui::Action t_action)
 
     if (t_action == gui::MapEditGui::Action::SET_TRAFFIC)
     {
-        tile.type = Tile::TileType::TRAFFIC;
         return index;
     }
 

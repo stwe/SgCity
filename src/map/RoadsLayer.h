@@ -84,5 +84,7 @@ namespace sg::map
         //-------------------------------------------------
 
         static std::unique_ptr<RoadTile> CreateRoadTile(const Tile& t_tile, int t_index);
+
+        static void UpdateTexture(RoadTile& t_roadTile);
     };
 }

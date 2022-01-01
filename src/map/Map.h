@@ -1,9 +1,17 @@
 #pragma once
 
 #include <memory>
-#include "gui/MapEditGui.h"
 #include "ogl/Window.h"
 #include "ogl/camera/Camera.h"
+
+//-------------------------------------------------
+// Forward declarations
+//-------------------------------------------------
+
+namespace sg::gui
+{
+    enum class Action;
+}
 
 //-------------------------------------------------
 // Map
@@ -33,6 +41,12 @@ namespace sg::map
     {
     public:
         //-------------------------------------------------
+        // Member
+        //-------------------------------------------------
+
+        int currentTerrainTileIndex;
+
+        //-------------------------------------------------
         // Ctors. / Dtor.
         //-------------------------------------------------
 
@@ -53,10 +67,16 @@ namespace sg::map
         ~Map() noexcept;
 
         //-------------------------------------------------
+        // Getter
+        //-------------------------------------------------
+
+        [[nodiscard]] const auto& GetTerrainLayer() const { return *m_terrainLayer; }
+
+        //-------------------------------------------------
         // Logic
         //-------------------------------------------------
 
-        void Update(gui::MapEditGui::Action t_action);
+        void Update(gui::Action t_action);
         void RenderForMousePicking(const ogl::Window& t_window, const ogl::camera::Camera& t_camera) const;
         void Render(const ogl::Window& t_window, const ogl::camera::Camera& t_camera) const;
 

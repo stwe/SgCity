@@ -3,6 +3,7 @@
 #include "WaterLayer.h"
 #include "TerrainLayer.h"
 #include "RoadsLayer.h"
+#include "gui/MapEditGui.h"
 
 //-------------------------------------------------
 // Ctors. / Dtor.
@@ -10,6 +11,7 @@
 
 sg::map::Map::Map(const int t_tileCount)
     : m_tileCount{ t_tileCount }
+    , currentTerrainTileIndex{ TerrainLayer::INVALID_TILE_INDEX }
 {
     Log::SG_LOG_DEBUG("[Map::Map()] Create Map.");
 
@@ -27,15 +29,15 @@ sg::map::Map::~Map() noexcept
 // Logic
 //-------------------------------------------------
 
-void sg::map::Map::Update(gui::MapEditGui::Action t_action)
+void sg::map::Map::Update(gui::Action t_action)
 {
     // terrain layer handles all actions - returns the index of the clicked tile
-    const auto idx{ m_terrainLayer->Update(t_action) };
+    currentTerrainTileIndex = m_terrainLayer->Update(t_action);
 
     // add a traffic tile if action: SET_TRAFFIC
-    if (idx != TerrainLayer::INVALID_TILE_INDEX && t_action == gui::MapEditGui::Action::SET_TRAFFIC)
+    if (currentTerrainTileIndex != TerrainLayer::INVALID_TILE_INDEX && t_action == gui::Action::SET_TRAFFIC)
     {
-        m_roadsLayer->Update(t_action, idx);
+        m_roadsLayer->Update(t_action, currentTerrainTileIndex);
     }
 }
 

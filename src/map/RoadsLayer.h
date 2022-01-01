@@ -2,7 +2,6 @@
 
 #include "Layer.h"
 #include "RoadTile.h"
-#include "gui/MapEditGui.h"
 
 //-------------------------------------------------
 // Forward declarations
@@ -11,6 +10,11 @@
 namespace sg::ogl::resource
 {
     class Texture;
+}
+
+namespace sg::gui
+{
+    enum class Action;
 }
 
 //-------------------------------------------------
@@ -40,7 +44,7 @@ namespace sg::map
         // Logic
         //-------------------------------------------------
 
-        void Update(gui::MapEditGui::Action t_action, int t_tileIndex);
+        void Update(gui::Action t_action, int t_tileIndex);
         void Render(const ogl::Window& t_window, const ogl::camera::Camera& t_camera) const override;
 
     protected:

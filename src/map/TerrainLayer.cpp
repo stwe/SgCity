@@ -8,6 +8,7 @@
 #include "ogl/resource/Texture.h"
 #include "ogl/input/PickingTexture.h"
 #include "ogl/input/MouseInput.h"
+#include "gui/MapEditGui.h"
 
 //-------------------------------------------------
 // Ctors. / Dtor.
@@ -30,7 +31,7 @@ sg::map::TerrainLayer::~TerrainLayer() noexcept
 // Logic
 //-------------------------------------------------
 
-int sg::map::TerrainLayer::Update(gui::MapEditGui::Action t_action)
+int sg::map::TerrainLayer::Update(gui::Action t_action)
 {
     auto index{ GetCurrentTileIdxUnderMouse() };
     if (index < 0 || index > tiles.size() - 1)
@@ -40,17 +41,17 @@ int sg::map::TerrainLayer::Update(gui::MapEditGui::Action t_action)
 
     auto& tile{ *tiles[index] };
 
-    if (t_action == gui::MapEditGui::Action::SET_TRAFFIC)
+    if (t_action == gui::Action::SET_TRAFFIC)
     {
         return index;
     }
 
-    if (t_action == gui::MapEditGui::Action::RAISE)
+    if (t_action == gui::Action::RAISE)
     {
         tile.Raise();
     }
 
-    if (t_action == gui::MapEditGui::Action::LOWER)
+    if (t_action == gui::Action::LOWER)
     {
         tile.Lower();
     }

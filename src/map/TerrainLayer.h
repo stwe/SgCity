@@ -1,7 +1,6 @@
 #pragma once
 
 #include "Layer.h"
-#include "gui/MapEditGui.h"
 
 //-------------------------------------------------
 // Forward declarations
@@ -15,6 +14,11 @@ namespace sg::ogl::resource
 namespace sg::ogl::input
 {
     class PickingTexture;
+}
+
+namespace sg::gui
+{
+    enum class Action;
 }
 
 //-------------------------------------------------
@@ -50,7 +54,7 @@ namespace sg::map
         // Logic
         //-------------------------------------------------
 
-        int Update(gui::MapEditGui::Action t_action);
+        int Update(gui::Action t_action);
         void RenderForMousePicking(const ogl::Window& t_window, const ogl::camera::Camera& t_camera);
         void Render(const ogl::Window& t_window, const ogl::camera::Camera& t_camera) const override;
 

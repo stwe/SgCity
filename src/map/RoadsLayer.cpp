@@ -6,6 +6,7 @@
 #include "ogl/math/Transform.h"
 #include "ogl/resource/ShaderProgram.h"
 #include "ogl/resource/Texture.h"
+#include "gui/MapEditGui.h"
 
 //-------------------------------------------------
 // Ctors. / Dtor.
@@ -28,7 +29,7 @@ sg::map::RoadsLayer::~RoadsLayer() noexcept
 // Logic
 //-------------------------------------------------
 
-void sg::map::RoadsLayer::Update(sg::gui::MapEditGui::Action t_action, const int t_tileIndex)
+void sg::map::RoadsLayer::Update(gui::Action t_action, const int t_tileIndex)
 {
     auto& terrainTile{ *tiles[t_tileIndex] };
     if (terrainTile.type == Tile::TileType::TRAFFIC)

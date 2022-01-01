@@ -152,7 +152,7 @@ void sg::Application::Render() const
 
     // (3) render gui
     ogl::Window::ImGuiBegin();
-    m_mapEditGui->Render();
+    m_mapEditGui->Render(*m_map);
     ogl::Window::ImGuiEnd();
 
     EndFrame();

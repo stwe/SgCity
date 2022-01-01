@@ -45,10 +45,11 @@ void sg::ogl::resource::Model::Render(const Window& t_window, const camera::Came
     m_vaos[0]->Bind(); // todo [0]
     m_modelShaderProgram->Bind();
 
+    // todo
     auto modelMatrix{ ogl::math::Transform::CreateModelMatrix(
-        glm::vec3(14.0f, 0.0f, 9.0f),
+        glm::vec3(24.0f, 0.0f, 20.0f),
         glm::vec3(0.0f, 0.0f, 0.0f),
-        glm::vec3(1.0f)
+        glm::vec3(0.125f)
     ) };
 
     m_modelShaderProgram->SetUniform("model", modelMatrix);
@@ -135,13 +136,13 @@ void sg::ogl::resource::Model::Init()
         }
 
         auto vao{ std::make_unique<ogl::buffer::Vao>() };
-        vao->CreateStaticVbo(vertices, 4 * 4); // todo: drawCount
+        vao->CreateStaticVbo(vertices, static_cast<int32_t>(vertices.size() / 3)); // todo: drawCount
         m_vaos.push_back(std::move(vao));
 
         m_modelShaderProgram = std::make_unique<ogl::resource::ShaderProgram>("/home/steffen/CLionProjects/SgCity/resources/shader/model");
         m_modelShaderProgram->Load();
 
-        m_modelTexture = std::make_unique<ogl::resource::Texture>("/home/steffen/CLionProjects/SgCity/resources/model/Tree_01/billboard0.png");
+        m_modelTexture = std::make_unique<ogl::resource::Texture>("/home/steffen/CLionProjects/SgCity/resources/model/house/house_text.jpg", true);
         m_modelTexture->Load();
     }
 }

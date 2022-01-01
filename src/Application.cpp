@@ -57,6 +57,9 @@ void sg::Application::Init()
     // create gui
     m_mapEditGui = std::make_unique<gui::MapEditGui>();
 
+    // sample house obj model
+    m_model = std::make_unique<ogl::resource::Model>("/home/steffen/CLionProjects/SgCity/resources/model/house/house.obj");
+
     Log::SG_LOG_DEBUG("[Application::Init()] The application was successfully initialized.");
 }
 
@@ -149,6 +152,7 @@ void sg::Application::Render() const
 
     // (2) render scene
     m_map->Render(m_window, m_camera);
+    m_model->Render(m_window, m_camera);
 
     // (3) render gui
     ogl::Window::ImGuiBegin();

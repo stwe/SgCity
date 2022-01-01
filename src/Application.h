@@ -3,6 +3,7 @@
 #include <memory>
 #include "ogl/Window.h"
 #include "ogl/camera/Camera.h"
+#include "ogl/resource/Model.h"
 
 //-------------------------------------------------
 // Forward declarations
@@ -94,6 +95,8 @@ namespace sg
          * So that events are only executed once.
          */
         bool m_handleMouseEvent{ true };
+
+        std::unique_ptr<ogl::resource::Model> m_model;
 
         //-------------------------------------------------
         // Logic

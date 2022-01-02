@@ -11,7 +11,6 @@
 
 sg::map::Map::Map(const int t_tileCount)
     : m_tileCount{ t_tileCount }
-    , currentTerrainTileIndex{ TerrainLayer::INVALID_TILE_INDEX }
 {
     Log::SG_LOG_DEBUG("[Map::Map()] Create Map.");
 
@@ -21,23 +20,25 @@ sg::map::Map::Map(const int t_tileCount)
 sg::map::Map::~Map() noexcept
 {
     Log::SG_LOG_DEBUG("[Map::~Map()] Destruct Map.");
-
-    CleanUp();
 }
 
 //-------------------------------------------------
 // Logic
 //-------------------------------------------------
 
+void sg::map::Map::Input()
+{
+    m_terrainLayer->Input();
+}
+
 void sg::map::Map::Update(gui::Action t_action)
 {
-    // terrain layer handles all actions - returns the index of the clicked tile
-    currentTerrainTileIndex = m_terrainLayer->Update(t_action);
+    m_terrainLayer->Update(t_action);
 
-    // add a traffic tile if action: SET_TRAFFIC
-    if (currentTerrainTileIndex != TerrainLayer::INVALID_TILE_INDEX && t_action == gui::Action::SET_TRAFFIC)
+    if (m_terrainLayer->currentTileIndex != TerrainLayer::INVALID_TILE_INDEX)
     {
-        m_roadsLayer->Update(t_action, currentTerrainTileIndex);
+        m_roadsLayer->Update(t_action, m_terrainLayer->currentTileIndex);
+        m_terrainLayer->currentTileIndex = TerrainLayer::INVALID_TILE_INDEX;
     }
 }
 
@@ -66,15 +67,4 @@ void sg::map::Map::Init()
     m_roadsLayer = std::make_unique<RoadsLayer>(m_tileCount, m_terrainLayer->tiles);
 
     Log::SG_LOG_DEBUG("[Map::Init()] The map was successfully initialized.");
-}
-
-//-------------------------------------------------
-// Clean up
-//-------------------------------------------------
-
-void sg::map::Map::CleanUp()
-{
-    Log::SG_LOG_DEBUG("[Map::CleanUp()] Clean up Map.");
-
-    // ...
 }

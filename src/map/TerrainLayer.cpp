@@ -31,19 +31,31 @@ sg::map::TerrainLayer::~TerrainLayer() noexcept
 // Logic
 //-------------------------------------------------
 
-int sg::map::TerrainLayer::Update(gui::Action t_action)
+void sg::map::TerrainLayer::Input()
 {
-    auto index{ GetCurrentTileIdxUnderMouse() };
-    if (index < 0 || index > tiles.size() - 1)
+    UpdateCurrentTileIndex();
+}
+
+void sg::map::TerrainLayer::Update(gui::Action t_action)
+{
+    // return if index is invalid
+    if (currentTileIndex == INVALID_TILE_INDEX)
     {
-        return INVALID_TILE_INDEX;
+        return;
     }
 
-    auto& tile{ *tiles[index] };
-
-    if (t_action == gui::Action::SET_TRAFFIC || tile.type == Tile::TileType::TRAFFIC)
+    // handle only RAISE and LOWER actions
+    if (t_action != gui::Action::RAISE && t_action != gui::Action::LOWER)
     {
-        return index;
+        return;
+    }
+
+    auto& tile{ *tiles[currentTileIndex] };
+
+    // handle only TileType NONE
+    if (tile.type != Tile::TileType::NONE)
+    {
+        return;
     }
 
     if (t_action == gui::Action::RAISE)
@@ -69,7 +81,8 @@ int sg::map::TerrainLayer::Update(gui::Action t_action)
     UpdateSouthEastNeighbor(tile);
     UpdateSouthWestNeighbor(tile);
 
-    return index;
+    // stop update
+    currentTileIndex = INVALID_TILE_INDEX;
 }
 
 void sg::map::TerrainLayer::RenderForMousePicking(const sg::ogl::Window& t_window, const sg::ogl::camera::Camera& t_camera)
@@ -127,17 +140,6 @@ void sg::map::TerrainLayer::Render(const sg::ogl::Window& t_window, const sg::og
 }
 
 //-------------------------------------------------
-// Mouse picking
-//-------------------------------------------------
-
-int sg::map::TerrainLayer::GetCurrentTileIdxUnderMouse() const
-{
-    return m_pickingTexture->ReadMapIndex(
-        ogl::input::MouseInput::GetInstance().GetX(),
-        ogl::input::MouseInput::GetInstance().GetY());
-}
-
-//-------------------------------------------------
 // Init
 //-------------------------------------------------
 
@@ -176,7 +178,7 @@ void sg::map::TerrainLayer::CreateTiles()
         for (auto x{ 0 }; x < tileCount; ++x)
         {
             auto index{ z * tileCount + x };
-            auto tile{ std::make_unique<Tile>( // is stored as shared_ptr later
+            auto tile{ std::make_unique<Tile>( // is stored as shared_ptr via push_back later
                 static_cast<float>(x),
                 static_cast<float>(z),
                 index
@@ -262,18 +264,6 @@ void sg::map::TerrainLayer::UpdateNorthNeighbor(sg::map::Tile& t_tile)
         const auto& tile{ t_tile.n };
         auto& vertices{ tile->vertices };
 
-        /*
-        tl.      tr
-         |  .  2
-         | 1   .
-        bl------ br   Raise
-
-        tl.      tr
-         |  .  2
-         | 1   .
-        bl------ br
-        */
-
         vertices[Tile::BL_1_Y] += t_tile.vertices[Tile::TL_1_Y] - vertices[Tile::BL_1_Y];
         vertices[Tile::BR_1_Y] += t_tile.vertices[Tile::TR_2_Y] - vertices[Tile::BR_1_Y];
 
@@ -290,18 +280,6 @@ void sg::map::TerrainLayer::UpdateSouthNeighbor(sg::map::Tile& t_tile)
     {
         const auto& tile{ t_tile.s };
         auto& vertices{ tile->vertices };
-
-        /*
-        tl.      tr
-         |  .  2
-         | 1   .
-        bl------ br
-
-        tl.      tr
-         |  .  2
-         | 1   .
-        bl------ br   Raise
-        */
 
         vertices[Tile::TL_1_Y] += t_tile.vertices[Tile::BL_1_Y] - vertices[Tile::TL_1_Y];
 
@@ -336,18 +314,6 @@ void sg::map::TerrainLayer::UpdateEastNeighbor(sg::map::Tile& t_tile)
     {
         const auto& tile{ t_tile.e };
         auto& vertices{ tile->vertices };
-
-        /*
-        tl.      tr   tl
-         |  .  2            raise
-         | 1   .
-        bl------ br   bl
-
-        tl.      tr
-         |  .  2
-         | 1   .
-        bl------ br   Raise
-        */
 
         vertices[Tile::TL_1_Y] += t_tile.vertices[Tile::TR_2_Y] - vertices[Tile::TL_1_Y];
         vertices[Tile::BL_1_Y] += t_tile.vertices[Tile::BR_1_Y] - vertices[Tile::BL_1_Y];
@@ -414,5 +380,22 @@ void sg::map::TerrainLayer::UpdateSouthEastNeighbor(sg::map::Tile& t_tile)
 
         tile->UpdateNormal();
         tile->VerticesToGpu(*vao);
+    }
+}
+
+//-------------------------------------------------
+// Mouse picking
+//-------------------------------------------------
+
+void sg::map::TerrainLayer::UpdateCurrentTileIndex()
+{
+    currentTileIndex = m_pickingTexture->ReadMapIndex(
+        ogl::input::MouseInput::GetInstance().GetX(),
+        ogl::input::MouseInput::GetInstance().GetY()
+        );
+
+    if (currentTileIndex < 0 || currentTileIndex > tiles.size() - 1)
+    {
+        currentTileIndex = INVALID_TILE_INDEX;
     }
 }

@@ -41,12 +41,6 @@ namespace sg::map
     {
     public:
         //-------------------------------------------------
-        // Member
-        //-------------------------------------------------
-
-        int currentTerrainTileIndex;
-
-        //-------------------------------------------------
         // Ctors. / Dtor.
         //-------------------------------------------------
 
@@ -76,6 +70,7 @@ namespace sg::map
         // Logic
         //-------------------------------------------------
 
+        void Input();
         void Update(gui::Action t_action);
         void RenderForMousePicking(const ogl::Window& t_window, const ogl::camera::Camera& t_camera) const;
         void Render(const ogl::Window& t_window, const ogl::camera::Camera& t_camera) const;
@@ -115,11 +110,5 @@ namespace sg::map
          * Initializes the Map.
          */
         void Init();
-
-        //-------------------------------------------------
-        // Clean up
-        //-------------------------------------------------
-
-        void CleanUp();
     };
 }

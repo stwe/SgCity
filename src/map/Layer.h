@@ -105,6 +105,12 @@ namespace sg::map
         // Logic
         //-------------------------------------------------
 
+        /**
+         * Render the Layer.
+         *
+         * @param t_window The Window object.
+         * @param t_camera The Camera object.
+         */
         virtual void Render(const ogl::Window& t_window, const ogl::camera::Camera& t_camera) const = 0;
 
     protected:

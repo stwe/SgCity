@@ -27,6 +27,9 @@ namespace sg::gui
 
 namespace sg::map
 {
+    /**
+     * Represents the TerrainLayer.
+     */
     class TerrainLayer : public Layer
     {
     public:
@@ -34,13 +37,31 @@ namespace sg::map
         // Constants
         //-------------------------------------------------
 
+        /**
+         * Value used for an invalid index.
+         */
         static constexpr auto INVALID_TILE_INDEX{ -1 };
+
+        //-------------------------------------------------
+        // Member
+        //-------------------------------------------------
+
+        /**
+         * Index in std::vector<std::shared_ptr<Tile>> of the current picked Tile.
+         */
+        int currentTileIndex{ INVALID_TILE_INDEX };
 
         //-------------------------------------------------
         // Ctors. / Dtor.
         //-------------------------------------------------
 
         TerrainLayer() = delete;
+
+        /**
+         * Constructs a new TerrainLayer object.
+         *
+         * @param t_tileCount The number of tiles in x and z direction.
+         */
         explicit TerrainLayer(int t_tileCount);
 
         TerrainLayer(const TerrainLayer& t_other) = delete;
@@ -54,20 +75,10 @@ namespace sg::map
         // Logic
         //-------------------------------------------------
 
-        int Update(gui::Action t_action);
+        void Input();
+        void Update(gui::Action t_action);
         void RenderForMousePicking(const ogl::Window& t_window, const ogl::camera::Camera& t_camera);
         void Render(const ogl::Window& t_window, const ogl::camera::Camera& t_camera) const override;
-
-        //-------------------------------------------------
-        // Mouse picking
-        //-------------------------------------------------
-
-        /**
-         * Get the mapIndex of the Tile under current mouse position.
-         *
-         * @return The mapIndex or INVALID_TILE_INDEX if invalid.
-         */
-        [[nodiscard]] int GetCurrentTileIdxUnderMouse() const;
 
     protected:
 
@@ -128,5 +139,11 @@ namespace sg::map
         void UpdateNorthEastNeighbor(Tile& t_tile);
         void UpdateSouthWestNeighbor(Tile& t_tile);
         void UpdateSouthEastNeighbor(Tile& t_tile);
+
+        //-------------------------------------------------
+        // Mouse picking
+        //-------------------------------------------------
+
+        void UpdateCurrentTileIndex();
     };
 }

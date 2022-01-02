@@ -49,9 +49,9 @@ void sg::gui::MapEditGui::Render(const map::Map& t_map)
 
     ImGui::Separator();
 
-    if (t_map.currentTerrainTileIndex != map::TerrainLayer::INVALID_TILE_INDEX && action == Action::INFO)
+    if (t_map.GetTerrainLayer().currentTileIndex != map::TerrainLayer::INVALID_TILE_INDEX && action == Action::INFO)
     {
-        const auto& tile{ *t_map.GetTerrainLayer().tiles[t_map.currentTerrainTileIndex] };
+        const auto& tile{ *t_map.GetTerrainLayer().tiles[t_map.GetTerrainLayer().currentTileIndex] };
         TileInfo(tile);
     }
 

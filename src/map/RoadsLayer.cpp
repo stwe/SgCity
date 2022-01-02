@@ -31,12 +31,21 @@ sg::map::RoadsLayer::~RoadsLayer() noexcept
 
 void sg::map::RoadsLayer::Update(gui::Action t_action, const int t_tileIndex)
 {
+    // handle only SET_TRAFFIC Actions
+    if (t_action != gui::Action::SET_TRAFFIC)
+    {
+        return;
+    }
+
     auto& terrainTile{ *tiles[t_tileIndex] };
+
+    // return if TileType is already TRAFFIC
     if (terrainTile.type == Tile::TileType::TRAFFIC)
     {
         return;
     }
 
+    // set TRAFFIC TileType
     terrainTile.type = Tile::TileType::TRAFFIC;
 
     Log::SG_LOG_DEBUG("[RoadsLayer::Update()] Create a road {}.", t_tileIndex);
@@ -45,7 +54,7 @@ void sg::map::RoadsLayer::Update(gui::Action t_action, const int t_tileIndex)
     auto i{ static_cast<int>(m_roadTiles.size()) };
     m_roadTiles.push_back(std::move(CreateRoadTile(terrainTile, i)));
 
-    // create a Vao if necessary
+    // create a new Vao if necessary
     if (!vao)
     {
         vao = std::make_unique<ogl::buffer::Vao>();

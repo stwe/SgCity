@@ -19,8 +19,6 @@ sg::Application::Application()
 sg::Application::~Application() noexcept
 {
     Log::SG_LOG_DEBUG("[Application::~Application()] Destruct Application.");
-
-    CleanUp();
 }
 
 //-------------------------------------------------
@@ -77,70 +75,14 @@ void sg::Application::Input()
     // updated mouse stuff
     ogl::input::MouseInput::GetInstance().Input();
 
-    // handle right mouse button
-    if (ogl::input::MouseInput::GetInstance().IsRightButtonPressed())
-    {
-        m_camera.ProcessMouse(ogl::input::MouseInput::GetInstance().GetDisplVec());
-    }
-
-    // workaround: handle *not* left mouse button
-    if (!ogl::input::MouseInput::GetInstance().IsLeftButtonPressed())
-    {
-        m_handleMouseEvent = true;
-    }
-
-    // handle left mouse button
-    if (ogl::input::MouseInput::GetInstance().IsLeftButtonPressed() && m_handleMouseEvent)
-    {
-        m_map->Update(m_mapEditGui->action);
-
-        // do not run the event again
-        m_handleMouseEvent = false;
-    }
+    InputRightMouseButton();
+    InputLeftMouseButton();
+    InputKey();
 }
 
 void sg::Application::Update()
 {
-    if (m_window.IsKeyPressed(GLFW_KEY_W))
-    {
-        m_camera.ProcessKeyboard(ogl::camera::Camera::Direction::FORWARD);
-    }
-
-    if (m_window.IsKeyPressed(GLFW_KEY_S))
-    {
-        m_camera.ProcessKeyboard(ogl::camera::Camera::Direction::BACKWARD);
-    }
-
-    if (m_window.IsKeyPressed(GLFW_KEY_A))
-    {
-        m_camera.ProcessKeyboard(ogl::camera::Camera::Direction::LEFT);
-    }
-
-    if (m_window.IsKeyPressed(GLFW_KEY_D))
-    {
-        m_camera.ProcessKeyboard(ogl::camera::Camera::Direction::RIGHT);
-    }
-
-    if (m_window.IsKeyPressed(GLFW_KEY_O))
-    {
-        m_camera.ProcessKeyboard(ogl::camera::Camera::Direction::UP);
-    }
-
-    if (m_window.IsKeyPressed(GLFW_KEY_U))
-    {
-        m_camera.ProcessKeyboard(ogl::camera::Camera::Direction::DOWN);
-    }
-
-    if (m_window.IsKeyPressed(GLFW_KEY_I))
-    {
-        Log::SG_LOG_DEBUG("Camera position: x: {}, y: {}, z: {}, yaw: {}, pitch: {}",
-                          m_camera.GetPosition().x,
-                          m_camera.GetPosition().y,
-                          m_camera.GetPosition().z,
-                          m_camera.GetYaw(),
-                          m_camera.GetPitch()
-                          );
-    }
+    m_map->Update(m_mapEditGui->action);
 }
 
 void sg::Application::Render() const
@@ -229,12 +171,74 @@ void sg::Application::EndFrame() const
 }
 
 //-------------------------------------------------
-// Clean up
+// Logic helper
 //-------------------------------------------------
 
-void sg::Application::CleanUp()
+void sg::Application::InputLeftMouseButton()
 {
-    Log::SG_LOG_DEBUG("[Application::CleanUp()] Clean up Application.");
+    // workaround: handle *not* left mouse button
+    if (!ogl::input::MouseInput::GetInstance().IsLeftButtonPressed())
+    {
+        m_handleMouseEvent = true;
+    }
 
-    // ...
+    if (ogl::input::MouseInput::GetInstance().IsLeftButtonPressed() && m_handleMouseEvent)
+    {
+        m_map->Input();
+
+        // workaround: do not run the event again
+        m_handleMouseEvent = false;
+    }
+}
+
+void sg::Application::InputRightMouseButton()
+{
+    if (ogl::input::MouseInput::GetInstance().IsRightButtonPressed())
+    {
+        m_camera.ProcessMouse(ogl::input::MouseInput::GetInstance().GetDisplVec());
+    }
+}
+
+void sg::Application::InputKey()
+{
+    if (m_window.IsKeyPressed(GLFW_KEY_W))
+    {
+        m_camera.ProcessKeyboard(ogl::camera::Camera::Direction::FORWARD);
+    }
+
+    if (m_window.IsKeyPressed(GLFW_KEY_S))
+    {
+        m_camera.ProcessKeyboard(ogl::camera::Camera::Direction::BACKWARD);
+    }
+
+    if (m_window.IsKeyPressed(GLFW_KEY_A))
+    {
+        m_camera.ProcessKeyboard(ogl::camera::Camera::Direction::LEFT);
+    }
+
+    if (m_window.IsKeyPressed(GLFW_KEY_D))
+    {
+        m_camera.ProcessKeyboard(ogl::camera::Camera::Direction::RIGHT);
+    }
+
+    if (m_window.IsKeyPressed(GLFW_KEY_O))
+    {
+        m_camera.ProcessKeyboard(ogl::camera::Camera::Direction::UP);
+    }
+
+    if (m_window.IsKeyPressed(GLFW_KEY_U))
+    {
+        m_camera.ProcessKeyboard(ogl::camera::Camera::Direction::DOWN);
+    }
+
+    if (m_window.IsKeyPressed(GLFW_KEY_I))
+    {
+        Log::SG_LOG_DEBUG("Camera position: x: {}, y: {}, z: {}, yaw: {}, pitch: {}",
+                          m_camera.GetPosition().x,
+                          m_camera.GetPosition().y,
+                          m_camera.GetPosition().z,
+                          m_camera.GetYaw(),
+                          m_camera.GetPitch()
+        );
+    }
 }

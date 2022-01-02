@@ -49,6 +49,9 @@ namespace sg
         // Ctors. / Dtor.
         //-------------------------------------------------
 
+        /**
+         * Constructs a new Application object.
+         */
         Application();
 
         Application(const Application& t_other) = delete;
@@ -121,9 +124,11 @@ namespace sg
         void EndFrame() const;
 
         //-------------------------------------------------
-        // Clean up
+        // Logic helper
         //-------------------------------------------------
 
-        void CleanUp();
+        void InputLeftMouseButton();
+        void InputRightMouseButton();
+        void InputKey();
     };
 }

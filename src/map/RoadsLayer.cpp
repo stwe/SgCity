@@ -247,5 +247,29 @@ bool sg::map::RoadsLayer::CheckTerrainForRoad(const sg::map::Tile& t_tile)
         }
     }
 
+    if (t_tile.vertices[Tile::TL_1_Y] > t_tile.vertices[Tile::BL_1_Y] &&
+        t_tile.vertices[Tile::TR_2_Y] <= t_tile.vertices[Tile::BR_1_Y])
+    {
+        return false;
+    }
+
+    if (t_tile.vertices[Tile::TL_1_Y] <= t_tile.vertices[Tile::BL_1_Y] &&
+        t_tile.vertices[Tile::TR_2_Y] > t_tile.vertices[Tile::BR_1_Y])
+    {
+        return false;
+    }
+
+    if (t_tile.vertices[Tile::BL_1_Y] > t_tile.vertices[Tile::TL_1_Y] &&
+        t_tile.vertices[Tile::BR_1_Y] <= t_tile.vertices[Tile::TR_2_Y])
+    {
+        return false;
+    }
+
+    if (t_tile.vertices[Tile::BL_1_Y] <= t_tile.vertices[Tile::TL_1_Y] &&
+        t_tile.vertices[Tile::BR_1_Y] > t_tile.vertices[Tile::TR_2_Y])
+    {
+        return false;
+    }
+
     return true;
 }

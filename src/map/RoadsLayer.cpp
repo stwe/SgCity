@@ -6,7 +6,6 @@
 #include "ogl/math/Transform.h"
 #include "ogl/resource/ShaderProgram.h"
 #include "ogl/resource/Texture.h"
-#include "gui/MapEditGui.h"
 
 //-------------------------------------------------
 // Ctors. / Dtor.
@@ -31,12 +30,6 @@ sg::map::RoadsLayer::~RoadsLayer() noexcept
 
 void sg::map::RoadsLayer::Update(gui::Action t_action, const int t_tileIndex)
 {
-    // handle only SET_TRAFFIC Actions
-    if (t_action != gui::Action::SET_TRAFFIC)
-    {
-        return;
-    }
-
     auto& terrainTile{ *tiles[t_tileIndex] };
 
     // return if TileType is already TRAFFIC

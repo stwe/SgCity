@@ -2,7 +2,6 @@
 
 #include <vector>
 #include <string>
-#include "map/Tile.h"
 #include "map/Map.h"
 
 namespace sg::gui
@@ -28,7 +27,7 @@ namespace sg::gui
         // Logic
         //-------------------------------------------------
 
-        void Render(const map::Map& t_map);
+        void Render(map::Map& t_map);
 
     protected:
 
@@ -39,11 +38,5 @@ namespace sg::gui
 
         std::vector<std::string> m_buttonNames{ "Raise terrain", "Lower terrain", "Build road", "Info" };
         std::vector<bool> m_buttons{ true, false, false, false };
-
-        //-------------------------------------------------
-        // Helper
-        //-------------------------------------------------
-
-        static void TileInfo(const map::Tile& t_tile);
     };
 }

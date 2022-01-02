@@ -1,4 +1,5 @@
 #include <glm/geometric.hpp>
+#include <imgui.h>
 #include "Tile.h"
 #include "ogl/OpenGL.h"
 
@@ -92,6 +93,32 @@ void sg::map::Tile::VerticesToGpu(ogl::buffer::Vao& t_vao) const
     t_vao.GetVbo().Bind();
     glBufferSubData(GL_ARRAY_BUFFER, mapIndex * Tile::BYTES_PER_TILE, Tile::BYTES_PER_TILE, vertices.data());
     ogl::buffer::Vbo::Unbind();
+}
+
+//-------------------------------------------------
+// Logic
+//-------------------------------------------------
+
+void sg::map::Tile::RenderImGui() const
+{
+    ImGui::Begin("Tile info");
+
+    ImGui::Separator();
+
+    switch (type)
+    {
+        case map::Tile::TileType::NONE : ImGui::Text("Type: Terrain"); break;
+        case map::Tile::TileType::RESIDENTIAL : ImGui::Text("Type: Residential"); break;
+        case map::Tile::TileType::COMMERCIAL : ImGui::Text("Type: Commercial"); break;
+        case map::Tile::TileType::INDUSTRIAL : ImGui::Text("Type: Industrial"); break;
+        case map::Tile::TileType::TRAFFIC : ImGui::Text("Type: Road"); break;
+    }
+
+    ImGui::Text("Tile index: %d", mapIndex);
+    ImGui::Text("Tile map x: %f", mapX);
+    ImGui::Text("Tile map y: %f", mapZ);
+
+    ImGui::End();
 }
 
 //-------------------------------------------------

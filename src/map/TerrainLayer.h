@@ -34,24 +34,6 @@ namespace sg::map
     {
     public:
         //-------------------------------------------------
-        // Constants
-        //-------------------------------------------------
-
-        /**
-         * Value used for an invalid index.
-         */
-        static constexpr auto INVALID_TILE_INDEX{ -1 };
-
-        //-------------------------------------------------
-        // Member
-        //-------------------------------------------------
-
-        /**
-         * Index in std::vector<std::shared_ptr<Tile>> of the current picked Tile.
-         */
-        int currentTileIndex{ INVALID_TILE_INDEX };
-
-        //-------------------------------------------------
         // Ctors. / Dtor.
         //-------------------------------------------------
 
@@ -72,11 +54,17 @@ namespace sg::map
         ~TerrainLayer() noexcept override;
 
         //-------------------------------------------------
+        // Getter
+        //-------------------------------------------------
+
+        [[nodiscard]] const auto& GetPickingTexture() const { return *m_pickingTexture; }
+
+        //-------------------------------------------------
         // Logic
         //-------------------------------------------------
 
         void Input();
-        void Update(gui::Action t_action);
+        void Update(gui::Action t_action, int t_currentTileIndex);
         void RenderForMousePicking(const ogl::Window& t_window, const ogl::camera::Camera& t_camera);
         void Render(const ogl::Window& t_window, const ogl::camera::Camera& t_camera) const override;
 
@@ -139,11 +127,5 @@ namespace sg::map
         void UpdateNorthEastNeighbor(Tile& t_tile);
         void UpdateSouthWestNeighbor(Tile& t_tile);
         void UpdateSouthEastNeighbor(Tile& t_tile);
-
-        //-------------------------------------------------
-        // Mouse picking
-        //-------------------------------------------------
-
-        void UpdateCurrentTileIndex();
     };
 }

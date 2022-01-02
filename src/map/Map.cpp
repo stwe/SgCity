@@ -4,6 +4,8 @@
 #include "TerrainLayer.h"
 #include "RoadsLayer.h"
 #include "gui/MapEditGui.h"
+#include "ogl/input/PickingTexture.h"
+#include "ogl/input/MouseInput.h"
 
 //-------------------------------------------------
 // Ctors. / Dtor.
@@ -28,17 +30,32 @@ sg::map::Map::~Map() noexcept
 
 void sg::map::Map::Input()
 {
+    UpdateCurrentTileIndex();
+
     m_terrainLayer->Input();
 }
 
 void sg::map::Map::Update(gui::Action t_action)
 {
-    m_terrainLayer->Update(t_action);
-
-    if (m_terrainLayer->currentTileIndex != TerrainLayer::INVALID_TILE_INDEX)
+    if (currentTileIndex != INVALID_TILE_INDEX)
     {
-        m_roadsLayer->Update(t_action, m_terrainLayer->currentTileIndex);
-        m_terrainLayer->currentTileIndex = TerrainLayer::INVALID_TILE_INDEX;
+        if (t_action == gui::Action::RAISE || t_action == gui::Action::LOWER)
+        {
+            m_terrainLayer->Update(t_action, currentTileIndex);
+            currentTileIndex = INVALID_TILE_INDEX;
+        }
+
+        if (t_action == gui::Action::SET_TRAFFIC)
+        {
+            m_roadsLayer->Update(t_action, currentTileIndex);
+            currentTileIndex = INVALID_TILE_INDEX;
+        }
+
+        if (t_action == gui::Action::INFO)
+        {
+            m_currentTile = m_terrainLayer->tiles[currentTileIndex];
+            currentTileIndex = INVALID_TILE_INDEX;
+        }
     }
 }
 
@@ -54,6 +71,14 @@ void sg::map::Map::Render(const ogl::Window& t_window, const ogl::camera::Camera
     m_roadsLayer->Render(t_window, t_camera);
 }
 
+void sg::map::Map::RenderImGui() const
+{
+    if (m_currentTile)
+    {
+        m_currentTile->RenderImGui();
+    }
+}
+
 //-------------------------------------------------
 // Init
 //-------------------------------------------------
@@ -67,4 +92,21 @@ void sg::map::Map::Init()
     m_roadsLayer = std::make_unique<RoadsLayer>(m_tileCount, m_terrainLayer->tiles);
 
     Log::SG_LOG_DEBUG("[Map::Init()] The map was successfully initialized.");
+}
+
+//-------------------------------------------------
+// Mouse picking
+//-------------------------------------------------
+
+void sg::map::Map::UpdateCurrentTileIndex()
+{
+    currentTileIndex = m_terrainLayer->GetPickingTexture().ReadMapIndex(
+        ogl::input::MouseInput::GetInstance().GetX(),
+        ogl::input::MouseInput::GetInstance().GetY()
+    );
+
+    if (currentTileIndex < 0 || currentTileIndex > m_terrainLayer->tiles.size() - 1)
+    {
+        currentTileIndex = INVALID_TILE_INDEX;
+    }
 }

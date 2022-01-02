@@ -2,13 +2,12 @@
 #include "MapEditGui.h"
 #include "Log.h"
 #include "ogl/input/MouseInput.h"
-#include "map/TerrainLayer.h"
 
 //-------------------------------------------------
 // Logic
 //-------------------------------------------------
 
-void sg::gui::MapEditGui::Render(const map::Map& t_map)
+void sg::gui::MapEditGui::Render(map::Map& t_map)
 {
     ImGui::Begin("Game Debug");
     ImGui::Text("Press the Escape key to exit.");
@@ -47,29 +46,5 @@ void sg::gui::MapEditGui::Render(const map::Map& t_map)
         }
     }
 
-    ImGui::Separator();
-
-    if (t_map.GetTerrainLayer().currentTileIndex != map::TerrainLayer::INVALID_TILE_INDEX && action == Action::INFO)
-    {
-        const auto& tile{ *t_map.GetTerrainLayer().tiles[t_map.GetTerrainLayer().currentTileIndex] };
-        TileInfo(tile);
-    }
-
     ImGui::End();
-}
-
-void sg::gui::MapEditGui::TileInfo(const sg::map::Tile& t_tile)
-{
-    switch (t_tile.type)
-    {
-        case map::Tile::TileType::NONE : ImGui::Text("Type: Terrain"); break;
-        case map::Tile::TileType::RESIDENTIAL : ImGui::Text("Type: Residential"); break;
-        case map::Tile::TileType::COMMERCIAL : ImGui::Text("Type: Commercial"); break;
-        case map::Tile::TileType::INDUSTRIAL : ImGui::Text("Type: Industrial"); break;
-        case map::Tile::TileType::TRAFFIC : ImGui::Text("Type: Road"); break;
-    }
-
-    ImGui::Text("Tile index: %d", t_tile.mapIndex);
-    ImGui::Text("Tile map x: %f", t_tile.mapX);
-    ImGui::Text("Tile map y: %f", t_tile.mapZ);
 }

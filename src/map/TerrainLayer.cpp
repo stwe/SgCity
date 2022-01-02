@@ -7,7 +7,6 @@
 #include "ogl/resource/ShaderProgram.h"
 #include "ogl/resource/Texture.h"
 #include "ogl/input/PickingTexture.h"
-#include "ogl/input/MouseInput.h"
 #include "gui/MapEditGui.h"
 
 //-------------------------------------------------
@@ -33,24 +32,12 @@ sg::map::TerrainLayer::~TerrainLayer() noexcept
 
 void sg::map::TerrainLayer::Input()
 {
-    UpdateCurrentTileIndex();
+    // ...
 }
 
-void sg::map::TerrainLayer::Update(gui::Action t_action)
+void sg::map::TerrainLayer::Update(gui::Action t_action, const int t_currentTileIndex)
 {
-    // return if index is invalid
-    if (currentTileIndex == INVALID_TILE_INDEX)
-    {
-        return;
-    }
-
-    // handle only RAISE and LOWER actions
-    if (t_action != gui::Action::RAISE && t_action != gui::Action::LOWER)
-    {
-        return;
-    }
-
-    auto& tile{ *tiles[currentTileIndex] };
+    auto& tile{ *tiles[t_currentTileIndex] };
 
     // handle only TileType NONE
     if (tile.type != Tile::TileType::NONE)
@@ -80,9 +67,6 @@ void sg::map::TerrainLayer::Update(gui::Action t_action)
     UpdateNorthWestNeighbor(tile);
     UpdateSouthEastNeighbor(tile);
     UpdateSouthWestNeighbor(tile);
-
-    // stop update
-    currentTileIndex = INVALID_TILE_INDEX;
 }
 
 void sg::map::TerrainLayer::RenderForMousePicking(const sg::ogl::Window& t_window, const sg::ogl::camera::Camera& t_camera)
@@ -380,22 +364,5 @@ void sg::map::TerrainLayer::UpdateSouthEastNeighbor(sg::map::Tile& t_tile)
 
         tile->UpdateNormal();
         tile->VerticesToGpu(*vao);
-    }
-}
-
-//-------------------------------------------------
-// Mouse picking
-//-------------------------------------------------
-
-void sg::map::TerrainLayer::UpdateCurrentTileIndex()
-{
-    currentTileIndex = m_pickingTexture->ReadMapIndex(
-        ogl::input::MouseInput::GetInstance().GetX(),
-        ogl::input::MouseInput::GetInstance().GetY()
-        );
-
-    if (currentTileIndex < 0 || currentTileIndex > tiles.size() - 1)
-    {
-        currentTileIndex = INVALID_TILE_INDEX;
     }
 }

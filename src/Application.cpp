@@ -99,6 +99,7 @@ void sg::Application::Render() const
     // (3) render gui
     ogl::Window::ImGuiBegin();
     m_mapEditGui->Render(*m_map);
+    m_map->RenderImGui();
     ogl::Window::ImGuiEnd();
 
     EndFrame();
@@ -185,8 +186,6 @@ void sg::Application::InputLeftMouseButton()
     if (ogl::input::MouseInput::GetInstance().IsLeftButtonPressed() && m_handleMouseEvent)
     {
         m_map->Input();
-
-        // workaround: do not run the event again
         m_handleMouseEvent = false;
     }
 }

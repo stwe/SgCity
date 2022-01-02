@@ -35,11 +35,34 @@ namespace sg::map
     class RoadsLayer;
 
     /**
+     * Forward declaration class Tile.
+     */
+    class Tile;
+
+    /**
      * Represents the Map.
      */
     class Map
     {
     public:
+        //-------------------------------------------------
+        // Constants
+        //-------------------------------------------------
+
+        /**
+         * Value used for an invalid tile index.
+         */
+        static constexpr auto INVALID_TILE_INDEX{ -1 };
+
+        //-------------------------------------------------
+        // Member
+        //-------------------------------------------------
+
+        /**
+         * Index in std::vector<std::shared_ptr<Tile>> of the current picked Tile.
+         */
+        int currentTileIndex{ INVALID_TILE_INDEX };
+
         //-------------------------------------------------
         // Ctors. / Dtor.
         //-------------------------------------------------
@@ -61,12 +84,6 @@ namespace sg::map
         ~Map() noexcept;
 
         //-------------------------------------------------
-        // Getter
-        //-------------------------------------------------
-
-        [[nodiscard]] const auto& GetTerrainLayer() const { return *m_terrainLayer; }
-
-        //-------------------------------------------------
         // Logic
         //-------------------------------------------------
 
@@ -74,6 +91,7 @@ namespace sg::map
         void Update(gui::Action t_action);
         void RenderForMousePicking(const ogl::Window& t_window, const ogl::camera::Camera& t_camera) const;
         void Render(const ogl::Window& t_window, const ogl::camera::Camera& t_camera) const;
+        void RenderImGui() const;
 
     protected:
 
@@ -102,6 +120,11 @@ namespace sg::map
          */
         std::unique_ptr<RoadsLayer> m_roadsLayer;
 
+        /**
+         * Current Tile object.
+         */
+        std::shared_ptr<map::Tile> m_currentTile;
+
         //-------------------------------------------------
         // Init
         //-------------------------------------------------
@@ -110,5 +133,11 @@ namespace sg::map
          * Initializes the Map.
          */
         void Init();
+
+        //-------------------------------------------------
+        // Mouse picking
+        //-------------------------------------------------
+
+        void UpdateCurrentTileIndex();
     };
 }

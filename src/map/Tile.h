@@ -178,7 +178,21 @@ namespace sg::map
         // Gpu
         //-------------------------------------------------
 
+        /**
+         * Provides the vertices to the Gpu.
+         *
+         * @param t_vao A Vao object.
+         */
         void VerticesToGpu(ogl::buffer::Vao& t_vao) const;
+
+        //-------------------------------------------------
+        // Logic
+        //-------------------------------------------------
+
+        /**
+         * Renders some info about the Tile.
+         */
+        void RenderImGui() const;
 
     protected:
 

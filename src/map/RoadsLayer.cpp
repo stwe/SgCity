@@ -38,14 +38,20 @@ void sg::map::RoadsLayer::Update(gui::Action t_action, const int t_tileIndex)
         return;
     }
 
-    // set TRAFFIC TileType
-    terrainTile.type = Tile::TileType::TRAFFIC;
+    Log::SG_LOG_DEBUG("[RoadsLayer::Update()] Built a road at {}.", t_tileIndex);
 
-    Log::SG_LOG_DEBUG("[RoadsLayer::Update()] Create a road {}.", t_tileIndex);
+    if (!CheckTerrainForRoad(terrainTile))
+    {
+        Log::SG_LOG_DEBUG("[RoadsLayer::Update()] No road can be built at {}.", t_tileIndex);
+        return;
+    }
 
     // create road tile
     auto i{ static_cast<int>(m_roadTiles.size()) };
     m_roadTiles.push_back(std::move(CreateRoadTile(terrainTile, i)));
+
+    // set TRAFFIC TileType
+    terrainTile.type = Tile::TileType::TRAFFIC;
 
     // create a new Vao if necessary
     if (!vao)
@@ -229,4 +235,17 @@ void sg::map::RoadsLayer::UpdateTexture(RoadTile& t_roadTile)
     // tr
     t_roadTile.vertices[58] = (1.0f / 4.0f) + xOffset;
     t_roadTile.vertices[59] = (1.0f / 4.0f) + yOffset;
+}
+
+bool sg::map::RoadsLayer::CheckTerrainForRoad(const sg::map::Tile& t_tile)
+{
+    for (auto idx : Tile::Y_INDEX)
+    {
+        if (t_tile.vertices[idx] < 0.0f)
+        {
+            return false;
+        }
+    }
+
+    return true;
 }

@@ -1,5 +1,6 @@
 #pragma once
 
+#include <array>
 #include <glm/vec3.hpp>
 #include "ogl/buffer/Vao.h"
 
@@ -59,6 +60,12 @@ namespace sg::map
         static constexpr auto TL_2_Y{ 34 };
         static constexpr auto BR_2_Y{ 45 };
         static constexpr auto TR_2_Y{ 56 };
+
+        static constexpr std::array<int, 6> Y_INDEX =
+        {
+            TL_1_Y, BL_1_Y, BR_1_Y,
+            TL_2_Y, BR_2_Y, TR_2_Y
+        };
 
         // Start index of normals
 

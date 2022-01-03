@@ -35,6 +35,11 @@ namespace sg::map
     class RoadsLayer;
 
     /**
+     * Forward declaration class BuildingsLayer.
+     */
+    class BuildingsLayer;
+
+    /**
      * Forward declaration class Tile.
      */
     class Tile;
@@ -106,19 +111,24 @@ namespace sg::map
         int m_tileCount{ 0 };
 
         /**
-         * The water surface.
+         * The water Layer.
          */
         std::unique_ptr<WaterLayer> m_waterLayer;
 
         /**
-         * The Terrain Layer.
+         * The terrain Layer.
          */
         std::unique_ptr<TerrainLayer> m_terrainLayer;
 
         /**
-         * Roads as a new Layer.
+         * The roads Layer
          */
         std::unique_ptr<RoadsLayer> m_roadsLayer;
+
+        /**
+         * The buildings Layer.
+         */
+        std::unique_ptr<BuildingsLayer> m_buildingsLayer;
 
         /**
          * Current Tile object.

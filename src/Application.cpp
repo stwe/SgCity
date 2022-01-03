@@ -94,7 +94,7 @@ void sg::Application::Render() const
 
     // (2) render scene
     m_map->Render(m_window, m_camera);
-    m_model->Render(m_window, m_camera);
+    //m_model->Render(m_window, m_camera);
 
     // (3) render gui
     ogl::Window::ImGuiBegin();

@@ -3,6 +3,7 @@
 #include "WaterLayer.h"
 #include "TerrainLayer.h"
 #include "RoadsLayer.h"
+#include "BuildingsLayer.h"
 #include "gui/MapEditGui.h"
 #include "ogl/input/PickingTexture.h"
 #include "ogl/input/MouseInput.h"
@@ -69,6 +70,7 @@ void sg::map::Map::Render(const ogl::Window& t_window, const ogl::camera::Camera
     m_terrainLayer->Render(t_window, t_camera);
     m_waterLayer->Render(t_window, t_camera);
     m_roadsLayer->Render(t_window, t_camera);
+    m_buildingsLayer->Render(t_window, t_camera);
 }
 
 void sg::map::Map::RenderImGui() const
@@ -90,6 +92,7 @@ void sg::map::Map::Init()
     m_waterLayer = std::make_unique<WaterLayer>(m_tileCount);
     m_terrainLayer = std::make_unique<TerrainLayer>(m_tileCount);
     m_roadsLayer = std::make_unique<RoadsLayer>(m_tileCount, m_terrainLayer->tiles);
+    m_buildingsLayer = std::make_unique<BuildingsLayer>(m_tileCount, m_terrainLayer->tiles);
 
     Log::SG_LOG_DEBUG("[Map::Init()] The map was successfully initialized.");
 }

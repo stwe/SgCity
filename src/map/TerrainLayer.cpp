@@ -168,6 +168,19 @@ void sg::map::TerrainLayer::CreateTiles()
                 index
             ) };
 
+            // todo: temp code
+            /////////////////////////////////////////////
+            if (x == 1)
+            {
+                tile->type = Tile::TileType::RESIDENTIAL;
+            }
+
+            if (x == 4)
+            {
+                tile->type = Tile::TileType::TRAFFIC;
+            }
+            /////////////////////////////////////////////
+
             tiles.push_back(std::move(tile));
         }
     }

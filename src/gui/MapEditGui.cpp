@@ -7,7 +7,7 @@
 // Logic
 //-------------------------------------------------
 
-void sg::gui::MapEditGui::Render(map::Map& t_map)
+void sg::gui::MapEditGui::RenderImGui(map::Map& t_map)
 {
     ImGui::Begin("Game Debug");
     ImGui::Text("Press the Escape key to exit.");

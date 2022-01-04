@@ -57,6 +57,11 @@ void sg::map::BuildingsLayer::Render(const sg::ogl::Window& t_window, const sg::
     vao->Unbind();
 
     ogl::OpenGL::DisableFaceCulling();
+
+    for (const auto& tile : m_buildingTiles)
+    {
+        m_buildingModel->Render(t_window, t_camera, glm::vec3(tile->mapX + 0.5f, 0.25f, tile->mapZ + 0.5f));
+    }
 }
 
 //-------------------------------------------------
@@ -84,7 +89,7 @@ void sg::map::BuildingsLayer::Init()
     m_tileTexture = std::make_unique<ogl::resource::Texture>("/home/steffen/CLionProjects/SgCity/resources/texture/r.png", true);
     m_tileTexture->Load();
 
-    // todo: m_buildingModel
+    m_buildingModel = std::make_unique<ogl::resource::Model>("/home/steffen/CLionProjects/SgCity/resources/model/cube.obj");
 
     Log::SG_LOG_DEBUG("[BuildingsLayer::Init()] The BuildingsLayer was successfully initialized.");
 }

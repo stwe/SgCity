@@ -59,8 +59,13 @@ namespace sg::ogl::resource
          *
          * @param t_window The Window object.
          * @param t_camera The Camera object.
+         * @param t_position The position in local space.
          */
-        void Render(const ogl::Window& t_window, const ogl::camera::Camera& t_camera) const;
+        void Render(
+            const ogl::Window& t_window,
+            const ogl::camera::Camera& t_camera,
+            const glm::vec3& t_position
+            ) const;
 
     protected:
 

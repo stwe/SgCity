@@ -27,7 +27,7 @@ namespace sg::gui
         // Logic
         //-------------------------------------------------
 
-        void Render(map::Map& t_map);
+        void RenderImGui(map::Map& t_map);
 
     protected:
 

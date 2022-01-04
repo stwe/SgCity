@@ -3,7 +3,6 @@
 #include <memory>
 #include "ogl/Window.h"
 #include "ogl/camera/Camera.h"
-#include "ogl/resource/Model.h"
 
 //-------------------------------------------------
 // Forward declarations
@@ -82,7 +81,7 @@ namespace sg
         /**
          * A camera to move around the map.
          */
-        ogl::camera::Camera m_camera{ glm::vec3(5.0f, 6.0f, 31.0f), -90.0f, -45.0f };
+        ogl::camera::Camera m_camera{ glm::vec3(5.0f, 1.3f, 7.0f), -90.0f, -13.0f };
 
         /**
          * The Map object.
@@ -98,8 +97,6 @@ namespace sg
          * So that events are only executed once.
          */
         bool m_handleMouseEvent{ true };
-
-        std::unique_ptr<ogl::resource::Model> m_model;
 
         //-------------------------------------------------
         // Logic

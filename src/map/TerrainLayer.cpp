@@ -170,14 +170,9 @@ void sg::map::TerrainLayer::CreateTiles()
 
             // todo: temp code
             /////////////////////////////////////////////
-            if (x == 1)
+            if (x == 4 && z == 4)
             {
                 tile->type = Tile::TileType::RESIDENTIAL;
-            }
-
-            if (x == 4)
-            {
-                tile->type = Tile::TileType::TRAFFIC;
             }
             /////////////////////////////////////////////
 

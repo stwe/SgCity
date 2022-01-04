@@ -33,7 +33,11 @@ sg::ogl::resource::Model::~Model() noexcept
 // Logic
 //-------------------------------------------------
 
-void sg::ogl::resource::Model::Render(const Window& t_window, const camera::Camera& t_camera) const
+void sg::ogl::resource::Model::Render(
+    const Window& t_window,
+    const camera::Camera& t_camera,
+    const glm::vec3& t_position
+    ) const
 {
     if (m_vaos.empty())
     {
@@ -47,9 +51,9 @@ void sg::ogl::resource::Model::Render(const Window& t_window, const camera::Came
 
     // todo
     auto modelMatrix{ ogl::math::Transform::CreateModelMatrix(
-        glm::vec3(24.0f, 0.0f, 20.0f),
+        t_position,
         glm::vec3(0.0f, 0.0f, 0.0f),
-        glm::vec3(0.125f)
+        glm::vec3(0.25f)
     ) };
 
     m_modelShaderProgram->SetUniform("model", modelMatrix);
@@ -136,13 +140,13 @@ void sg::ogl::resource::Model::Init()
         }
 
         auto vao{ std::make_unique<ogl::buffer::Vao>() };
-        vao->CreateStaticVbo(vertices, static_cast<int32_t>(vertices.size() / 3)); // todo: drawCount
+        vao->CreateStaticVbo(vertices, 12 * 3); // todo: drawCount
         m_vaos.push_back(std::move(vao));
 
         m_modelShaderProgram = std::make_unique<ogl::resource::ShaderProgram>("/home/steffen/CLionProjects/SgCity/resources/shader/model");
         m_modelShaderProgram->Load();
 
-        m_modelTexture = std::make_unique<ogl::resource::Texture>("/home/steffen/CLionProjects/SgCity/resources/model/house/house_text.jpg", true);
+        m_modelTexture = std::make_unique<ogl::resource::Texture>("/home/steffen/CLionProjects/SgCity/resources/texture/building.jpeg", true);
         m_modelTexture->Load();
     }
 }

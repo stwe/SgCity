@@ -57,6 +57,8 @@ or
 $ conan install conanfile.txt -s build_type=Release --build missing
 ```
 
+**If the following error occurs: `ERROR: opengl/system: Error in package_info() method, line 80`, then `pkg-config` must be installed first.**
+
 ```bash
 $ mkdir build
 $ cd build

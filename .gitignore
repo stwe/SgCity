@@ -30,3 +30,7 @@ conaninfo.txt
 conanbuildinfo.cmake
 
 !/resources/devlog/*.png
+!/resources/model/*.obj
+!/resources/texture/building.png
+!/resources/texture/grass.png
+!/resources/texture/r.png

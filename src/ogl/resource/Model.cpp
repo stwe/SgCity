@@ -146,7 +146,7 @@ void sg::ogl::resource::Model::Init()
         m_modelShaderProgram = std::make_unique<ogl::resource::ShaderProgram>("/home/steffen/CLionProjects/SgCity/resources/shader/model");
         m_modelShaderProgram->Load();
 
-        m_modelTexture = std::make_unique<ogl::resource::Texture>("/home/steffen/CLionProjects/SgCity/resources/texture/building.jpeg", true);
+        m_modelTexture = std::make_unique<ogl::resource::Texture>("/home/steffen/CLionProjects/SgCity/resources/texture/building.png", true);
         m_modelTexture->Load();
     }
 }

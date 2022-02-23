@@ -1,3 +1,21 @@
+// This file is part of the SgCity project.
+//
+// Copyright (c) 2022. stwe <https://github.com/stwe/SgCity>
+//
+// This program is free software; you can redistribute it and/or
+// modify it under the terms of the GNU General Public License
+// as published by the Free Software Foundation; either version 2
+// of the License, or (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program; if not, write to the Free Software
+// Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+
 #pragma once
 
 #include <memory>
@@ -44,6 +62,16 @@ namespace sg
          */
         static constexpr auto TILE_COUNT{ 64 };
 
+        /**
+         * The width of the screen.
+         */
+        static constexpr auto SCREEN_WIDTH{ 1024 };
+
+        /**
+         * The height of the screen.
+         */
+        static constexpr auto SCREEN_HEIGHT{ 768 };
+
         //-------------------------------------------------
         // Ctors. / Dtor.
         //-------------------------------------------------
@@ -76,7 +104,7 @@ namespace sg
         /**
          * A Glfw window.
          */
-        ogl::Window m_window{ 1024, 768, "SgCity Sandbox" };
+        ogl::Window m_window{ SCREEN_WIDTH, SCREEN_HEIGHT, "SgCity Sandbox" };
 
         /**
          * A camera to move around the map.

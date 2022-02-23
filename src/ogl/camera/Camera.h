@@ -1,12 +1,42 @@
+// This file is part of the SgCity project.
+//
+// Copyright (c) 2022. stwe <https://github.com/stwe/SgCity>
+//
+// This program is free software; you can redistribute it and/or
+// modify it under the terms of the GNU General Public License
+// as published by the Free Software Foundation; either version 2
+// of the License, or (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program; if not, write to the Free Software
+// Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+
 #pragma once
 
 #include <glm/gtc/matrix_transform.hpp>
+
+//-------------------------------------------------
+// Camera
+//-------------------------------------------------
 
 namespace sg::ogl::camera
 {
     class Camera
     {
     public:
+        //-------------------------------------------------
+        // Constants
+        //-------------------------------------------------
+
+        static constexpr auto MOVEMENT_SPEED{ 1.0f / 60.0f * 4.0f };
+
+        static constexpr auto MOUSE_SENSITIVITY{ 0.2f };
+
         //-------------------------------------------------
         // Type
         //-------------------------------------------------
@@ -55,8 +85,8 @@ namespace sg::ogl::camera
         // Setter
         //-------------------------------------------------
 
-        void SetCameraSpeed(float t_speed) { m_movementSpeed = t_speed; }
-        void SetMouseSensitivity(float t_sensitivity) { m_mouseSensitivity = t_sensitivity; }
+        void SetCameraSpeed(const float t_speed) { m_movementSpeed = t_speed; }
+        void SetMouseSensitivity(const float t_sensitivity) { m_mouseSensitivity = t_sensitivity; }
         void SetPosition(const glm::vec3& t_position) { m_position = t_position; }
 
         //-------------------------------------------------
@@ -79,8 +109,8 @@ namespace sg::ogl::camera
         // Member
         //-------------------------------------------------
 
-        float m_movementSpeed{ 0.0167f * 4.0f };
-        float m_mouseSensitivity{ 0.2f };
+        float m_movementSpeed{ MOVEMENT_SPEED };
+        float m_mouseSensitivity{ MOUSE_SENSITIVITY };
 
         glm::vec3 m_position{ glm::vec3(0.0f, 0.0f, 0.0f) };
         glm::vec3 m_front{ glm::vec3(0.0f, 0.0f, 1.0f) };

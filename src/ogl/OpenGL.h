@@ -1,3 +1,21 @@
+// This file is part of the SgCity project.
+//
+// Copyright (c) 2022. stwe <https://github.com/stwe/SgCity>
+//
+// This program is free software; you can redistribute it and/or
+// modify it under the terms of the GNU General Public License
+// as published by the Free Software Foundation; either version 2
+// of the License, or (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program; if not, write to the Free Software
+// Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+
 #pragma once
 
 #include <GL/glew.h>
@@ -18,10 +36,10 @@ namespace sg::ogl
         /**
          * Specify clear values for the color buffers.
          *
-         * @param r red - range [0, 1].
-         * @param g green - range [0, 1].
-         * @param b blue - range [0, 1].
-         * @param a alpha - range [0, 1].
+         * @param t_red red - range [0, 1].
+         * @param t_green green - range [0, 1].
+         * @param t_blue blue - range [0, 1].
+         * @param t_alpha alpha - range [0, 1].
          */
         static void SetClearColor(float t_red, float t_green, float t_blue, float t_alpha)
         {

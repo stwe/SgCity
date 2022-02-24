@@ -9,7 +9,6 @@
 
 namespace sg::ogl::resource
 {
-    class Texture;
     class Model;
 }
 
@@ -50,14 +49,9 @@ namespace sg::map
         //-------------------------------------------------
 
         /**
-         * The tile texture.
-         */
-        std::unique_ptr<ogl::resource::Texture> m_tileTexture;
-
-        /**
          * A Model object.
          */
-        std::unique_ptr<ogl::resource::Model> m_buildingModel;
+        sg::ogl::resource::Model* m_buildingModel{ nullptr };
 
         /**
          * An array holding the BuildingTile objects.

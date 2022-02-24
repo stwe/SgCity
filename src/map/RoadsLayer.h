@@ -7,11 +7,6 @@
 // Forward declarations
 //-------------------------------------------------
 
-namespace sg::ogl::resource
-{
-    class Texture;
-}
-
 namespace sg::gui
 {
     enum class Action;
@@ -53,11 +48,6 @@ namespace sg::map
         //-------------------------------------------------
         // Member
         //-------------------------------------------------
-
-        /**
-         * The roads texture atlas.
-         */
-        std::unique_ptr<ogl::resource::Texture> m_roadsTexture;
 
         /**
          * An array holding the RoadTile objects.

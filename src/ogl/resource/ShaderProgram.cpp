@@ -1,8 +1,25 @@
+// This file is part of the SgCity project.
+//
+// Copyright (c) 2022. stwe <https://github.com/stwe/SgCity>
+//
+// This program is free software; you can redistribute it and/or
+// modify it under the terms of the GNU General Public License
+// as published by the Free Software Foundation; either version 2
+// of the License, or (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program; if not, write to the Free Software
+// Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+
 #include <glm/gtc/type_ptr.hpp>
 #include "ShaderProgram.h"
 #include "ogl/OpenGL.h"
 #include "Assert.h"
-#include "SgException.h"
 #include "ResourceUtil.h"
 
 //-------------------------------------------------
@@ -13,6 +30,8 @@ sg::ogl::resource::ShaderProgram::ShaderProgram(std::string t_path)
     : m_path{ std::move(t_path) }
 {
     Log::SG_LOG_DEBUG("[ShaderProgram::ShaderProgram()] Create ShaderProgram.");
+
+    Init();
 }
 
 sg::ogl::resource::ShaderProgram::~ShaderProgram() noexcept
@@ -20,21 +39,6 @@ sg::ogl::resource::ShaderProgram::~ShaderProgram() noexcept
     Log::SG_LOG_DEBUG("[ShaderProgram::~ShaderProgram()] Destruct ShaderProgram.");
 
     CleanUp();
-}
-
-//-------------------------------------------------
-// Load
-//-------------------------------------------------
-
-void sg::ogl::resource::ShaderProgram::Load()
-{
-    CreateId();
-
-    AddVertexShader(ResourceUtil::ReadShaderFile(m_path + "/Vertex.vert"));
-    AddFragmentShader(ResourceUtil::ReadShaderFile(m_path + "/Fragment.frag"));
-
-    LinkAndValidateProgram();
-    AddFoundUniforms();
 }
 
 //-------------------------------------------------
@@ -46,7 +50,7 @@ void sg::ogl::resource::ShaderProgram::Bind() const
     glUseProgram(id);
 }
 
-void sg::ogl::resource::ShaderProgram::Unbind() const
+void sg::ogl::resource::ShaderProgram::Unbind()
 {
     glUseProgram(0);
 }
@@ -94,6 +98,21 @@ void sg::ogl::resource::ShaderProgram::SetUniform(const std::string& t_uniformNa
 void sg::ogl::resource::ShaderProgram::SetUniform(const std::string& t_uniformName, const glm::mat3& t_value)
 {
     glUniformMatrix3fv(m_uniforms.at(t_uniformName), 1, GL_FALSE, value_ptr(t_value));
+}
+
+//-------------------------------------------------
+// Init
+//-------------------------------------------------
+
+void sg::ogl::resource::ShaderProgram::Init()
+{
+    CreateId();
+
+    AddVertexShader(ResourceUtil::ReadShaderFile(m_path + "/Vertex.vert"));
+    AddFragmentShader(ResourceUtil::ReadShaderFile(m_path + "/Fragment.frag"));
+
+    LinkAndValidateProgram();
+    AddFoundUniforms();
 }
 
 //-------------------------------------------------

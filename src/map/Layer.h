@@ -14,11 +14,6 @@ namespace sg::ogl::buffer
     class Vao;
 }
 
-namespace sg::ogl::resource
-{
-    class ShaderProgram;
-}
-
 //-------------------------------------------------
 // Layer
 //-------------------------------------------------
@@ -64,11 +59,6 @@ namespace sg::map
          * A Vao object which contains a Vbo with vertex data.
          */
         std::unique_ptr<ogl::buffer::Vao> vao;
-
-        /**
-         * A ShaderProgram object used to draw the Layer.
-         */
-        std::unique_ptr<ogl::resource::ShaderProgram> shaderProgram;
 
         //-------------------------------------------------
         // Ctors. / Dtor.

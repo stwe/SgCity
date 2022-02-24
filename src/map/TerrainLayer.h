@@ -6,11 +6,6 @@
 // Forward declarations
 //-------------------------------------------------
 
-namespace sg::ogl::resource
-{
-    class Texture;
-}
-
 namespace sg::ogl::input
 {
     class PickingTexture;
@@ -74,16 +69,6 @@ namespace sg::map
         //-------------------------------------------------
         // Member
         //-------------------------------------------------
-
-        /**
-         * The texture for each Tile.
-         */
-        std::unique_ptr<ogl::resource::Texture> m_tileTexture;
-
-        /**
-         * A ShaderProgram object used to draw the TerrainLayer for mouse picking.
-         */
-        std::unique_ptr<ogl::resource::ShaderProgram> m_pickingShaderProgram;
 
         /**
          * An object holding the Fbo for mouse picking.

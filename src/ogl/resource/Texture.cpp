@@ -1,3 +1,21 @@
+// This file is part of the SgCity project.
+//
+// Copyright (c) 2022. stwe <https://github.com/stwe/SgCity>
+//
+// This program is free software; you can redistribute it and/or
+// modify it under the terms of the GNU General Public License
+// as published by the Free Software Foundation; either version 2
+// of the License, or (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program; if not, write to the Free Software
+// Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+
 #include "Texture.h"
 #include "Assert.h"
 #include "SgException.h"
@@ -10,34 +28,25 @@
 // Ctors. / Dtor.
 //-------------------------------------------------
 
-sg::ogl::resource::Texture::Texture(std::string t_path)
-    : m_path{ std::move(t_path) }
-{
-    Log::SG_LOG_DEBUG("[Texture::Texture()] Create Texture.");
-}
-
 sg::ogl::resource::Texture::Texture(std::string t_path, bool t_loadVerticalFlipped)
     : m_path{ std::move(t_path) }
     , m_loadVerticalFlipped{ t_loadVerticalFlipped }
 {
     Log::SG_LOG_DEBUG("[Texture::Texture()] Create Texture.");
+
+    CreateId();
+    LoadFromFile();
 }
+
+sg::ogl::resource::Texture::Texture(std::string t_path)
+    : Texture(std::move(t_path), false)
+{}
 
 sg::ogl::resource::Texture::~Texture() noexcept
 {
     Log::SG_LOG_DEBUG("[Texture::~Texture()] Destruct Texture.");
 
     CleanUp();
-}
-
-//-------------------------------------------------
-// Load
-//-------------------------------------------------
-
-void sg::ogl::resource::Texture::Load()
-{
-    CreateId();
-    LoadFromFile();
 }
 
 //-------------------------------------------------
@@ -57,10 +66,7 @@ void sg::ogl::resource::Texture::Unbind()
 void sg::ogl::resource::Texture::BindForReading(uint32_t t_textureUnit) const
 {
     // make sure that the OpenGL constants are used here
-    if (t_textureUnit < GL_TEXTURE0 || t_textureUnit > GL_TEXTURE15) {
-        SG_ASSERT(false, "[Texture::BindForReading()] Invalid texture unit value.")
-    }
-
+    SG_ASSERT(t_textureUnit >= GL_TEXTURE0 || t_textureUnit <= GL_TEXTURE15, "[Texture::BindForReading()] Invalid texture unit value.")
     glActiveTexture(t_textureUnit);
     Bind();
 }

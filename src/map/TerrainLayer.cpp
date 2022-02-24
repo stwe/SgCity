@@ -4,8 +4,7 @@
 #include "Log.h"
 #include "ogl/OpenGL.h"
 #include "ogl/math/Transform.h"
-#include "ogl/resource/ShaderProgram.h"
-#include "ogl/resource/Texture.h"
+#include "ogl/resource/ResourceManager.h"
 #include "ogl/input/PickingTexture.h"
 #include "gui/MapEditGui.h"
 
@@ -69,7 +68,7 @@ void sg::map::TerrainLayer::Update(gui::Action t_action, const int t_currentTile
     UpdateSouthWestNeighbor(tile);
 }
 
-void sg::map::TerrainLayer::RenderForMousePicking(const sg::ogl::Window& t_window, const sg::ogl::camera::Camera& t_camera)
+void sg::map::TerrainLayer::RenderForMousePicking(const ogl::Window& t_window, const ogl::camera::Camera& t_camera)
 {
     if (!m_pickingTexture)
     {
@@ -83,41 +82,46 @@ void sg::map::TerrainLayer::RenderForMousePicking(const sg::ogl::Window& t_windo
     ogl::OpenGL::Clear();
 
     vao->Bind();
-    m_pickingShaderProgram->Bind();
 
-    m_pickingShaderProgram->SetUniform("model", modelMatrix);
-    m_pickingShaderProgram->SetUniform("view", t_camera.GetViewMatrix());
-    m_pickingShaderProgram->SetUniform("projection", t_window.GetProjectionMatrix());
+    auto& shaderProgram{ ogl::resource::ResourceManager::LoadShaderProgram("/home/steffen/CLionProjects/SgCity/resources/shader/picking") };
+    shaderProgram.Bind();
+
+    shaderProgram.SetUniform("model", modelMatrix);
+    shaderProgram.SetUniform("view", t_camera.GetViewMatrix());
+    shaderProgram.SetUniform("projection", t_window.GetProjectionMatrix());
 
     vao->DrawPrimitives();
 
-    m_pickingShaderProgram->Unbind();
+    ogl::resource::ShaderProgram::Unbind();
     vao->Unbind();
 
     m_pickingTexture->DisableWriting();
 }
 
-void sg::map::TerrainLayer::Render(const sg::ogl::Window& t_window, const sg::ogl::camera::Camera& t_camera) const
+void sg::map::TerrainLayer::Render(const ogl::Window& t_window, const ogl::camera::Camera& t_camera) const
 {
     ogl::OpenGL::EnableFaceCulling();
 
     vao->Bind();
-    shaderProgram->Bind();
 
-    shaderProgram->SetUniform("model", modelMatrix);
-    shaderProgram->SetUniform("view", t_camera.GetViewMatrix());
-    shaderProgram->SetUniform("projection", t_window.GetProjectionMatrix());
+    auto& shaderProgram{ ogl::resource::ResourceManager::LoadShaderProgram("/home/steffen/CLionProjects/SgCity/resources/shader/map") };
+    shaderProgram.Bind();
+
+    shaderProgram.SetUniform("model", modelMatrix);
+    shaderProgram.SetUniform("view", t_camera.GetViewMatrix());
+    shaderProgram.SetUniform("projection", t_window.GetProjectionMatrix());
 
     const auto mv{ t_camera.GetViewMatrix() * modelMatrix };
     const auto n{ glm::inverseTranspose(glm::mat3(mv)) };
-    shaderProgram->SetUniform("normalMatrix", n);
+    shaderProgram.SetUniform("normalMatrix", n);
 
-    m_tileTexture->BindForReading(GL_TEXTURE0);
-    shaderProgram->SetUniform("diffuseMap", 0);
+    const auto& texture{ ogl::resource::ResourceManager::LoadTexture("/home/steffen/CLionProjects/SgCity/resources/texture/grass.png") };
+    texture.BindForReading(GL_TEXTURE0);
+    shaderProgram.SetUniform("diffuseMap", 0);
 
     vao->DrawPrimitives();
 
-    shaderProgram->Unbind();
+    ogl::resource::ShaderProgram::Unbind();
     vao->Unbind();
 
     ogl::OpenGL::DisableFaceCulling();
@@ -142,15 +146,6 @@ void sg::map::TerrainLayer::Init()
     CreateTiles();
     AddTileNeighbors();
     TilesToGpu();
-
-    shaderProgram = std::make_unique<ogl::resource::ShaderProgram>("/home/steffen/CLionProjects/SgCity/resources/shader/map");
-    shaderProgram->Load();
-
-    m_tileTexture = std::make_unique<ogl::resource::Texture>("/home/steffen/CLionProjects/SgCity/resources/texture/grass.png");
-    m_tileTexture->Load();
-
-    m_pickingShaderProgram = std::make_unique<ogl::resource::ShaderProgram>("/home/steffen/CLionProjects/SgCity/resources/shader/picking");
-    m_pickingShaderProgram->Load();
 
     Log::SG_LOG_DEBUG("[TerrainLayer::Init()] The TerrainLayer was successfully initialized.");
 }

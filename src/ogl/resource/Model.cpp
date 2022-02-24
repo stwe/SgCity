@@ -1,10 +1,27 @@
+// This file is part of the SgCity project.
+//
+// Copyright (c) 2022. stwe <https://github.com/stwe/SgCity>
+//
+// This program is free software; you can redistribute it and/or
+// modify it under the terms of the GNU General Public License
+// as published by the Free Software Foundation; either version 2
+// of the License, or (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program; if not, write to the Free Software
+// Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+
 #include "Model.h"
 #include "SgException.h"
 #include "Log.h"
 #include "ogl/OpenGL.h"
 #include "ogl/buffer/Vao.h"
-#include "ogl/resource/ShaderProgram.h"
-#include "ogl/resource/Texture.h"
+#include "ogl/resource/ResourceManager.h"
 #include "ogl/math/Transform.h"
 
 #define TINYOBJLOADER_IMPLEMENTATION
@@ -47,7 +64,9 @@ void sg::ogl::resource::Model::Render(
     ogl::OpenGL::EnableAlphaBlending();
 
     m_vaos[0]->Bind(); // todo [0]
-    m_modelShaderProgram->Bind();
+
+    auto& shaderProgram{ ogl::resource::ResourceManager::LoadShaderProgram("/home/steffen/CLionProjects/SgCity/resources/shader/model") };
+    shaderProgram.Bind();
 
     // todo
     auto modelMatrix{ ogl::math::Transform::CreateModelMatrix(
@@ -56,16 +75,17 @@ void sg::ogl::resource::Model::Render(
         glm::vec3(0.25f)
     ) };
 
-    m_modelShaderProgram->SetUniform("model", modelMatrix);
-    m_modelShaderProgram->SetUniform("view", t_camera.GetViewMatrix());
-    m_modelShaderProgram->SetUniform("projection", t_window.GetProjectionMatrix());
+    shaderProgram.SetUniform("model", modelMatrix);
+    shaderProgram.SetUniform("view", t_camera.GetViewMatrix());
+    shaderProgram.SetUniform("projection", t_window.GetProjectionMatrix());
 
-    m_modelTexture->BindForReading(GL_TEXTURE0);
-    m_modelShaderProgram->SetUniform("diffuseMap", 0);
+    const auto& texture{ ogl::resource::ResourceManager::LoadTexture("/home/steffen/CLionProjects/SgCity/resources/texture/building.png", true) };
+    texture.BindForReading(GL_TEXTURE0);
+    shaderProgram.SetUniform("diffuseMap", 0);
 
     m_vaos[0]->DrawPrimitives();
 
-    m_modelShaderProgram->Unbind();
+    ogl::resource::ShaderProgram::Unbind();
     m_vaos[0]->Unbind();
 
     ogl::OpenGL::DisableBlending();
@@ -142,12 +162,6 @@ void sg::ogl::resource::Model::Init()
         auto vao{ std::make_unique<ogl::buffer::Vao>() };
         vao->CreateStaticVbo(vertices, 12 * 3); // todo: drawCount
         m_vaos.push_back(std::move(vao));
-
-        m_modelShaderProgram = std::make_unique<ogl::resource::ShaderProgram>("/home/steffen/CLionProjects/SgCity/resources/shader/model");
-        m_modelShaderProgram->Load();
-
-        m_modelTexture = std::make_unique<ogl::resource::Texture>("/home/steffen/CLionProjects/SgCity/resources/texture/building.png", true);
-        m_modelTexture->Load();
     }
 }
 

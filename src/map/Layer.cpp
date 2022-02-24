@@ -3,7 +3,6 @@
 #include "Log.h"
 #include "Tile.h"
 #include "ogl/buffer/Vao.h"
-#include "ogl/resource/ShaderProgram.h"
 
 //-------------------------------------------------
 // Ctors. / Dtor.

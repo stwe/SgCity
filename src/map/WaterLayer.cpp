@@ -3,7 +3,7 @@
 #include "ogl/OpenGL.h"
 #include "ogl/math/Transform.h"
 #include "ogl/buffer/Vao.h"
-#include "ogl/resource/ShaderProgram.h"
+#include "ogl/resource/ResourceManager.h"
 
 //-------------------------------------------------
 // Ctors. / Dtor.
@@ -31,15 +31,17 @@ void sg::map::WaterLayer::Render(const sg::ogl::Window& t_window, const sg::ogl:
     ogl::OpenGL::EnableFaceCulling();
 
     vao->Bind();
-    shaderProgram->Bind();
 
-    shaderProgram->SetUniform("model", modelMatrix);
-    shaderProgram->SetUniform("view", t_camera.GetViewMatrix());
-    shaderProgram->SetUniform("projection", t_window.GetProjectionMatrix());
+    auto& shaderProgram{ ogl::resource::ResourceManager::LoadShaderProgram("/home/steffen/CLionProjects/SgCity/resources/shader/water") };
+    shaderProgram.Bind();
+
+    shaderProgram.SetUniform("model", modelMatrix);
+    shaderProgram.SetUniform("view", t_camera.GetViewMatrix());
+    shaderProgram.SetUniform("projection", t_window.GetProjectionMatrix());
 
     vao->DrawPrimitives();
 
-    shaderProgram->Unbind();
+    ogl::resource::ShaderProgram::Unbind();
     vao->Unbind();
 
     ogl::OpenGL::DisableFaceCulling();
@@ -63,9 +65,6 @@ void sg::map::WaterLayer::Init()
 
     vao = std::make_unique<ogl::buffer::Vao>();
     vao->CreateStaticWaterVbo();
-
-    shaderProgram = std::make_unique<ogl::resource::ShaderProgram>("/home/steffen/CLionProjects/SgCity/resources/shader/water");
-    shaderProgram->Load();
 
     Log::SG_LOG_DEBUG("[WaterLayer::Init()] The WaterLayer was successfully initialized.");
 }

@@ -3,9 +3,7 @@
 #include "Log.h"
 #include "ogl/OpenGL.h"
 #include "ogl/math/Transform.h"
-#include "ogl/resource/ShaderProgram.h"
-#include "ogl/resource/Texture.h"
-#include "ogl/resource/Model.h"
+#include "ogl/resource/ResourceManager.h"
 
 //-------------------------------------------------
 // Ctors. / Dtor.
@@ -28,7 +26,7 @@ sg::map::BuildingsLayer::~BuildingsLayer() noexcept
 // Logic
 //-------------------------------------------------
 
-void sg::map::BuildingsLayer::Render(const sg::ogl::Window& t_window, const sg::ogl::camera::Camera& t_camera) const
+void sg::map::BuildingsLayer::Render(const ogl::Window& t_window, const ogl::camera::Camera& t_camera) const
 {
     if (!vao)
     {
@@ -38,22 +36,25 @@ void sg::map::BuildingsLayer::Render(const sg::ogl::Window& t_window, const sg::
     ogl::OpenGL::EnableFaceCulling();
 
     vao->Bind();
-    shaderProgram->Bind();
 
-    shaderProgram->SetUniform("model", modelMatrix);
-    shaderProgram->SetUniform("view", t_camera.GetViewMatrix());
-    shaderProgram->SetUniform("projection", t_window.GetProjectionMatrix());
+    auto& shaderProgram{ ogl::resource::ResourceManager::LoadShaderProgram("/home/steffen/CLionProjects/SgCity/resources/shader/map") };
+    shaderProgram.Bind();
+
+    shaderProgram.SetUniform("model", modelMatrix);
+    shaderProgram.SetUniform("view", t_camera.GetViewMatrix());
+    shaderProgram.SetUniform("projection", t_window.GetProjectionMatrix());
 
     const auto mv{ t_camera.GetViewMatrix() * modelMatrix };
     const auto n{ glm::inverseTranspose(glm::mat3(mv)) };
-    shaderProgram->SetUniform("normalMatrix", n);
+    shaderProgram.SetUniform("normalMatrix", n);
 
-    m_tileTexture->BindForReading(GL_TEXTURE0);
-    shaderProgram->SetUniform("diffuseMap", 0);
+    const auto& texture{ ogl::resource::ResourceManager::LoadTexture("/home/steffen/CLionProjects/SgCity/resources/texture/r.png") };
+    texture.BindForReading(GL_TEXTURE0);
+    shaderProgram.SetUniform("diffuseMap", 0);
 
     vao->DrawPrimitives();
 
-    shaderProgram->Unbind();
+    ogl::resource::ShaderProgram::Unbind();
     vao->Unbind();
 
     ogl::OpenGL::DisableFaceCulling();
@@ -83,13 +84,7 @@ void sg::map::BuildingsLayer::Init()
     CreateBuildingTiles();
     BuildingTilesToGpu();
 
-    shaderProgram = std::make_unique<ogl::resource::ShaderProgram>("/home/steffen/CLionProjects/SgCity/resources/shader/map");
-    shaderProgram->Load();
-
-    m_tileTexture = std::make_unique<ogl::resource::Texture>("/home/steffen/CLionProjects/SgCity/resources/texture/r.png", true);
-    m_tileTexture->Load();
-
-    m_buildingModel = std::make_unique<ogl::resource::Model>("/home/steffen/CLionProjects/SgCity/resources/model/cube.obj");
+    m_buildingModel = &sg::ogl::resource::ResourceManager::LoadModel("/home/steffen/CLionProjects/SgCity/resources/model/cube.obj");
 
     Log::SG_LOG_DEBUG("[BuildingsLayer::Init()] The BuildingsLayer was successfully initialized.");
 }

@@ -4,8 +4,7 @@
 #include "Log.h"
 #include "ogl/OpenGL.h"
 #include "ogl/math/Transform.h"
-#include "ogl/resource/ShaderProgram.h"
-#include "ogl/resource/Texture.h"
+#include "ogl/resource/ResourceManager.h"
 
 //-------------------------------------------------
 // Ctors. / Dtor.
@@ -75,7 +74,7 @@ void sg::map::RoadsLayer::Update(gui::Action t_action, const int t_tileIndex)
     }
 }
 
-void sg::map::RoadsLayer::Render(const sg::ogl::Window& t_window, const sg::ogl::camera::Camera& t_camera) const
+void sg::map::RoadsLayer::Render(const ogl::Window& t_window, const ogl::camera::Camera& t_camera) const
 {
     if (!vao)
     {
@@ -85,22 +84,25 @@ void sg::map::RoadsLayer::Render(const sg::ogl::Window& t_window, const sg::ogl:
     ogl::OpenGL::EnableFaceCulling();
 
     vao->Bind();
-    shaderProgram->Bind();
 
-    shaderProgram->SetUniform("model", modelMatrix);
-    shaderProgram->SetUniform("view", t_camera.GetViewMatrix());
-    shaderProgram->SetUniform("projection", t_window.GetProjectionMatrix());
+    auto& shaderProgram{ ogl::resource::ResourceManager::LoadShaderProgram("/home/steffen/CLionProjects/SgCity/resources/shader/map") };
+    shaderProgram.Bind();
+
+    shaderProgram.SetUniform("model", modelMatrix);
+    shaderProgram.SetUniform("view", t_camera.GetViewMatrix());
+    shaderProgram.SetUniform("projection", t_window.GetProjectionMatrix());
 
     const auto mv{ t_camera.GetViewMatrix() * modelMatrix };
     const auto n{ glm::inverseTranspose(glm::mat3(mv)) };
-    shaderProgram->SetUniform("normalMatrix", n);
+    shaderProgram.SetUniform("normalMatrix", n);
 
-    m_roadsTexture->BindForReading(GL_TEXTURE0);
-    shaderProgram->SetUniform("diffuseMap", 0);
+    const auto& texture{ ogl::resource::ResourceManager::LoadTexture("/home/steffen/CLionProjects/SgCity/resources/texture/roads.png") };
+    texture.BindForReading(GL_TEXTURE0);
+    shaderProgram.SetUniform("diffuseMap", 0);
 
     vao->DrawPrimitives();
 
-    shaderProgram->Unbind();
+    ogl::resource::ShaderProgram::Unbind();
     vao->Unbind();
 
     ogl::OpenGL::DisableFaceCulling();
@@ -124,12 +126,6 @@ void sg::map::RoadsLayer::Init()
 
     CreateRoadTiles();
     RoadTilesToGpu();
-
-    shaderProgram = std::make_unique<ogl::resource::ShaderProgram>("/home/steffen/CLionProjects/SgCity/resources/shader/map");
-    shaderProgram->Load();
-
-    m_roadsTexture = std::make_unique<ogl::resource::Texture>("/home/steffen/CLionProjects/SgCity/resources/texture/roads.png");
-    m_roadsTexture->Load();
 
     Log::SG_LOG_DEBUG("[RoadsLayer::Init()] The RoadsLayer was successfully initialized.");
 }

@@ -16,7 +16,7 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-#include "Vbo.h"
+#include "Ebo.h"
 #include "Assert.h"
 #include "ogl/OpenGL.h"
 
@@ -24,16 +24,16 @@
 // Ctors. / Dtor.
 //-------------------------------------------------
 
-sg::ogl::buffer::Vbo::Vbo()
+sg::ogl::buffer::Ebo::Ebo()
 {
-    Log::SG_LOG_DEBUG("[Vbo::Vbo()] Create Vbo.");
+    Log::SG_LOG_DEBUG("[Ebo::Ebo()] Create Ebo.");
 
     CreateId();
 }
 
-sg::ogl::buffer::Vbo::~Vbo() noexcept
+sg::ogl::buffer::Ebo::~Ebo() noexcept
 {
-    Log::SG_LOG_DEBUG("[Vbo::~Vbo()] Destruct Vbo.");
+    Log::SG_LOG_DEBUG("[Ebo::~Ebo()] Destruct Ebo.");
 
     CleanUp();
 }
@@ -42,65 +42,34 @@ sg::ogl::buffer::Vbo::~Vbo() noexcept
 // Bind / unbind
 //-------------------------------------------------
 
-void sg::ogl::buffer::Vbo::Bind() const
+void sg::ogl::buffer::Ebo::Bind() const
 {
-    glBindBuffer(GL_ARRAY_BUFFER, id);
-}
-
-void sg::ogl::buffer::Vbo::Unbind()
-{
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
-}
-
-//-------------------------------------------------
-// Attributes
-//-------------------------------------------------
-
-void sg::ogl::buffer::Vbo::AddFloatAttribute(const uint32_t t_index,
-                                             const int32_t t_nrOfFloatComponents,
-                                             const int32_t t_nrOfAllFloats,
-                                             const uint64_t t_startPoint) const
-{
-    Bind();
-
-    glEnableVertexAttribArray(t_index);
-    glVertexAttribPointer(
-        t_index,
-        t_nrOfFloatComponents,
-        GL_FLOAT,
-        GL_FALSE,
-        t_nrOfAllFloats * static_cast<int32_t>(sizeof(float)),
-        reinterpret_cast<uintptr_t*>(t_startPoint * sizeof(float))
-    );
-
-    Unbind();
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, id);
 }
 
 //-------------------------------------------------
 // Create
 //-------------------------------------------------
 
-void sg::ogl::buffer::Vbo::CreateId()
+void sg::ogl::buffer::Ebo::CreateId()
 {
     glGenBuffers(1, &id);
-    SG_ASSERT(id, "[Vbo::CreateId()] Error while creating a new Vbo.")
+    SG_ASSERT(id, "[Ebo::CreateId()] Error while creating a new Ebo.")
 
-    Log::SG_LOG_DEBUG("[Vbo::CreateId()] A new Vbo was created. The Id is {}.", id);
+    Log::SG_LOG_DEBUG("[Ebo::CreateId()] A new Ebo was created. The Id is {}.", id);
 }
 
 //-------------------------------------------------
 // Clean up
 //-------------------------------------------------
 
-void sg::ogl::buffer::Vbo::CleanUp()
+void sg::ogl::buffer::Ebo::CleanUp()
 {
-    Log::SG_LOG_DEBUG("[Vbo::CleanUp()] Clean up Vbo Id {}.", id);
-
-    Unbind();
+    Log::SG_LOG_DEBUG("[Ebo::CleanUp()] Clean up Ebo Id {}.", id);
 
     if (id)
     {
         glDeleteBuffers(1, &id);
-        Log::SG_LOG_DEBUG("[Vbo::CleanUp()] Vbo Id {} was deleted.", id);
+        Log::SG_LOG_DEBUG("[Ebo::CleanUp()] Ebo Id {} was deleted.", id);
     }
 }

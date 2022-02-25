@@ -20,7 +20,7 @@
 
 #include <memory>
 #include <vector>
-#include "Vbo.h"
+#include <cstdint>
 
 //-------------------------------------------------
 // Vao
@@ -28,6 +28,16 @@
 
 namespace sg::ogl::buffer
 {
+    /**
+     * Forward declaration class Vbo.
+     */
+    class Vbo;
+
+    /**
+     * Forward declaration class Ebo.
+     */
+    class Ebo;
+
     /**
      * Represents a Vertex Array Object.
      */
@@ -48,6 +58,16 @@ namespace sg::ogl::buffer
          */
         int32_t drawCount{ 0 };
 
+        /**
+         * A Vbo object.
+         */
+        std::unique_ptr<Vbo> vbo;
+
+        /**
+         * An Ebo object (Indexbuffer).
+         */
+        std::unique_ptr<Ebo> ebo;
+
         //-------------------------------------------------
         // Ctors. / Dtor.
         //-------------------------------------------------
@@ -60,12 +80,6 @@ namespace sg::ogl::buffer
         Vao& operator=(Vao&& t_other) noexcept = delete;
 
         ~Vao() noexcept;
-
-        //-------------------------------------------------
-        // Getter
-        //-------------------------------------------------
-
-        Vbo& GetVbo();
 
         //-------------------------------------------------
         // Bind / unbind
@@ -116,6 +130,11 @@ namespace sg::ogl::buffer
          */
         void CreateStaticWaterVbo();
 
+        // todo:
+
+        void CreateModelVertexDataVbo(const std::vector<float>& t_vertices, int32_t t_drawCount);
+        void CreateModelIndexBuffer(const std::vector<uint32_t>& t_indices);
+
         //-------------------------------------------------
         // Draw
         //-------------------------------------------------
@@ -127,15 +146,6 @@ namespace sg::ogl::buffer
     protected:
 
     private:
-        //-------------------------------------------------
-        // Member
-        //-------------------------------------------------
-
-        /**
-         * A Vbo object.
-         */
-        std::unique_ptr<Vbo> m_vbo;
-
         //-------------------------------------------------
         // Create
         //-------------------------------------------------

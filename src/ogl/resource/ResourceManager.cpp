@@ -17,6 +17,11 @@
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 #include "ResourceManager.h"
+#include "Model.h"
+
+//-------------------------------------------------
+// Shaders
+//-------------------------------------------------
 
 sg::ogl::resource::ShaderProgram& sg::ogl::resource::ResourceManager::LoadShaderProgram(const std::string& t_path)
 {
@@ -28,12 +33,21 @@ sg::ogl::resource::ShaderProgram& sg::ogl::resource::ResourceManager::LoadShader
     return *shaderPrograms.at(t_path);
 }
 
-sg::ogl::resource::Model& sg::ogl::resource::ResourceManager::LoadModel(const std::string& t_path)
+//-------------------------------------------------
+// Models
+//-------------------------------------------------
+
+std::shared_ptr<sg::ogl::resource::Model> sg::ogl::resource::ResourceManager::LoadModel(const std::string& t_path)
+{
+    return LoadModel(t_path, aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_CalcTangentSpace | aiProcess_GenSmoothNormals);
+}
+
+std::shared_ptr<sg::ogl::resource::Model> sg::ogl::resource::ResourceManager::LoadModel(const std::string& t_path, unsigned int t_pFlags)
 {
     if (models.count(t_path) == 0)
     {
-        models.emplace(t_path, std::make_unique<ogl::resource::Model>(t_path));
+        models.emplace(t_path, std::make_unique<ogl::resource::Model>(t_path, t_pFlags));
     }
 
-    return *models.at(t_path);
+    return models.at(t_path);
 }

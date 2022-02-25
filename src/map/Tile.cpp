@@ -1,6 +1,7 @@
 #include <glm/geometric.hpp>
 #include <imgui.h>
 #include "Tile.h"
+#include "ogl/buffer/Vbo.h"
 #include "ogl/OpenGL.h"
 
 //-------------------------------------------------
@@ -90,7 +91,7 @@ void sg::map::Tile::UpdateNormal()
 
 void sg::map::Tile::VerticesToGpu(ogl::buffer::Vao& t_vao) const
 {
-    t_vao.GetVbo().Bind();
+    t_vao.vbo->Bind();
     glBufferSubData(GL_ARRAY_BUFFER, mapIndex * Tile::BYTES_PER_TILE, Tile::BYTES_PER_TILE, vertices.data());
     ogl::buffer::Vbo::Unbind();
 }

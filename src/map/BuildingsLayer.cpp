@@ -4,6 +4,7 @@
 #include "ogl/OpenGL.h"
 #include "ogl/math/Transform.h"
 #include "ogl/resource/ResourceManager.h"
+#include "ogl/resource/Model.h"
 
 //-------------------------------------------------
 // Ctors. / Dtor.
@@ -61,7 +62,7 @@ void sg::map::BuildingsLayer::Render(const ogl::Window& t_window, const ogl::cam
 
     for (const auto& tile : m_buildingTiles)
     {
-        m_buildingModel->Render(t_window, t_camera, glm::vec3(tile->mapX + 0.5f, 0.25f, tile->mapZ + 0.5f));
+        m_model->Render(t_window, t_camera, glm::vec3(tile->mapX, 0.25f, tile->mapZ));
     }
 }
 
@@ -84,7 +85,7 @@ void sg::map::BuildingsLayer::Init()
     CreateBuildingTiles();
     BuildingTilesToGpu();
 
-    m_buildingModel = &sg::ogl::resource::ResourceManager::LoadModel("/home/steffen/CLionProjects/SgCity/resources/model/cube.obj");
+    m_model = std::make_shared<ogl::resource::Model>("/home/steffen/CLionProjects/SgCity/resources/model/211_firestation_detailed.obj");
 
     Log::SG_LOG_DEBUG("[BuildingsLayer::Init()] The BuildingsLayer was successfully initialized.");
 }

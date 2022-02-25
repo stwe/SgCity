@@ -19,63 +19,50 @@
 #pragma once
 
 #include <cstdint>
-#include <string>
 
 //-------------------------------------------------
-// Texture
+// Ebo
 //-------------------------------------------------
 
-namespace sg::ogl::resource
+namespace sg::ogl::buffer
 {
     /**
-     * Represents a Texture.
+     * Represents an Indexbuffer.
      */
-    class Texture
+    class Ebo
     {
     public:
         //-------------------------------------------------
         // Member
         //-------------------------------------------------
 
+        /**
+         * The handle of the Ebo.
+         */
         uint32_t id{ 0 };
 
         //-------------------------------------------------
         // Ctors. / Dtor.
         //-------------------------------------------------
 
-        Texture() = delete;
-        Texture(std::string t_path, bool t_loadVerticalFlipped);
-        explicit Texture(std::string t_path);
+        Ebo();
 
-        Texture(const Texture& t_other) = delete;
-        Texture(Texture&& t_other) noexcept = delete;
-        Texture& operator=(const Texture& t_other) = delete;
-        Texture& operator=(Texture&& t_other) noexcept = delete;
+        Ebo(const Ebo& t_other) = delete;
+        Ebo(Ebo&& t_other) noexcept = delete;
+        Ebo& operator=(const Ebo& t_other) = delete;
+        Ebo& operator=(Ebo&& t_other) noexcept = delete;
 
-        ~Texture() noexcept;
+        ~Ebo() noexcept;
 
         //-------------------------------------------------
         // Bind / unbind
         //-------------------------------------------------
 
         void Bind() const;
-        static void Unbind();
-        void BindForReading(uint32_t t_textureUnit) const;
 
     protected:
 
     private:
-        //-------------------------------------------------
-        // Member
-        //-------------------------------------------------
-
-        std::string m_path;
-        bool m_loadVerticalFlipped{ false };
-        int m_width{ 0 };
-        int m_height{ 0 };
-        int m_format{ 0 };
-        int m_channels{ 0 };
-
         //-------------------------------------------------
         // Create
         //-------------------------------------------------
@@ -83,15 +70,9 @@ namespace sg::ogl::resource
         void CreateId();
 
         //-------------------------------------------------
-        // Helper
-        //-------------------------------------------------
-
-        void LoadFromFile();
-
-        //-------------------------------------------------
         // Clean up
         //-------------------------------------------------
 
-        void CleanUp() const;
+        void CleanUp();
     };
 }

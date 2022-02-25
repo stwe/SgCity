@@ -14,6 +14,7 @@ look and feel of old city building simulations from the 90s.
 - [GLM](https://github.com/g-truc/glm)
 - [spdlog](https://github.com/gabime/spdlog)
 - [Dear ImGui](https://github.com/ocornut/imgui)
+- [Assimp](https://github.com/assimp/assimp)
 - C++ 17 Compiler
 
 ## Platforms
@@ -40,6 +41,7 @@ glew/2.2.0
 glm/0.9.9.8
 spdlog/1.9.2
 imgui/1.86
+assimp/5.1.0
 
 [generators]
 cmake

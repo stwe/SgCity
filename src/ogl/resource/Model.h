@@ -18,7 +18,9 @@
 
 #pragma once
 
-#include <string>
+#include <assimp/scene.h>
+#include <assimp/postprocess.h>
+#include <cstdint>
 #include <memory>
 #include <vector>
 #include "ogl/Window.h"
@@ -39,9 +41,23 @@ namespace sg::ogl::buffer
 
 namespace sg::ogl::resource
 {
+    /**
+     * Forward declaration class Mesh.
+     */
+    class Mesh;
+
+    /**
+     * Represents the Model.
+     */
     class Model
     {
     public:
+        //-------------------------------------------------
+        // Member
+        //-------------------------------------------------
+
+        std::vector<std::shared_ptr<Mesh>> meshes;
+
         //-------------------------------------------------
         // Ctors. / Dtor.
         //-------------------------------------------------
@@ -51,9 +67,13 @@ namespace sg::ogl::resource
         /**
          * Constructs a new Model object.
          *
-         * @param t_path The path to the model file.
+         * @param t_fullFilePath The full file path to the model file.
+         * @param t_pFlags Post processing flags.
          */
-        explicit Model(std::string t_path);
+        explicit Model(
+            std::string t_fullFilePath,
+            unsigned int t_pFlags = aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_CalcTangentSpace | aiProcess_GenSmoothNormals
+            );
 
         Model(const Model& t_other) = delete;
         Model(Model&& t_other) noexcept = delete;
@@ -66,18 +86,11 @@ namespace sg::ogl::resource
         // Logic
         //-------------------------------------------------
 
-        /**
-         * Renders the model.
-         *
-         * @param t_window The Window object.
-         * @param t_camera The Camera object.
-         * @param t_position The position in local space.
-         */
         void Render(
             const ogl::Window& t_window,
             const ogl::camera::Camera& t_camera,
             const glm::vec3& t_position
-            ) const;
+            );
 
     protected:
 
@@ -86,21 +99,17 @@ namespace sg::ogl::resource
         // Member
         //-------------------------------------------------
 
-        /**
-         * The path to the model file.
-         */
-        std::string m_path;
-
-        /**
-         * A Vao for each Shape.
-         */
-        std::vector<std::unique_ptr<ogl::buffer::Vao>> m_vaos;
+        std::string m_fullFilePath;
+        std::string m_directory;
 
         //-------------------------------------------------
-        // Init
+        // Load
         //-------------------------------------------------
 
-        void Init();
+        void LoadFromFile(unsigned int t_pFlags);
+        void ProcessNode(aiNode* t_node, const aiScene* t_scene);
+        std::unique_ptr<Mesh> ProcessMesh(aiMesh* t_mesh, const aiScene* t_scene) const;
+        std::vector<uint32_t> LoadMaterialTextures(aiMaterial* t_mat, aiTextureType t_type) const;
 
         //-------------------------------------------------
         // Clean up

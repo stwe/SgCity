@@ -18,12 +18,12 @@
 
 #pragma once
 
+#include <assimp/postprocess.h>
 #include <map>
 #include <memory>
 #include <tuple>
 #include "Texture.h"
 #include "ShaderProgram.h"
-#include "Model.h"
 
 //-------------------------------------------------
 // ResourceManager
@@ -31,13 +31,28 @@
 
 namespace sg::ogl::resource
 {
+    /**
+     * Forward declaration class Model.
+     */
+    class Model;
+
+    /**
+     * Represents the Resourcemanager.
+     */
     class ResourceManager
     {
     public:
+        //-------------------------------------------------
+        // Member
+        //-------------------------------------------------
 
         inline static std::map<std::string, std::unique_ptr<Texture>> textures;
         inline static std::map<std::string, std::unique_ptr<ShaderProgram>> shaderPrograms;
-        inline static std::map<std::string, std::unique_ptr<Model>> models;
+        inline static std::map<std::string, std::shared_ptr<Model>> models;
+
+        //-------------------------------------------------
+        // Textures
+        //-------------------------------------------------
 
         template<typename... Args>
         static const Texture& LoadTexture(Args&&... args)
@@ -51,12 +66,27 @@ namespace sg::ogl::resource
             return *textures.at(std::get<0>(t));
         }
 
+        //-------------------------------------------------
+        // Shaders
+        //-------------------------------------------------
+
         static ShaderProgram& LoadShaderProgram(const std::string& t_path);
-        static Model& LoadModel(const std::string& t_path);
+
+        //-------------------------------------------------
+        // Models
+        //-------------------------------------------------
+
+        static std::shared_ptr<Model> LoadModel(const std::string& t_path);
+        static std::shared_ptr<Model> LoadModel(const std::string& t_path, unsigned int t_pFlags = aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_CalcTangentSpace | aiProcess_GenSmoothNormals);
 
     protected:
 
     private:
+        //-------------------------------------------------
+        // Ctors. / Dtor.
+        //-------------------------------------------------
+
         ResourceManager() = default;
+        ~ResourceManager() noexcept = default;
     };
 }

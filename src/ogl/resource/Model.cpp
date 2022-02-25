@@ -16,27 +16,28 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
+#include <assimp/Importer.hpp>
+#include <ogl/math/Transform.h>
 #include "Model.h"
+#include "Mesh.h"
+#include "Material.h"
+#include "Assert.h"
 #include "SgException.h"
-#include "Log.h"
-#include "ogl/OpenGL.h"
 #include "ogl/buffer/Vao.h"
-#include "ogl/resource/ResourceManager.h"
-#include "ogl/math/Transform.h"
-
-#define TINYOBJLOADER_IMPLEMENTATION
-#include "tiny_obj_loader.h"
+#include "ResourceManager.h"
 
 //-------------------------------------------------
 // Ctors. / Dtor.
 //-------------------------------------------------
 
-sg::ogl::resource::Model::Model(std::string t_path)
-    : m_path{ std::move(t_path) }
+sg::ogl::resource::Model::Model(std::string t_fullFilePath, const unsigned int t_pFlags)
+    : m_fullFilePath{ std::move(t_fullFilePath) }
 {
     Log::SG_LOG_DEBUG("[Model::Model()] Create Model.");
 
-    Init();
+    m_directory = m_fullFilePath.substr(0, m_fullFilePath.find_last_of('/'));
+
+    LoadFromFile(t_pFlags);
 }
 
 sg::ogl::resource::Model::~Model() noexcept
@@ -51,19 +52,14 @@ sg::ogl::resource::Model::~Model() noexcept
 //-------------------------------------------------
 
 void sg::ogl::resource::Model::Render(
-    const Window& t_window,
-    const camera::Camera& t_camera,
+    const ogl::Window& t_window,
+    const ogl::camera::Camera& t_camera,
     const glm::vec3& t_position
-    ) const
+    )
 {
-    if (m_vaos.empty())
-    {
-        return;
-    }
-
     ogl::OpenGL::EnableAlphaBlending();
 
-    m_vaos[0]->Bind(); // todo [0]
+    meshes[0]->vao->Bind();
 
     auto& shaderProgram{ ogl::resource::ResourceManager::LoadShaderProgram("/home/steffen/CLionProjects/SgCity/resources/shader/model") };
     shaderProgram.Bind();
@@ -83,86 +79,246 @@ void sg::ogl::resource::Model::Render(
     texture.BindForReading(GL_TEXTURE0);
     shaderProgram.SetUniform("diffuseMap", 0);
 
-    m_vaos[0]->DrawPrimitives();
+    meshes[0]->vao->DrawPrimitives();
 
     ogl::resource::ShaderProgram::Unbind();
-    m_vaos[0]->Unbind();
+    meshes[0]->vao->Unbind();
 
     ogl::OpenGL::DisableBlending();
 }
 
 //-------------------------------------------------
-// Init
+// Load
 //-------------------------------------------------
 
-void sg::ogl::resource::Model::Init()
+void sg::ogl::resource::Model::LoadFromFile(unsigned int t_pFlags)
 {
-    tinyobj::ObjReaderConfig reader_config;
-    reader_config.mtl_search_path = "";
+    Assimp::Importer importer;
 
-    tinyobj::ObjReader reader;
+    Log::SG_LOG_DEBUG("[Model::LoadFromFile()] Start loading model file at: {}", m_fullFilePath);
 
-    if (!reader.ParseFromFile(m_path, reader_config))
+    const auto* scene{ importer.ReadFile(m_fullFilePath, t_pFlags) };
+    if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode)
     {
-        if (!reader.Error().empty())
-        {
-            throw SG_EXCEPTION("[Model::Init()] Error: " + reader.Error());
-        }
+        throw SG_EXCEPTION("[Model::LoadFromFile()] ERROR::ASSIMP:: " + std::string(importer.GetErrorString()));
     }
 
-    if (!reader.Warning().empty())
+    ProcessNode(scene->mRootNode, scene);
+
+    Log::SG_LOG_DEBUG("[Model::LoadFromFile()] Model file at {} successfully loaded.", m_fullFilePath);
+}
+
+void sg::ogl::resource::Model::ProcessNode(aiNode* t_node, const aiScene* t_scene)
+{
+    // Process each mesh located at the current node.
+    for (auto i{ 0u }; i < t_node->mNumMeshes; ++i)
     {
-        Log::SG_LOG_WARN("[Model::Init()] Warning: {}.", reader.Warning());
+        auto* mesh{ t_scene->mMeshes[t_node->mMeshes[i]] };
+        meshes.push_back(ProcessMesh(mesh, t_scene));
     }
 
-    auto& attrib = reader.GetAttrib();
-    auto& shapes = reader.GetShapes();
-    auto& materials = reader.GetMaterials();
+    // After we've processed all of the meshes (if any) we then recursively process each of the children nodes.
+    for (auto i{ 0u }; i < t_node->mNumChildren; ++i)
+    {
+        ProcessNode(t_node->mChildren[i], t_scene);
+    }
+}
 
+std::unique_ptr<sg::ogl::resource::Mesh> sg::ogl::resource::Model::ProcessMesh(aiMesh* t_mesh, const aiScene* t_scene) const
+{
+    // Data to fill.
     std::vector<float> vertices;
+    std::vector<uint32_t> indices;
 
-    // Loop over shapes
-    for (auto s{ 0u }; s < shapes.size(); ++s)
+    // Prevent duplicate warnings.
+    auto missingUv{ false };
+    auto missingTangent{ false };
+    auto missingBiTangent{ false };
+
+    // Walk through each of the mesh's vertices.
+    for (auto i{ 0u }; i < t_mesh->mNumVertices; ++i)
     {
-        // Loop over faces(polygon)
-        auto index_offset{ 0u };
-        for (auto f{ 0u }; f < shapes[s].mesh.num_face_vertices.size(); ++f)
+        // push position (3 floats)
+        vertices.push_back(t_mesh->mVertices[i].x);
+        vertices.push_back(t_mesh->mVertices[i].y);
+        vertices.push_back(t_mesh->mVertices[i].z);
+
+        // push normal (3 floats)
+        //vertices.push_back(t_mesh->mNormals[i].x);
+        //vertices.push_back(t_mesh->mNormals[i].y);
+        //vertices.push_back(t_mesh->mNormals[i].z);
+
+        // texture coordinates (2 floats)
+        if (t_mesh->mTextureCoords[0])
         {
-            auto fv{ size_t(shapes[s].mesh.num_face_vertices[f]) };
-
-            // Loop over vertices in the face.
-            for (auto v{ 0u }; v < fv; ++v)
+            // A vertex can contain up to 8 different texture coordinates. We thus make the assumption that we won't
+            // use models where a vertex can have multiple texture coordinates so we always take the first set (0).
+            vertices.push_back(t_mesh->mTextureCoords[0][i].x);
+            vertices.push_back(t_mesh->mTextureCoords[0][i].y);
+        }
+        else
+        {
+            vertices.push_back(0.0f);
+            vertices.push_back(0.0f);
+            if (!missingUv)
             {
-                // access to vertex
-                tinyobj::index_t idx = shapes[s].mesh.indices[index_offset + v];
-                tinyobj::real_t vx = attrib.vertices[3 * size_t(idx.vertex_index) + 0];
-                tinyobj::real_t vy = attrib.vertices[3 * size_t(idx.vertex_index) + 1];
-                tinyobj::real_t vz = attrib.vertices[3 * size_t(idx.vertex_index) + 2];
-
-                vertices.push_back(vx);
-                vertices.push_back(vy);
-                vertices.push_back(vz);
-
-                if (idx.texcoord_index >= 0)
-                {
-                    tinyobj::real_t tx = attrib.texcoords[2 * size_t(idx.texcoord_index) + 0];
-                    tinyobj::real_t ty = attrib.texcoords[2 * size_t(idx.texcoord_index) + 1];
-
-                    vertices.push_back(tx);
-                    vertices.push_back(ty);
-                }
+                missingUv = true;
+                Log::SG_LOG_WARN("[Model::ProcessMesh()] Missing texture coords. Set default values (0, 0).");
             }
-
-            index_offset += fv;
-
-            // per-face material
-            //shapes[s].mesh.material_ids[f];
         }
 
-        auto vao{ std::make_unique<ogl::buffer::Vao>() };
-        vao->CreateStaticVbo(vertices, 12 * 3); // todo: drawCount
-        m_vaos.push_back(std::move(vao));
+        // tangent (3 floats)
+        /*
+        if (t_mesh->mTangents)
+        {
+            vertices.push_back(t_mesh->mTangents[i].x);
+            vertices.push_back(t_mesh->mTangents[i].y);
+            vertices.push_back(t_mesh->mTangents[i].z);
+        }
+        else
+        {
+            vertices.push_back(0.0f);
+            vertices.push_back(0.0f);
+            vertices.push_back(0.0f);
+            if (!missingTangent)
+            {
+                missingTangent = true;
+                Log::SG_LOG_WARN("[Model::ProcessMesh()] Missing tangent coords. Set default values (0, 0, 0).");
+            }
+        }
+        */
+
+        // bitangent (3 floats)
+        /*
+        if (t_mesh->mBitangents)
+        {
+            vertices.push_back(t_mesh->mBitangents[i].x);
+            vertices.push_back(t_mesh->mBitangents[i].y);
+            vertices.push_back(t_mesh->mBitangents[i].z);
+        }
+        else
+        {
+            vertices.push_back(0.0f);
+            vertices.push_back(0.0f);
+            vertices.push_back(0.0f);
+            if (!missingBiTangent)
+            {
+                missingBiTangent = true;
+                Log::SG_LOG_WARN("[Model::ProcessMesh()] Missing bitangent coords. Set default values (0, 0, 0).");
+            }
+        }
+        */
     }
+
+    // Now walk through each of the mesh's faces (a face is a mesh its triangle) and retrieve the corresponding vertex indices.
+    for (auto i{ 0u }; i < t_mesh->mNumFaces; ++i)
+    {
+        const auto face{ t_mesh->mFaces[i] };
+
+        // Retrieve all indices of the face and store them in the indices vector.
+        for (auto j{ 0u }; j < face.mNumIndices; ++j)
+        {
+            indices.push_back(face.mIndices[j]);
+        }
+    }
+
+    // Process materials.
+    auto* aiMeshMaterial{ t_scene->mMaterials[t_mesh->mMaterialIndex] };
+
+    // Create a unique_ptr Material instance.
+    auto materialUniquePtr{ std::make_unique<Material>() };
+    SG_ASSERT(materialUniquePtr, "[Model::ProcessMesh()] Null pointer.")
+
+    // Set material name.
+    aiString name;
+    aiMeshMaterial->Get(AI_MATKEY_NAME, name);
+    materialUniquePtr->newmtl = name.C_Str();
+
+    // Set material colors.
+    aiColor3D color;
+    aiMeshMaterial->Get(AI_MATKEY_COLOR_AMBIENT, color);
+    materialUniquePtr->ka = glm::vec3(color.r, color.g, color.b);
+    aiMeshMaterial->Get(AI_MATKEY_COLOR_DIFFUSE, color);
+    materialUniquePtr->kd = glm::vec3(color.r, color.g, color.b);
+    aiMeshMaterial->Get(AI_MATKEY_COLOR_SPECULAR, color);
+    materialUniquePtr->ks = glm::vec3(color.r, color.g, color.b);
+
+    // Set the material shininess.
+    float shininess;
+    aiMeshMaterial->Get(AI_MATKEY_SHININESS, shininess);
+    materialUniquePtr->ns = shininess;
+
+    // Load textures.
+    Log::SG_LOG_DEBUG("[Model::ProcessMesh()] Loading textures for the model: {}", m_fullFilePath);
+
+    auto ambientMaps{ LoadMaterialTextures(aiMeshMaterial, aiTextureType_AMBIENT) };
+    auto diffuseMaps{ LoadMaterialTextures(aiMeshMaterial, aiTextureType_DIFFUSE) };
+    auto specularMaps{ LoadMaterialTextures(aiMeshMaterial, aiTextureType_SPECULAR) };
+    auto bumpMaps{ LoadMaterialTextures(aiMeshMaterial, aiTextureType_HEIGHT) };
+    auto normalMaps{ LoadMaterialTextures(aiMeshMaterial, aiTextureType_NORMALS) };
+
+    // Always use the first texture Id.
+    if (!ambientMaps.empty())
+    {
+        materialUniquePtr->mapKa = ambientMaps[0];
+    }
+
+    if (!diffuseMaps.empty())
+    {
+        materialUniquePtr->mapKd = diffuseMaps[0];
+    }
+
+    if (!specularMaps.empty())
+    {
+        materialUniquePtr->mapKs = specularMaps[0];
+    }
+
+    if (!bumpMaps.empty())
+    {
+        materialUniquePtr->mapBump = bumpMaps[0];
+    }
+
+    if (!normalMaps.empty())
+    {
+        materialUniquePtr->mapKn = normalMaps[0];
+    }
+
+    // Create a unique_ptr Mesh instance.
+    auto meshUniquePtr{ std::make_unique<Mesh>() };
+    SG_ASSERT(meshUniquePtr, "[Model::ProcessMesh()] Null pointer.")
+
+    // Add Vbo.
+    meshUniquePtr->vao->CreateModelVertexDataVbo(vertices, (int32_t)t_mesh->mNumVertices);
+
+    // Add Ebo.
+    meshUniquePtr->vao->CreateModelIndexBuffer(indices);
+
+    // Each mesh has a default material. Set the material properties as default.
+    meshUniquePtr->defaultMaterial = std::move(materialUniquePtr);
+
+    // Return a mesh object created from the extracted mesh data.
+    return meshUniquePtr;
+}
+
+std::vector<uint32_t> sg::ogl::resource::Model::LoadMaterialTextures(aiMaterial* t_mat, aiTextureType t_type) const
+{
+    std::vector<uint32_t> textures;
+
+    /*
+    for (auto i{ 0u }; i < t_mat->GetTextureCount(t_type); ++i)
+    {
+        aiString str;
+        const auto result{ t_mat->GetTexture(t_type, i, &str) };
+        if (result == aiReturn_FAILURE)
+        {
+            throw SG_EXCEPTION("[Model::LoadMaterialTextures()] Error while loading material texture.");
+        }
+
+        textures.push_back(m_application->GetTextureManager().GetTextureIdFromPath(m_directory + "/" + str.C_Str()));
+    }
+    */
+
+    return textures;
 }
 
 //-------------------------------------------------

@@ -31,6 +31,9 @@
 
 namespace sg::ogl::resource
 {
+    /**
+     * Represents a Shaderprogram.
+     */
     class ShaderProgram
     {
     public:

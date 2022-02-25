@@ -17,6 +17,8 @@
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 #include "Vao.h"
+#include "Vbo.h"
+#include "Ebo.h"
 #include "Assert.h"
 #include "ogl/OpenGL.h"
 
@@ -39,16 +41,6 @@ sg::ogl::buffer::Vao::~Vao() noexcept
 }
 
 //-------------------------------------------------
-// Getter
-//-------------------------------------------------
-
-sg::ogl::buffer::Vbo& sg::ogl::buffer::Vao::GetVbo()
-{
-    SG_ASSERT(m_vbo, "[Vao::GetVbo] Vbo does not exist.")
-    return *m_vbo;
-}
-
-//-------------------------------------------------
 // Bind / unbind
 //-------------------------------------------------
 
@@ -68,27 +60,27 @@ void sg::ogl::buffer::Vao::Unbind()
 
 void sg::ogl::buffer::Vao::CreateEmptyDynamicVbo(const uint32_t t_size, const int32_t t_drawCount)
 {
-    SG_ASSERT(!m_vbo, "[Vao::CreateEmptyDynamicVbo()] Vbo already exists.")
+    SG_ASSERT(!vbo, "[Vao::CreateEmptyDynamicVbo()] Vbo already exists.")
 
     Bind();
 
-    m_vbo = std::make_unique<Vbo>();
-    m_vbo->Bind();
+    vbo = std::make_unique<Vbo>();
+    vbo->Bind();
 
     glBufferData(GL_ARRAY_BUFFER, t_size, nullptr, GL_DYNAMIC_DRAW);
     Vbo::Unbind();
 
     // enable location 0 (position)
-    m_vbo->AddFloatAttribute(0, 3, 11, 0);
+    vbo->AddFloatAttribute(0, 3, 11, 0);
 
     // enable location 1 (uv)
-    m_vbo->AddFloatAttribute(1, 2, 11, 3);
+    vbo->AddFloatAttribute(1, 2, 11, 3);
 
     // enable location 2 (idColor)
-    m_vbo->AddFloatAttribute(2, 3, 11, 5);
+    vbo->AddFloatAttribute(2, 3, 11, 5);
 
     // enable location 3 (normal)
-    m_vbo->AddFloatAttribute(3, 3, 11, 8);
+    vbo->AddFloatAttribute(3, 3, 11, 8);
 
     Unbind();
 
@@ -100,12 +92,12 @@ void sg::ogl::buffer::Vao::CreateEmptyDynamicVbo(const uint32_t t_size, const in
 
 void sg::ogl::buffer::Vao::CreateStaticVbo(const std::vector<float>& t_vertices, int32_t t_drawCount)
 {
-    SG_ASSERT(!m_vbo, "[Vao::CreateStaticVbo()] Vbo already exists.")
+    SG_ASSERT(!vbo, "[Vao::CreateStaticVbo()] Vbo already exists.")
 
     Bind();
 
-    m_vbo = std::make_unique<Vbo>();
-    m_vbo->Bind();
+    vbo = std::make_unique<Vbo>();
+    vbo->Bind();
 
     uint32_t floatsPerVertex{ 5 };
 
@@ -113,10 +105,10 @@ void sg::ogl::buffer::Vao::CreateStaticVbo(const std::vector<float>& t_vertices,
     Vbo::Unbind();
 
     // enable location 0 (position)
-    m_vbo->AddFloatAttribute(0, 3, 5, 0);
+    vbo->AddFloatAttribute(0, 3, 5, 0);
 
     // enable location 1 (uv)
-    m_vbo->AddFloatAttribute(1, 2, 5, 3);
+    vbo->AddFloatAttribute(1, 2, 5, 3);
 
     Unbind();
 
@@ -128,12 +120,12 @@ void sg::ogl::buffer::Vao::CreateStaticVbo(const std::vector<float>& t_vertices,
 
 void sg::ogl::buffer::Vao::CreateStaticWaterVbo()
 {
-    SG_ASSERT(!m_vbo, "[Vao::CreateWaterVbo()] Vbo already exists.")
+    SG_ASSERT(!vbo, "[Vao::CreateWaterVbo()] Vbo already exists.")
 
     Bind();
 
-    m_vbo = std::make_unique<Vbo>();
-    m_vbo->Bind();
+    vbo = std::make_unique<Vbo>();
+    vbo->Bind();
 
     // x and z vertex positions, y is set to 0.0 in the vertex shader
     std::vector<float> vertices =
@@ -153,9 +145,50 @@ void sg::ogl::buffer::Vao::CreateStaticWaterVbo()
     Vbo::Unbind();
 
     // enable location 0 (position)
-    m_vbo->AddFloatAttribute(0, 2, 2, 0);
+    vbo->AddFloatAttribute(0, 2, 2, 0);
 
     Unbind();
+}
+
+// todo
+
+void sg::ogl::buffer::Vao::CreateModelVertexDataVbo(const std::vector<float>& t_vertices, int32_t t_drawCount)
+{
+    SG_ASSERT(!vbo, "[Vao::CreateModelVertexDataVbo()] Vbo already exists.")
+
+    Bind();
+
+    vbo = std::make_unique<Vbo>();
+    vbo->Bind();
+    glBufferData(GL_ARRAY_BUFFER, static_cast<int64_t>(t_vertices.size()) * static_cast<int64_t>(sizeof(float)), t_vertices.data(), GL_STATIC_DRAW);
+    Vbo::Unbind();
+
+    // enable location 0 (position)
+    vbo->AddFloatAttribute(0, 3, 5, 0);
+
+    // enable location 1 (uv)
+    vbo->AddFloatAttribute(1, 2, 5, 3);
+
+    Unbind();
+    drawCount = t_drawCount;
+}
+
+void sg::ogl::buffer::Vao::CreateModelIndexBuffer(const std::vector<uint32_t>& t_indices)
+{
+    SG_ASSERT(!ebo, "[Vao::CreateModelIndexBuffer()] Ebo already exists.")
+    SG_ASSERT(vbo, "[Vao::CreateModelIndexBuffer()] The Ebo should be created after the Vbo.")
+
+    static constexpr auto ELEMENT_SIZE_IN_BYTES{ static_cast<int64_t>(sizeof(uint32_t)) };
+    auto numberOfElements{ static_cast<int32_t>(t_indices.size()) };
+
+    Bind();
+
+    ebo = std::make_unique<Ebo>();
+    ebo->Bind();
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, static_cast<int64_t>(numberOfElements) * ELEMENT_SIZE_IN_BYTES, t_indices.data(), GL_STATIC_DRAW);
+
+    Unbind();
+    drawCount = numberOfElements;
 }
 
 //-------------------------------------------------
@@ -164,7 +197,14 @@ void sg::ogl::buffer::Vao::CreateStaticWaterVbo()
 
 void sg::ogl::buffer::Vao::DrawPrimitives(const uint32_t t_drawMode, const int32_t t_first) const
 {
-    glDrawArrays(t_drawMode, t_first, drawCount);
+    if (ebo)
+    {
+        glDrawElements(t_drawMode, drawCount, GL_UNSIGNED_INT, nullptr);
+    }
+    else
+    {
+        glDrawArrays(t_drawMode, t_first, drawCount);
+    }
 }
 
 void sg::ogl::buffer::Vao::DrawPrimitives(const uint32_t t_drawMode) const

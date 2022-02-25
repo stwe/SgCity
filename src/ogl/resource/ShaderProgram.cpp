@@ -122,7 +122,7 @@ void sg::ogl::resource::ShaderProgram::Init()
 void sg::ogl::resource::ShaderProgram::CreateId()
 {
     id = glCreateProgram();
-    SG_ASSERT(id, "[ShaderProgram::CreateId()] Error while creating a new Shader Program.");
+    SG_ASSERT(id, "[ShaderProgram::CreateId()] Error while creating a new Shader Program.")
 
     Log::SG_LOG_DEBUG("[ShaderProgram::CreateId()] A new Shader Program was created. The Id is {}.", id);
 }
@@ -150,7 +150,7 @@ void sg::ogl::resource::ShaderProgram::AddFragmentShader(const std::string& t_sh
 uint32_t sg::ogl::resource::ShaderProgram::CreateShaderObject(int32_t t_shaderType)
 {
     const uint32_t shaderId{ glCreateShader(t_shaderType) };
-    SG_ASSERT(shaderId, "[ShaderProgram::CreateShaderObject()] Shader object creation has failed.");
+    SG_ASSERT(shaderId, "[ShaderProgram::CreateShaderObject()] Shader object creation has failed.")
 
     return shaderId;
 }

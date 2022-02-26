@@ -51,7 +51,7 @@ namespace sg::map
         /**
          * A Model object.
          */
-        std::shared_ptr<sg::ogl::resource::Model> m_model;
+        std::shared_ptr<ogl::resource::Model> m_model;
 
         /**
          * An array holding the BuildingTile objects.

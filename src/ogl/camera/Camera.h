@@ -33,7 +33,7 @@ namespace sg::ogl::camera
         // Constants
         //-------------------------------------------------
 
-        static constexpr auto MOVEMENT_SPEED{ 1.0f / 60.0f * 4.0f };
+        static constexpr auto MOVEMENT_SPEED{ 1.0f / 60.0f / 16.0f };
 
         static constexpr auto MOUSE_SENSITIVITY{ 0.2f };
 

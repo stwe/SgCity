@@ -63,7 +63,7 @@ void sg::ogl::buffer::Ebo::CreateId()
 // Clean up
 //-------------------------------------------------
 
-void sg::ogl::buffer::Ebo::CleanUp()
+void sg::ogl::buffer::Ebo::CleanUp() const
 {
     Log::SG_LOG_DEBUG("[Ebo::CleanUp()] Clean up Ebo Id {}.", id);
 

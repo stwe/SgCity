@@ -68,14 +68,14 @@ namespace sg::ogl::resource
         // Set uniforms
         //-------------------------------------------------
 
-        void SetUniform(const std::string& t_uniformName, int32_t t_value);
-        void SetUniform(const std::string& t_uniformName, float t_value);
-        void SetUniform(const std::string& t_uniformName, bool t_value);
-        void SetUniform(const std::string& t_uniformName, const glm::vec2& t_value);
-        void SetUniform(const std::string& t_uniformName, const glm::vec3& t_value);
-        void SetUniform(const std::string& t_uniformName, const glm::vec4& t_value);
-        void SetUniform(const std::string& t_uniformName, const glm::mat4& t_value);
-        void SetUniform(const std::string& t_uniformName, const glm::mat3& t_value);
+        void SetUniform(const std::string& t_uniformName, int32_t t_value) const;
+        void SetUniform(const std::string& t_uniformName, float t_value) const;
+        void SetUniform(const std::string& t_uniformName, bool t_value) const;
+        void SetUniform(const std::string& t_uniformName, const glm::vec2& t_value) const;
+        void SetUniform(const std::string& t_uniformName, const glm::vec3& t_value) const;
+        void SetUniform(const std::string& t_uniformName, const glm::vec4& t_value) const;
+        void SetUniform(const std::string& t_uniformName, const glm::mat4& t_value) const;
+        void SetUniform(const std::string& t_uniformName, const glm::mat3& t_value) const;
 
     protected:
 

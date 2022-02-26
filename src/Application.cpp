@@ -136,7 +136,7 @@ void sg::Application::GameLoop()
 
     while(!m_window.WindowShouldClose())
     {
-        auto now{ glfwGetTime() };
+        const auto now{ glfwGetTime() };
         dt += (now - lastTime) / FRAME_TIME;
         lastTime = now;
 

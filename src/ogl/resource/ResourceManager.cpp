@@ -27,7 +27,7 @@ sg::ogl::resource::ShaderProgram& sg::ogl::resource::ResourceManager::LoadShader
 {
     if (shaderPrograms.count(t_path) == 0)
     {
-        shaderPrograms.emplace(t_path, std::make_unique<ogl::resource::ShaderProgram>(t_path));
+        shaderPrograms.emplace(t_path, std::make_unique<ShaderProgram>(t_path));
     }
 
     return *shaderPrograms.at(t_path);
@@ -46,7 +46,7 @@ std::shared_ptr<sg::ogl::resource::Model> sg::ogl::resource::ResourceManager::Lo
 {
     if (models.count(t_path) == 0)
     {
-        models.emplace(t_path, std::make_unique<ogl::resource::Model>(t_path, t_pFlags));
+        models.emplace(t_path, std::make_unique<Model>(t_path, t_pFlags));
     }
 
     return models.at(t_path);

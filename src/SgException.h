@@ -32,7 +32,7 @@ namespace sg
     class SgException : public std::exception
     {
     public:
-        SgException(int t_line, const char* t_file, std::string t_message)
+        SgException(const int t_line, const char* t_file, std::string t_message)
             : m_line{ t_line }
             , m_file{ t_file }
             , m_message{ std::move(t_message) }

@@ -56,6 +56,9 @@ namespace sg::ogl::resource
         // Member
         //-------------------------------------------------
 
+        /**
+         * A model consists of one or more VAOs.
+         */
         std::vector<std::shared_ptr<Mesh>> meshes;
 
         //-------------------------------------------------
@@ -86,11 +89,18 @@ namespace sg::ogl::resource
         // Logic
         //-------------------------------------------------
 
+        /**
+         * Renders the model.
+         *
+         * @param t_window The current window to get the projection matrix.
+         * @param t_camera The camera to get the view matrix.
+         * @param t_position The position of the model.
+         */
         void Render(
-            const ogl::Window& t_window,
-            const ogl::camera::Camera& t_camera,
+            const Window& t_window,
+            const camera::Camera& t_camera,
             const glm::vec3& t_position
-            );
+            ) const;
 
     protected:
 
@@ -107,8 +117,8 @@ namespace sg::ogl::resource
         //-------------------------------------------------
 
         void LoadFromFile(unsigned int t_pFlags);
-        void ProcessNode(aiNode* t_node, const aiScene* t_scene);
-        std::unique_ptr<Mesh> ProcessMesh(aiMesh* t_mesh, const aiScene* t_scene) const;
+        void ProcessNode(const aiNode* t_node, const aiScene* t_scene);
+        std::unique_ptr<Mesh> ProcessMesh(const aiMesh* t_mesh, const aiScene* t_scene) const;
         std::vector<uint32_t> LoadMaterialTextures(aiMaterial* t_mat, aiTextureType t_type) const;
 
         //-------------------------------------------------

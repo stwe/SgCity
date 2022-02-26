@@ -93,6 +93,6 @@ namespace sg::ogl::buffer
         // Clean up
         //-------------------------------------------------
 
-        void CleanUp();
+        void CleanUp() const;
     };
 }

@@ -85,7 +85,7 @@ void sg::map::BuildingsLayer::Init()
     CreateBuildingTiles();
     BuildingTilesToGpu();
 
-    m_model = std::make_shared<ogl::resource::Model>("E:/Dev/SgCity/resources/model/cube.obj");
+    m_model = std::make_shared<ogl::resource::Model>("E:/Dev/SgCity/resources/model/node_115.obj");
 
     Log::SG_LOG_DEBUG("[BuildingsLayer::Init()] The BuildingsLayer was successfully initialized.");
 }

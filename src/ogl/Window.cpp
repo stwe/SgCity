@@ -166,7 +166,7 @@ void sg::ogl::Window::InitWindow()
 
     // Setup an error callback.
     glfwSetErrorCallback(
-        [](int t_error, const char* t_description)
+        [](const int t_error, const char* t_description)
          {
              Log::SG_LOG_ERROR("GLFW Error ({}) {}", t_error, t_description);
          }
@@ -245,7 +245,7 @@ void sg::ogl::Window::InitImGui() const
     // setup ImGui context
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
-    auto& io{ ImGui::GetIO() };
+    const auto& io{ ImGui::GetIO() };
     (void)io;
 
     // setup renderer bindings

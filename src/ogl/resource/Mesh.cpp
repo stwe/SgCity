@@ -45,7 +45,7 @@ sg::ogl::resource::Mesh::~Mesh() noexcept
 }
 
 //-------------------------------------------------
-// Draw - methods created for convenience
+// Draw methods created for convenience
 //-------------------------------------------------
 
 void sg::ogl::resource::Mesh::InitDraw() const

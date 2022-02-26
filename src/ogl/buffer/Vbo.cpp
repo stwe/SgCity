@@ -92,7 +92,7 @@ void sg::ogl::buffer::Vbo::CreateId()
 // Clean up
 //-------------------------------------------------
 
-void sg::ogl::buffer::Vbo::CleanUp()
+void sg::ogl::buffer::Vbo::CleanUp() const
 {
     Log::SG_LOG_DEBUG("[Vbo::CleanUp()] Clean up Vbo Id {}.", id);
 

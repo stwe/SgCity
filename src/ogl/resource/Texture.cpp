@@ -28,7 +28,7 @@
 // Ctors. / Dtor.
 //-------------------------------------------------
 
-sg::ogl::resource::Texture::Texture(std::string t_path, bool t_loadVerticalFlipped)
+sg::ogl::resource::Texture::Texture(std::string t_path, const bool t_loadVerticalFlipped)
     : m_path{ std::move(t_path) }
     , m_loadVerticalFlipped{ t_loadVerticalFlipped }
 {
@@ -63,10 +63,10 @@ void sg::ogl::resource::Texture::Unbind()
     glBindTexture(GL_TEXTURE_2D, 0);
 }
 
-void sg::ogl::resource::Texture::BindForReading(uint32_t t_textureUnit) const
+void sg::ogl::resource::Texture::BindForReading(const uint32_t t_textureUnit) const
 {
     // make sure that the OpenGL constants are used here
-    SG_ASSERT(t_textureUnit >= GL_TEXTURE0 || t_textureUnit <= GL_TEXTURE15, "[Texture::BindForReading()] Invalid texture unit value.")
+    SG_ASSERT(t_textureUnit >= GL_TEXTURE0 && t_textureUnit <= GL_TEXTURE15, "[Texture::BindForReading()] Invalid texture unit value.")
     glActiveTexture(t_textureUnit);
     Bind();
 }
@@ -91,8 +91,7 @@ void sg::ogl::resource::Texture::LoadFromFile()
 {
     stbi_set_flip_vertically_on_load(m_loadVerticalFlipped);
 
-    auto* const image{ stbi_load(m_path.c_str(), &m_width, &m_height, &m_channels, 0) };
-    if (image)
+    if (auto* const image{ stbi_load(m_path.c_str(), &m_width, &m_height, &m_channels, 0) })
     {
         SG_ASSERT(m_width, "[Texture::LoadFromFile()] Invalid image format.")
         SG_ASSERT(m_height, "[Texture::LoadFromFile()] Invalid image format.")

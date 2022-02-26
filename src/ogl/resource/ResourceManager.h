@@ -51,16 +51,25 @@ namespace sg::ogl::resource
         inline static std::map<std::string, std::shared_ptr<Model>> models;
 
         //-------------------------------------------------
+        // Ctors. / Dtor.
+        //-------------------------------------------------
+
+        ResourceManager(const ResourceManager& t_other) = delete;
+        ResourceManager(ResourceManager&& t_other) noexcept = delete;
+        ResourceManager& operator=(const ResourceManager& t_other) = delete;
+        ResourceManager& operator=(ResourceManager&& t_other) noexcept = delete;
+
+        //-------------------------------------------------
         // Textures
         //-------------------------------------------------
 
         template<typename... Args>
-        static const Texture& LoadTexture(Args&&... args)
+        static const Texture& LoadTexture(Args&&... t_args)
         {
-            auto t{ std::make_tuple(args...) };
+            auto t{ std::make_tuple(t_args...) };
             if (textures.count(std::get<0>(t)) == 0)
             {
-                textures.emplace(std::get<0>(t), std::make_unique<ogl::resource::Texture>(std::forward<Args>(args)...));
+                textures.emplace(std::get<0>(t), std::make_unique<Texture>(std::forward<Args>(t_args)...));
             }
 
             return *textures.at(std::get<0>(t));

@@ -59,43 +59,43 @@ void sg::ogl::resource::ShaderProgram::Unbind()
 // Set uniforms
 //-------------------------------------------------
 
-void sg::ogl::resource::ShaderProgram::SetUniform(const std::string& t_uniformName, const int32_t t_value)
+void sg::ogl::resource::ShaderProgram::SetUniform(const std::string& t_uniformName, const int32_t t_value) const
 {
     glUniform1i(m_uniforms.at(t_uniformName), t_value);
 }
 
-void sg::ogl::resource::ShaderProgram::SetUniform(const std::string& t_uniformName, const float t_value)
+void sg::ogl::resource::ShaderProgram::SetUniform(const std::string& t_uniformName, const float t_value) const
 {
     glUniform1f(m_uniforms.at(t_uniformName), t_value);
 }
 
-void sg::ogl::resource::ShaderProgram::SetUniform(const std::string& t_uniformName, const bool t_value)
+void sg::ogl::resource::ShaderProgram::SetUniform(const std::string& t_uniformName, const bool t_value) const
 {
     // if value == true load 1 else 0 as float
     glUniform1f(m_uniforms.at(t_uniformName), t_value ? 1.0f : 0.0f);
 }
 
-void sg::ogl::resource::ShaderProgram::SetUniform(const std::string& t_uniformName, const glm::vec2& t_value)
+void sg::ogl::resource::ShaderProgram::SetUniform(const std::string& t_uniformName, const glm::vec2& t_value) const
 {
     glUniform2f(m_uniforms.at(t_uniformName), t_value.x, t_value.y);
 }
 
-void sg::ogl::resource::ShaderProgram::SetUniform(const std::string& t_uniformName, const glm::vec3& t_value)
+void sg::ogl::resource::ShaderProgram::SetUniform(const std::string& t_uniformName, const glm::vec3& t_value) const
 {
     glUniform3f(m_uniforms.at(t_uniformName), t_value.x, t_value.y, t_value.z);
 }
 
-void sg::ogl::resource::ShaderProgram::SetUniform(const std::string& t_uniformName, const glm::vec4& t_value)
+void sg::ogl::resource::ShaderProgram::SetUniform(const std::string& t_uniformName, const glm::vec4& t_value) const
 {
     glUniform4f(m_uniforms.at(t_uniformName), t_value.x, t_value.y, t_value.z, t_value.w);
 }
 
-void sg::ogl::resource::ShaderProgram::SetUniform(const std::string& t_uniformName, const glm::mat4& t_value)
+void sg::ogl::resource::ShaderProgram::SetUniform(const std::string& t_uniformName, const glm::mat4& t_value) const
 {
     glUniformMatrix4fv(m_uniforms.at(t_uniformName), 1, GL_FALSE, value_ptr(t_value));
 }
 
-void sg::ogl::resource::ShaderProgram::SetUniform(const std::string& t_uniformName, const glm::mat3& t_value)
+void sg::ogl::resource::ShaderProgram::SetUniform(const std::string& t_uniformName, const glm::mat3& t_value) const
 {
     glUniformMatrix3fv(m_uniforms.at(t_uniformName), 1, GL_FALSE, value_ptr(t_value));
 }
@@ -147,7 +147,7 @@ void sg::ogl::resource::ShaderProgram::AddFragmentShader(const std::string& t_sh
 // Shader
 //-------------------------------------------------
 
-uint32_t sg::ogl::resource::ShaderProgram::CreateShaderObject(int32_t t_shaderType)
+uint32_t sg::ogl::resource::ShaderProgram::CreateShaderObject(const int32_t t_shaderType)
 {
     const uint32_t shaderId{ glCreateShader(t_shaderType) };
     SG_ASSERT(shaderId, "[ShaderProgram::CreateShaderObject()] Shader object creation has failed.")
@@ -155,14 +155,14 @@ uint32_t sg::ogl::resource::ShaderProgram::CreateShaderObject(int32_t t_shaderTy
     return shaderId;
 }
 
-void sg::ogl::resource::ShaderProgram::CompileShader(uint32_t t_shaderId, const std::string& t_shaderCode)
+void sg::ogl::resource::ShaderProgram::CompileShader(const uint32_t t_shaderId, const std::string& t_shaderCode)
 {
-    auto shaderSrc{ t_shaderCode.c_str() };
+    const auto shaderSrc{ t_shaderCode.c_str() };
     glShaderSource(t_shaderId, 1, &shaderSrc, nullptr);
     glCompileShader(t_shaderId);
 }
 
-void sg::ogl::resource::ShaderProgram::CheckCompileStatus(uint32_t t_shaderId)
+void sg::ogl::resource::ShaderProgram::CheckCompileStatus(const uint32_t t_shaderId)
 {
     auto isCompiled{ GL_FALSE };
     glGetShaderiv(t_shaderId, GL_COMPILE_STATUS, &isCompiled);
@@ -188,7 +188,7 @@ void sg::ogl::resource::ShaderProgram::CheckCompileStatus(uint32_t t_shaderId)
 
 void sg::ogl::resource::ShaderProgram::FindUniforms(const std::string& t_shaderCode)
 {
-    std::string uniformKeyword{ "uniform" };
+    const std::string uniformKeyword{ "uniform" };
     const auto uniformKeywordLength{ uniformKeyword.length() };
 
     std::vector<size_t> uniformPositions;
@@ -208,7 +208,7 @@ void sg::ogl::resource::ShaderProgram::FindUniforms(const std::string& t_shaderC
     }
 }
 
-uint32_t sg::ogl::resource::ShaderProgram::AddShader(const std::string& t_shaderCode, int32_t t_shaderType)
+uint32_t sg::ogl::resource::ShaderProgram::AddShader(const std::string& t_shaderCode, const int32_t t_shaderType)
 {
     const uint32_t shaderId{ CreateShaderObject(t_shaderType) };
     CompileShader(shaderId, t_shaderCode);

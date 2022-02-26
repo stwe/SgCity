@@ -33,11 +33,11 @@ namespace sg::ogl::math
         {
             auto modelMatrix{ glm::mat4(1.0f) };
 
-            modelMatrix = glm::translate(modelMatrix, t_position);
-            modelMatrix = glm::rotate(modelMatrix, glm::radians(t_rotation.x), glm::vec3(1.0f, 0.0f, 0.0f));
-            modelMatrix = glm::rotate(modelMatrix, glm::radians(t_rotation.y), glm::vec3(0.0f, 1.0f, 0.0f));
-            modelMatrix = glm::rotate(modelMatrix, glm::radians(t_rotation.z), glm::vec3(0.0f, 0.0f, 1.0f));
-            modelMatrix = glm::scale(modelMatrix, t_size);
+            modelMatrix = translate(modelMatrix, t_position);
+            modelMatrix = rotate(modelMatrix, glm::radians(t_rotation.x), glm::vec3(1.0f, 0.0f, 0.0f));
+            modelMatrix = rotate(modelMatrix, glm::radians(t_rotation.y), glm::vec3(0.0f, 1.0f, 0.0f));
+            modelMatrix = rotate(modelMatrix, glm::radians(t_rotation.z), glm::vec3(0.0f, 0.0f, 1.0f));
+            modelMatrix = scale(modelMatrix, t_size);
 
             return modelMatrix;
         }

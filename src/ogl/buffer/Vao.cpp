@@ -99,7 +99,7 @@ void sg::ogl::buffer::Vao::CreateStaticVbo(const std::vector<float>& t_vertices,
     vbo = std::make_unique<Vbo>();
     vbo->Bind();
 
-    uint32_t floatsPerVertex{ 5 };
+    constexpr uint32_t floatsPerVertex{ 5 };
 
     glBufferData(GL_ARRAY_BUFFER, t_drawCount * floatsPerVertex * (uint32_t)sizeof(float), t_vertices.data(), GL_STATIC_DRAW);
     Vbo::Unbind();
@@ -128,7 +128,7 @@ void sg::ogl::buffer::Vao::CreateStaticWaterVbo()
     vbo->Bind();
 
     // x and z vertex positions, y is set to 0.0 in the vertex shader
-    std::vector<float> vertices =
+    const std::vector<float> vertices =
     {
          0.0f, 0.0f, // tl
          0.0f, 1.0f, // bl
@@ -139,7 +139,7 @@ void sg::ogl::buffer::Vao::CreateStaticWaterVbo()
     };
 
     drawCount = 6;
-    uint32_t floatsPerVertex{ 2 };
+    constexpr uint32_t floatsPerVertex{ 2 };
 
     glBufferData(GL_ARRAY_BUFFER, drawCount * floatsPerVertex * (uint32_t)sizeof(float), vertices.data(), GL_STATIC_DRAW);
     Vbo::Unbind();
@@ -179,7 +179,7 @@ void sg::ogl::buffer::Vao::CreateModelIndexBuffer(const std::vector<uint32_t>& t
     SG_ASSERT(vbo, "[Vao::CreateModelIndexBuffer()] The Ebo should be created after the Vbo.")
 
     static constexpr auto ELEMENT_SIZE_IN_BYTES{ static_cast<int64_t>(sizeof(uint32_t)) };
-    auto numberOfElements{ static_cast<int32_t>(t_indices.size()) };
+    const auto numberOfElements{ static_cast<int32_t>(t_indices.size()) };
 
     Bind();
 
@@ -233,7 +233,7 @@ void sg::ogl::buffer::Vao::CreateId()
 // Clean up
 //-------------------------------------------------
 
-void sg::ogl::buffer::Vao::CleanUp()
+void sg::ogl::buffer::Vao::CleanUp() const
 {
     Log::SG_LOG_DEBUG("[Vao::CleanUp()] Clean up Vao Id {}.", id);
 

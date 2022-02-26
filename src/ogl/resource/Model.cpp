@@ -52,46 +52,49 @@ sg::ogl::resource::Model::~Model() noexcept
 //-------------------------------------------------
 
 void sg::ogl::resource::Model::Render(
-    const ogl::Window& t_window,
-    const ogl::camera::Camera& t_camera,
+    const Window& t_window,
+    const camera::Camera& t_camera,
     const glm::vec3& t_position
-    )
+    ) const
 {
-    ogl::OpenGL::EnableAlphaBlending();
+    OpenGL::EnableAlphaBlending();
 
-    meshes[0]->vao->Bind();
-
-    auto& shaderProgram{ ogl::resource::ResourceManager::LoadShaderProgram("E:/Dev/SgCity/resources/shader/model") };
+    auto& shaderProgram{ ResourceManager::LoadShaderProgram("E:/Dev/SgCity/resources/shader/model") };
     shaderProgram.Bind();
 
-    // todo
-    auto modelMatrix{ ogl::math::Transform::CreateModelMatrix(
-        t_position,
-        glm::vec3(0.0f, 0.0f, 0.0f),
-        glm::vec3(0.25f)
+    const auto modelMatrix{ math::Transform::CreateModelMatrix(
+    t_position,
+    glm::vec3(0.0f, 0.0f, 0.0f),
+    glm::vec3(0.25f)
     ) };
 
     shaderProgram.SetUniform("model", modelMatrix);
     shaderProgram.SetUniform("view", t_camera.GetViewMatrix());
     shaderProgram.SetUniform("projection", t_window.GetProjectionMatrix());
 
-    const auto& texture{ ogl::resource::ResourceManager::LoadTexture("E:/Dev/SgCity/resources/texture/building.png", true) };
-    texture.BindForReading(GL_TEXTURE0);
-    shaderProgram.SetUniform("diffuseMap", 0);
+    for (const auto& mesh : meshes)
+    {
+        mesh->vao->Bind();
 
-    meshes[0]->vao->DrawPrimitives();
+        // todo: wird momentan nicht verwendet; diffuse map auslesen
+        const auto& texture{ ResourceManager::LoadTexture("E:/Dev/SgCity/resources/texture/building.png", true) };
+        texture.BindForReading(GL_TEXTURE0);
+        shaderProgram.SetUniform("diffuseMap", 0);
 
-    ogl::resource::ShaderProgram::Unbind();
-    meshes[0]->vao->Unbind();
+        mesh->vao->DrawPrimitives();
+        mesh->vao->Unbind();
+    }
 
-    ogl::OpenGL::DisableBlending();
+    ShaderProgram::Unbind();
+
+    OpenGL::DisableBlending();
 }
 
 //-------------------------------------------------
 // Load
 //-------------------------------------------------
 
-void sg::ogl::resource::Model::LoadFromFile(unsigned int t_pFlags)
+void sg::ogl::resource::Model::LoadFromFile(const unsigned int t_pFlags)
 {
     Assimp::Importer importer;
 
@@ -108,7 +111,7 @@ void sg::ogl::resource::Model::LoadFromFile(unsigned int t_pFlags)
     Log::SG_LOG_DEBUG("[Model::LoadFromFile()] Model file at {} successfully loaded.", m_fullFilePath);
 }
 
-void sg::ogl::resource::Model::ProcessNode(aiNode* t_node, const aiScene* t_scene)
+void sg::ogl::resource::Model::ProcessNode(const aiNode* t_node, const aiScene* t_scene)
 {
     // Process each mesh located at the current node.
     for (auto i{ 0u }; i < t_node->mNumMeshes; ++i)
@@ -124,7 +127,7 @@ void sg::ogl::resource::Model::ProcessNode(aiNode* t_node, const aiScene* t_scen
     }
 }
 
-std::unique_ptr<sg::ogl::resource::Mesh> sg::ogl::resource::Model::ProcessMesh(aiMesh* t_mesh, const aiScene* t_scene) const
+std::unique_ptr<sg::ogl::resource::Mesh> sg::ogl::resource::Model::ProcessMesh(const aiMesh* t_mesh, const aiScene* t_scene) const
 {
     // Data to fill.
     std::vector<float> vertices;
@@ -251,11 +254,11 @@ std::unique_ptr<sg::ogl::resource::Mesh> sg::ogl::resource::Model::ProcessMesh(a
     // Load textures.
     Log::SG_LOG_DEBUG("[Model::ProcessMesh()] Loading textures for the model: {}", m_fullFilePath);
 
-    auto ambientMaps{ LoadMaterialTextures(aiMeshMaterial, aiTextureType_AMBIENT) };
-    auto diffuseMaps{ LoadMaterialTextures(aiMeshMaterial, aiTextureType_DIFFUSE) };
-    auto specularMaps{ LoadMaterialTextures(aiMeshMaterial, aiTextureType_SPECULAR) };
-    auto bumpMaps{ LoadMaterialTextures(aiMeshMaterial, aiTextureType_HEIGHT) };
-    auto normalMaps{ LoadMaterialTextures(aiMeshMaterial, aiTextureType_NORMALS) };
+    const auto ambientMaps{ LoadMaterialTextures(aiMeshMaterial, aiTextureType_AMBIENT) };
+    const auto diffuseMaps{ LoadMaterialTextures(aiMeshMaterial, aiTextureType_DIFFUSE) };
+    const auto specularMaps{ LoadMaterialTextures(aiMeshMaterial, aiTextureType_SPECULAR) };
+    const auto bumpMaps{ LoadMaterialTextures(aiMeshMaterial, aiTextureType_HEIGHT) };
+    const auto normalMaps{ LoadMaterialTextures(aiMeshMaterial, aiTextureType_NORMALS) };
 
     // Always use the first texture Id.
     if (!ambientMaps.empty())
@@ -288,7 +291,7 @@ std::unique_ptr<sg::ogl::resource::Mesh> sg::ogl::resource::Model::ProcessMesh(a
     SG_ASSERT(meshUniquePtr, "[Model::ProcessMesh()] Null pointer.")
 
     // Add Vbo.
-    meshUniquePtr->vao->CreateModelVertexDataVbo(vertices, (int32_t)t_mesh->mNumVertices);
+    meshUniquePtr->vao->CreateModelVertexDataVbo(vertices, static_cast<int32_t>(t_mesh->mNumVertices));
 
     // Add Ebo.
     meshUniquePtr->vao->CreateModelIndexBuffer(indices);

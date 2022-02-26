@@ -133,7 +133,7 @@ namespace sg::ogl
         /**
          * Poll the key status.
          *
-         * @param keyCode A constant such as GLFW_KEY_W or GLFW_KEY_SPACE
+         * @param t_keyCode A constant such as GLFW_KEY_W or GLFW_KEY_SPACE
          *
          * @return true if GLFW_PRESS
          */

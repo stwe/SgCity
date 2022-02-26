@@ -106,10 +106,10 @@ namespace sg::ogl::resource
         // For convenience
         //-------------------------------------------------
 
-        [[nodiscard]] bool HasAmbientMap() const { return mapKa != 0; };
-        [[nodiscard]] bool HasDiffuseMap() const { return mapKd != 0; };
-        [[nodiscard]] bool HasSpecularMap() const { return mapKs != 0; };
-        [[nodiscard]] bool HasBumpMap() const { return mapBump != 0; };
-        [[nodiscard]] bool HasNormalMap() const { return mapKn != 0; };
+        [[nodiscard]] bool HasAmbientMap() const { return mapKa != 0; }
+        [[nodiscard]] bool HasDiffuseMap() const { return mapKd != 0; }
+        [[nodiscard]] bool HasSpecularMap() const { return mapKs != 0; }
+        [[nodiscard]] bool HasBumpMap() const { return mapBump != 0; }
+        [[nodiscard]] bool HasNormalMap() const { return mapKn != 0; }
     };
 }

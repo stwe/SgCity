@@ -83,7 +83,7 @@ namespace sg::ogl::resource
         ~Mesh() noexcept;
 
         //-------------------------------------------------
-        // Draw - methods created for convenience
+        // Draw methods created for convenience
         //-------------------------------------------------
 
         /**

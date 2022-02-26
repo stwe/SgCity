@@ -18,7 +18,7 @@
 
 #include "PickingTexture.h"
 #include "SgException.h"
-#include "Assert.h"
+#include "SgAssert.h"
 #include "ogl/OpenGL.h"
 #include "ogl/resource/Texture.h"
 

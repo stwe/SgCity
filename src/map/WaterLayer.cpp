@@ -32,7 +32,7 @@ void sg::map::WaterLayer::Render(const sg::ogl::Window& t_window, const sg::ogl:
 
     vao->Bind();
 
-    auto& shaderProgram{ ogl::resource::ResourceManager::LoadShaderProgram("/home/steffen/CLionProjects/SgCity/resources/shader/water") };
+    auto& shaderProgram{ ogl::resource::ResourceManager::LoadShaderProgram("E:/Dev/SgCity/resources/shader/water") };
     shaderProgram.Bind();
 
     shaderProgram.SetUniform("model", modelMatrix);

@@ -17,7 +17,7 @@
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 #include "Mesh.h"
-#include "Assert.h"
+#include "SgAssert.h"
 #include "ogl/buffer/Vao.h"
 
 //-------------------------------------------------

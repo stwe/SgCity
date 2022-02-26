@@ -85,7 +85,7 @@ void sg::map::RoadsLayer::Render(const ogl::Window& t_window, const ogl::camera:
 
     vao->Bind();
 
-    auto& shaderProgram{ ogl::resource::ResourceManager::LoadShaderProgram("/home/steffen/CLionProjects/SgCity/resources/shader/map") };
+    auto& shaderProgram{ ogl::resource::ResourceManager::LoadShaderProgram("E:/Dev/SgCity/resources/shader/map") };
     shaderProgram.Bind();
 
     shaderProgram.SetUniform("model", modelMatrix);
@@ -96,7 +96,7 @@ void sg::map::RoadsLayer::Render(const ogl::Window& t_window, const ogl::camera:
     const auto n{ glm::inverseTranspose(glm::mat3(mv)) };
     shaderProgram.SetUniform("normalMatrix", n);
 
-    const auto& texture{ ogl::resource::ResourceManager::LoadTexture("/home/steffen/CLionProjects/SgCity/resources/texture/roads.png") };
+    const auto& texture{ ogl::resource::ResourceManager::LoadTexture("E:/Dev/SgCity/resources/texture/roads.png") };
     texture.BindForReading(GL_TEXTURE0);
     shaderProgram.SetUniform("diffuseMap", 0);
 

@@ -83,7 +83,7 @@ void sg::map::TerrainLayer::RenderForMousePicking(const ogl::Window& t_window, c
 
     vao->Bind();
 
-    auto& shaderProgram{ ogl::resource::ResourceManager::LoadShaderProgram("/home/steffen/CLionProjects/SgCity/resources/shader/picking") };
+    auto& shaderProgram{ ogl::resource::ResourceManager::LoadShaderProgram("E:/Dev/SgCity/resources/shader/picking") };
     shaderProgram.Bind();
 
     shaderProgram.SetUniform("model", modelMatrix);
@@ -104,7 +104,7 @@ void sg::map::TerrainLayer::Render(const ogl::Window& t_window, const ogl::camer
 
     vao->Bind();
 
-    auto& shaderProgram{ ogl::resource::ResourceManager::LoadShaderProgram("/home/steffen/CLionProjects/SgCity/resources/shader/map") };
+    auto& shaderProgram{ ogl::resource::ResourceManager::LoadShaderProgram("E:/Dev/SgCity/resources/shader/map") };
     shaderProgram.Bind();
 
     shaderProgram.SetUniform("model", modelMatrix);
@@ -115,7 +115,7 @@ void sg::map::TerrainLayer::Render(const ogl::Window& t_window, const ogl::camer
     const auto n{ glm::inverseTranspose(glm::mat3(mv)) };
     shaderProgram.SetUniform("normalMatrix", n);
 
-    const auto& texture{ ogl::resource::ResourceManager::LoadTexture("/home/steffen/CLionProjects/SgCity/resources/texture/grass.png") };
+    const auto& texture{ ogl::resource::ResourceManager::LoadTexture("E:/Dev/SgCity/resources/texture/grass.png") };
     texture.BindForReading(GL_TEXTURE0);
     shaderProgram.SetUniform("diffuseMap", 0);
 

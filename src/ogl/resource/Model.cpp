@@ -21,7 +21,7 @@
 #include "Model.h"
 #include "Mesh.h"
 #include "Material.h"
-#include "Assert.h"
+#include "SgAssert.h"
 #include "SgException.h"
 #include "ogl/buffer/Vao.h"
 #include "ResourceManager.h"
@@ -61,7 +61,7 @@ void sg::ogl::resource::Model::Render(
 
     meshes[0]->vao->Bind();
 
-    auto& shaderProgram{ ogl::resource::ResourceManager::LoadShaderProgram("/home/steffen/CLionProjects/SgCity/resources/shader/model") };
+    auto& shaderProgram{ ogl::resource::ResourceManager::LoadShaderProgram("E:/Dev/SgCity/resources/shader/model") };
     shaderProgram.Bind();
 
     // todo
@@ -75,7 +75,7 @@ void sg::ogl::resource::Model::Render(
     shaderProgram.SetUniform("view", t_camera.GetViewMatrix());
     shaderProgram.SetUniform("projection", t_window.GetProjectionMatrix());
 
-    const auto& texture{ ogl::resource::ResourceManager::LoadTexture("/home/steffen/CLionProjects/SgCity/resources/texture/building.png", true) };
+    const auto& texture{ ogl::resource::ResourceManager::LoadTexture("E:/Dev/SgCity/resources/texture/building.png", true) };
     texture.BindForReading(GL_TEXTURE0);
     shaderProgram.SetUniform("diffuseMap", 0);
 

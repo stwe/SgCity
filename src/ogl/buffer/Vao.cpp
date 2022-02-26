@@ -19,7 +19,7 @@
 #include "Vao.h"
 #include "Vbo.h"
 #include "Ebo.h"
-#include "Assert.h"
+#include "SgAssert.h"
 #include "ogl/OpenGL.h"
 
 //-------------------------------------------------

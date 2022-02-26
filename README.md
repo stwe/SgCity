@@ -19,9 +19,53 @@ look and feel of old city building simulations from the 90s.
 
 ## Platforms
 
+- Win
 - Linux
 
 ## Build instructions
+
+### Win
+
+First, [install](https://docs.conan.io/en/latest/installation.html) the Conan package manager locally.
+
+As this project relies on multiple 3rd-Party Libs, I created a `conanfile.txt` with all the requirements.
+
+```txt
+[requires]
+glfw/3.3.5
+glew/2.2.0
+glm/0.9.9.8
+spdlog/1.9.2
+imgui/1.86
+assimp/5.1.0
+
+[generators]
+premake
+```
+
+My favor build configuration tool for Windows is Premake5. Premake5 can generate Makefiles and Visual Studio Solutions with a single description file for cross-platform projects.
+Download [Premake5](https://premake.github.io/download) to your preferred location.
+
+Complete the installation of requirements for the project running:
+
+```bash
+$ conan install conanfile_win.txt -s build_type=Debug
+```
+
+or
+
+```bash
+$ conan install conanfile_win.txt -s build_type=Release
+```
+
+followed by:
+
+```bash
+$ premake5 vs2019
+```
+
+
+### Linux
 
 First, [install](https://docs.conan.io/en/latest/installation.html) the Conan package manager locally.
 

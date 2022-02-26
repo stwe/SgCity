@@ -19,7 +19,7 @@
 #include <glm/gtc/type_ptr.hpp>
 #include "ShaderProgram.h"
 #include "ogl/OpenGL.h"
-#include "Assert.h"
+#include "SgAssert.h"
 #include "ResourceUtil.h"
 
 //-------------------------------------------------

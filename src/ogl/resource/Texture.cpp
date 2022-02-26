@@ -17,7 +17,7 @@
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 #include "Texture.h"
-#include "Assert.h"
+#include "SgAssert.h"
 #include "SgException.h"
 #include "ogl/OpenGL.h"
 

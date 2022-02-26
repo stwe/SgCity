@@ -38,7 +38,7 @@ void sg::map::BuildingsLayer::Render(const ogl::Window& t_window, const ogl::cam
 
     vao->Bind();
 
-    auto& shaderProgram{ ogl::resource::ResourceManager::LoadShaderProgram("/home/steffen/CLionProjects/SgCity/resources/shader/map") };
+    auto& shaderProgram{ ogl::resource::ResourceManager::LoadShaderProgram("E:/Dev/SgCity/resources/shader/map") };
     shaderProgram.Bind();
 
     shaderProgram.SetUniform("model", modelMatrix);
@@ -49,7 +49,7 @@ void sg::map::BuildingsLayer::Render(const ogl::Window& t_window, const ogl::cam
     const auto n{ glm::inverseTranspose(glm::mat3(mv)) };
     shaderProgram.SetUniform("normalMatrix", n);
 
-    const auto& texture{ ogl::resource::ResourceManager::LoadTexture("/home/steffen/CLionProjects/SgCity/resources/texture/r.png") };
+    const auto& texture{ ogl::resource::ResourceManager::LoadTexture("E:/Dev/SgCity/resources/texture/r.png") };
     texture.BindForReading(GL_TEXTURE0);
     shaderProgram.SetUniform("diffuseMap", 0);
 
@@ -85,7 +85,7 @@ void sg::map::BuildingsLayer::Init()
     CreateBuildingTiles();
     BuildingTilesToGpu();
 
-    m_model = std::make_shared<ogl::resource::Model>("/home/steffen/CLionProjects/SgCity/resources/model/211_firestation_detailed.obj");
+    m_model = std::make_shared<ogl::resource::Model>("E:/Dev/SgCity/resources/model/cube.obj");
 
     Log::SG_LOG_DEBUG("[BuildingsLayer::Init()] The BuildingsLayer was successfully initialized.");
 }

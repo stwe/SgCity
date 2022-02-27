@@ -38,7 +38,7 @@ void sg::map::BuildingsLayer::Render(const ogl::Window& t_window, const ogl::cam
 
     vao->Bind();
 
-    auto& shaderProgram{ ogl::resource::ResourceManager::LoadShaderProgram("E:/Dev/SgCity/resources/shader/map") };
+    const auto& shaderProgram{ ogl::resource::ResourceManager::LoadShaderProgram("E:/Dev/SgCity/resources/shader/map") };
     shaderProgram.Bind();
 
     shaderProgram.SetUniform("model", modelMatrix);
@@ -49,7 +49,7 @@ void sg::map::BuildingsLayer::Render(const ogl::Window& t_window, const ogl::cam
     const auto n{ glm::inverseTranspose(glm::mat3(mv)) };
     shaderProgram.SetUniform("normalMatrix", n);
 
-    const auto& texture{ ogl::resource::ResourceManager::LoadTexture("E:/Dev/SgCity/resources/texture/r.png") };
+    const auto& texture{ ogl::resource::ResourceManager::LoadTexture("E:/Dev/SgCity/resources/texture/r.png", true) };
     texture.BindForReading(GL_TEXTURE0);
     shaderProgram.SetUniform("diffuseMap", 0);
 
@@ -97,7 +97,7 @@ void sg::map::BuildingsLayer::CreateBuildingTiles()
     {
         if (tile->type == Tile::TileType::RESIDENTIAL)
         {
-            m_buildingTiles.push_back(std::move(CreateBuildingTile(*tile, i)));
+            m_buildingTiles.emplace_back(CreateBuildingTile(*tile, i));
             i++;
         }
     }

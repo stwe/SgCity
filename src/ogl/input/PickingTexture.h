@@ -107,6 +107,6 @@ namespace sg::ogl::input
         // Clean up
         //-------------------------------------------------
 
-        void CleanUp();
+        void CleanUp() const;
     };
 }

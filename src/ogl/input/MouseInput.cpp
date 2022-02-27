@@ -33,7 +33,7 @@ sg::ogl::input::MouseInput& sg::ogl::input::MouseInput::GetInstance()
 // Logic
 //-------------------------------------------------
 
-void sg::ogl::input::MouseInput::Init(const sg::ogl::Window& t_window)
+void sg::ogl::input::MouseInput::Init(const Window& t_window)
 {
     // Registers a callback that will be invoked when the mouse is moved.
     glfwSetCursorPosCallback

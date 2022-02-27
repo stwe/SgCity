@@ -147,7 +147,7 @@ void sg::ogl::input::PickingTexture::Unbind()
 // Clean up
 //-------------------------------------------------
 
-void sg::ogl::input::PickingTexture::CleanUp()
+void sg::ogl::input::PickingTexture::CleanUp() const
 {
     Log::SG_LOG_DEBUG("[PickingTexture::CleanUp()] Clean up Fbo Id {}.", m_fboId);
 

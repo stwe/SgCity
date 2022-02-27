@@ -41,7 +41,7 @@ namespace sg::ogl
          * @param t_blue blue - range [0, 1].
          * @param t_alpha alpha - range [0, 1].
          */
-        static void SetClearColor(float t_red, float t_green, float t_blue, float t_alpha)
+        static void SetClearColor(const float t_red, const float t_green, const float t_blue, const float t_alpha)
         {
             glClearColor(t_red, t_green, t_blue, t_alpha);
         }

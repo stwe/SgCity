@@ -59,7 +59,7 @@ void sg::ogl::resource::Model::Render(
 {
     OpenGL::EnableAlphaBlending();
 
-    auto& shaderProgram{ ResourceManager::LoadShaderProgram("E:/Dev/SgCity/resources/shader/model") };
+    const auto& shaderProgram{ ResourceManager::LoadShaderProgram("E:/Dev/SgCity/resources/shader/model") };
     shaderProgram.Bind();
 
     const auto modelMatrix{ math::Transform::CreateModelMatrix(
@@ -77,9 +77,11 @@ void sg::ogl::resource::Model::Render(
         mesh->vao->Bind();
 
         // todo: wird momentan nicht verwendet; diffuse map auslesen
-        const auto& texture{ ResourceManager::LoadTexture("E:/Dev/SgCity/resources/texture/building.png", true) };
-        texture.BindForReading(GL_TEXTURE0);
-        shaderProgram.SetUniform("diffuseMap", 0);
+        //const auto& texture{ ResourceManager::LoadTexture("E:/Dev/SgCity/resources/texture/building.png", true) };
+        //texture.BindForReading(GL_TEXTURE0);
+        //shaderProgram.SetUniform("diffuseMap", 0);
+
+        shaderProgram.SetUniform("diffuseColor", mesh->defaultMaterial->kd);
 
         mesh->vao->DrawPrimitives();
         mesh->vao->Unbind();
@@ -116,7 +118,7 @@ void sg::ogl::resource::Model::ProcessNode(const aiNode* t_node, const aiScene* 
     // Process each mesh located at the current node.
     for (auto i{ 0u }; i < t_node->mNumMeshes; ++i)
     {
-        auto* mesh{ t_scene->mMeshes[t_node->mMeshes[i]] };
+        const auto* mesh{ t_scene->mMeshes[t_node->mMeshes[i]] };
         meshes.push_back(ProcessMesh(mesh, t_scene));
     }
 

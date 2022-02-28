@@ -26,11 +26,16 @@
 // Ctors. / Dtor.
 //-------------------------------------------------
 
-sg::ogl::input::PickingTexture::PickingTexture()
+sg::ogl::input::PickingTexture::PickingTexture(const int t_width, const int t_height)
+    : m_width{ t_width }
+    , m_height{ t_height }
 {
+    SG_ASSERT(m_width, "[PickingTexture::PickingTexture()] Invalid width.")
+    SG_ASSERT(m_height, "[PickingTexture::PickingTexture()] Invalid  height.")
+
     Log::SG_LOG_DEBUG("[PickingTexture::PickingTexture()] Create PickingTexture.");
 
-    CreateId();
+    Init();
 }
 
 sg::ogl::input::PickingTexture::~PickingTexture() noexcept
@@ -38,48 +43,6 @@ sg::ogl::input::PickingTexture::~PickingTexture() noexcept
     Log::SG_LOG_DEBUG("[PickingTexture::~PickingTexture()] Destruct PickingTexture.");
 
     CleanUp();
-}
-
-//-------------------------------------------------
-// Init
-//-------------------------------------------------
-
-void sg::ogl::input::PickingTexture::Init(const int t_width, const int t_height)
-{
-    // store width && height
-    m_width = t_width;
-    m_height = t_height;
-
-    // bind Fbo
-    Bind();
-
-    // create the texture object for the primitive information buffer
-    glGenTextures(1, &m_pickingTextureId);
-    glBindTexture(GL_TEXTURE_2D, m_pickingTextureId);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB32F, t_width, t_height, 0, GL_RGB, GL_FLOAT, nullptr);
-    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_pickingTextureId, 0);
-
-    // create the texture object for the depth buffer
-    glGenTextures(1, &m_depthTextureId);
-    glBindTexture(GL_TEXTURE_2D, m_depthTextureId);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, t_width, t_height, 0, GL_DEPTH_COMPONENT, GL_FLOAT, nullptr);
-    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, m_depthTextureId, 0);
-
-    // disable reading to avoid problems with older GPUs
-    glReadBuffer(GL_NONE);
-
-    glDrawBuffer(GL_COLOR_ATTACHMENT0);
-
-    // verify that the FBO is correct
-    const auto status{ glCheckFramebufferStatus(GL_FRAMEBUFFER) };
-    if (status != GL_FRAMEBUFFER_COMPLETE)
-    {
-        throw SG_EXCEPTION("[PickingTexture::Init()] Error while creating Fbo attachments.");
-    }
-
-    // restore the default framebuffer
-    resource::Texture::Unbind();
-    Unbind();
 }
 
 //-------------------------------------------------
@@ -100,21 +63,72 @@ void sg::ogl::input::PickingTexture::DisableWriting()
 // Read
 //-------------------------------------------------
 
-int sg::ogl::input::PickingTexture::ReadMapIndex(const int t_x, const int t_y) const
+void sg::ogl::input::PickingTexture::EnableReading() const
 {
     glBindFramebuffer(GL_READ_FRAMEBUFFER, m_fboId);
+}
+
+void sg::ogl::input::PickingTexture::DisableReading()
+{
+    glBindFramebuffer(GL_READ_FRAMEBUFFER, 0);
+}
+
+int sg::ogl::input::PickingTexture::ReadMapIndex(const int t_x, const int t_y) const
+{
+    EnableReading();
     glReadBuffer(GL_COLOR_ATTACHMENT0);
 
     unsigned char rgbaData[4];
     glReadPixels(t_x, m_height - t_y - 1, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, rgbaData);
 
     glReadBuffer(GL_NONE);
-    glBindFramebuffer(GL_READ_FRAMEBUFFER, 0);
+    DisableReading();
 
     // convert the color back to an Id
     return rgbaData[0] +
            rgbaData[1] * 256 +
            rgbaData[2] * 256 * 256;
+}
+
+//-------------------------------------------------
+// Init
+//-------------------------------------------------
+
+void sg::ogl::input::PickingTexture::Init()
+{
+    // create Fbo handle
+    CreateId();
+
+    // bind Fbo
+    Bind();
+
+    // create the texture object for the primitive information buffer
+    glGenTextures(1, &m_pickingTextureId);
+    glBindTexture(GL_TEXTURE_2D, m_pickingTextureId);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB32F, m_width, m_height, 0, GL_RGB, GL_FLOAT, nullptr);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_pickingTextureId, 0);
+
+    // create the texture object for the depth buffer
+    glGenTextures(1, &m_depthTextureId);
+    glBindTexture(GL_TEXTURE_2D, m_depthTextureId);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, m_width, m_height, 0, GL_DEPTH_COMPONENT, GL_FLOAT, nullptr);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, m_depthTextureId, 0);
+
+    // disable reading to avoid problems with older GPUs
+    glReadBuffer(GL_NONE);
+
+    glDrawBuffer(GL_COLOR_ATTACHMENT0);
+
+    // verify that the FBO is correct
+    const auto status{ glCheckFramebufferStatus(GL_FRAMEBUFFER) };
+    if (status != GL_FRAMEBUFFER_COMPLETE)
+    {
+        throw SG_EXCEPTION("[PickingTexture::Init()] Error while creating Fbo attachments.");
+    }
+
+    // restore the default framebuffer
+    resource::Texture::Unbind();
+    Unbind();
 }
 
 //-------------------------------------------------

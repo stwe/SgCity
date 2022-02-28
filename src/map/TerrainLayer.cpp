@@ -1,3 +1,21 @@
+// This file is part of the SgCity project.
+//
+// Copyright (c) 2022. stwe <https://github.com/stwe/SgCity>
+//
+// This program is free software; you can redistribute it and/or
+// modify it under the terms of the GNU General Public License
+// as published by the Free Software Foundation; either version 2
+// of the License, or (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program; if not, write to the Free Software
+// Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+
 #include <glm/gtc/matrix_inverse.hpp>
 #include "TerrainLayer.h"
 #include "Tile.h"
@@ -34,7 +52,7 @@ void sg::map::TerrainLayer::Input()
     // ...
 }
 
-void sg::map::TerrainLayer::Update(gui::Action t_action, const int t_currentTileIndex)
+void sg::map::TerrainLayer::Update(const gui::Action t_action, const int t_currentTileIndex)
 {
     auto& tile{ *tiles[t_currentTileIndex] };
 
@@ -72,8 +90,7 @@ void sg::map::TerrainLayer::RenderForMousePicking(const ogl::Window& t_window, c
 {
     if (!m_pickingTexture)
     {
-        m_pickingTexture = std::make_unique<ogl::input::PickingTexture>();
-        m_pickingTexture->Init(t_window.GetWidth(), t_window.GetHeight());
+        m_pickingTexture = std::make_unique<ogl::input::PickingTexture>(t_window.GetWidth(), t_window.GetHeight());
     }
 
     m_pickingTexture->EnableWriting();
@@ -83,7 +100,7 @@ void sg::map::TerrainLayer::RenderForMousePicking(const ogl::Window& t_window, c
 
     vao->Bind();
 
-    auto& shaderProgram{ ogl::resource::ResourceManager::LoadShaderProgram("E:/Dev/SgCity/resources/shader/picking") };
+    const auto& shaderProgram{ ogl::resource::ResourceManager::LoadShaderProgram("E:/Dev/SgCity/resources/shader/picking") };
     shaderProgram.Bind();
 
     shaderProgram.SetUniform("model", modelMatrix);
@@ -104,7 +121,7 @@ void sg::map::TerrainLayer::Render(const ogl::Window& t_window, const ogl::camer
 
     vao->Bind();
 
-    auto& shaderProgram{ ogl::resource::ResourceManager::LoadShaderProgram("E:/Dev/SgCity/resources/shader/map") };
+    const auto& shaderProgram{ ogl::resource::ResourceManager::LoadShaderProgram("E:/Dev/SgCity/resources/shader/map") };
     shaderProgram.Bind();
 
     shaderProgram.SetUniform("model", modelMatrix);
@@ -156,74 +173,61 @@ void sg::map::TerrainLayer::CreateTiles()
     {
         for (auto x{ 0 }; x < tileCount; ++x)
         {
-            auto index{ z * tileCount + x };
-            auto tile{ std::make_unique<Tile>( // is stored as shared_ptr via push_back later
-                static_cast<float>(x),
-                static_cast<float>(z),
-                index
-            ) };
-
-            // todo: temp code
-            /////////////////////////////////////////////
-            if (x == 4 && z == 4)
-            {
-                tile->type = Tile::TileType::RESIDENTIAL;
-            }
-            /////////////////////////////////////////////
-
-            tiles.push_back(std::move(tile));
+            const auto i{ z * tileCount + x };
+            // todo: the normal of each Tile is vec3(0, 1, 0) by default
+            tiles.emplace_back(std::make_unique<Tile>(static_cast<float>(x), static_cast<float>(z), i));
         }
     }
 }
 
-void sg::map::TerrainLayer::AddTileNeighbors()
+void sg::map::TerrainLayer::AddTileNeighbors() const
 {
     for (auto z{ 0 }; z < tileCount; ++z)
     {
         for (auto x{ 0 }; x < tileCount; ++x)
         {
-            const auto i{ static_cast<int>(z) * tileCount + static_cast<int>(x) };
+            const auto i{ z * tileCount + x };
 
             // regular grid
             if (z > 0)
             {
-                tiles[i]->n = tiles[static_cast<int>(z - 1) * tileCount + static_cast<int>(x)];
+                tiles[i]->n = tiles[(z - 1) * tileCount + x];
             }
 
             if (z < tileCount - 1)
             {
-                tiles[i]->s = tiles[static_cast<int>(z + 1) * tileCount + static_cast<int>(x)];
+                tiles[i]->s = tiles[(z + 1) * tileCount + x];
             }
 
             if (x > 0)
             {
-                tiles[i]->w = tiles[static_cast<int>(z) * tileCount + static_cast<int>(x - 1)];
+                tiles[i]->w = tiles[z * tileCount + (x - 1)];
             }
 
             if (x < tileCount - 1)
             {
-                tiles[i]->e = tiles[static_cast<int>(z) * tileCount + static_cast<int>(x + 1)];
+                tiles[i]->e = tiles[z * tileCount + (x + 1)];
             }
 
             // connect diagonally
             if (z > 0 && x < tileCount - 1)
             {
-                tiles[i]->ne = tiles[static_cast<int>(z - 1) * tileCount + static_cast<int>(x + 1)];
+                tiles[i]->ne = tiles[(z - 1) * tileCount + (x + 1)];
             }
 
             if (z > 0 && x > 0)
             {
-                tiles[i]->nw = tiles[static_cast<int>(z - 1) * tileCount + static_cast<int>(x - 1)];
+                tiles[i]->nw = tiles[(z - 1) * tileCount + (x - 1)];
             }
 
             if (z < tileCount - 1 && x > 0)
             {
-                tiles[i]->sw = tiles[static_cast<int>(z + 1) * tileCount + static_cast<int>(x - 1)];
+                tiles[i]->sw = tiles[(z + 1) * tileCount + (x - 1)];
             }
 
             if (z < tileCount - 1 && x < tileCount - 1)
             {
-                tiles[i]->se = tiles[static_cast<int>(z + 1) * tileCount + static_cast<int>(x + 1)];
+                tiles[i]->se = tiles[(z + 1) * tileCount + (x + 1)];
             }
         }
     }
@@ -244,7 +248,7 @@ void sg::map::TerrainLayer::TilesToGpu()
 // Helper
 //-------------------------------------------------
 
-void sg::map::TerrainLayer::UpdateNorthNeighbor(sg::map::Tile& t_tile)
+void sg::map::TerrainLayer::UpdateNorthNeighbor(const Tile& t_tile) const
 {
     if (t_tile.n)
     {
@@ -261,7 +265,7 @@ void sg::map::TerrainLayer::UpdateNorthNeighbor(sg::map::Tile& t_tile)
     }
 }
 
-void sg::map::TerrainLayer::UpdateSouthNeighbor(sg::map::Tile& t_tile)
+void sg::map::TerrainLayer::UpdateSouthNeighbor(const Tile& t_tile) const
 {
     if (t_tile.s)
     {
@@ -278,7 +282,7 @@ void sg::map::TerrainLayer::UpdateSouthNeighbor(sg::map::Tile& t_tile)
     }
 }
 
-void sg::map::TerrainLayer::UpdateWestNeighbor(sg::map::Tile& t_tile)
+void sg::map::TerrainLayer::UpdateWestNeighbor(const Tile& t_tile) const
 {
     if (t_tile.w)
     {
@@ -295,7 +299,7 @@ void sg::map::TerrainLayer::UpdateWestNeighbor(sg::map::Tile& t_tile)
     }
 }
 
-void sg::map::TerrainLayer::UpdateEastNeighbor(sg::map::Tile& t_tile)
+void sg::map::TerrainLayer::UpdateEastNeighbor(const Tile& t_tile) const
 {
     if (t_tile.e)
     {
@@ -312,7 +316,7 @@ void sg::map::TerrainLayer::UpdateEastNeighbor(sg::map::Tile& t_tile)
     }
 }
 
-void sg::map::TerrainLayer::UpdateNorthWestNeighbor(sg::map::Tile& t_tile)
+void sg::map::TerrainLayer::UpdateNorthWestNeighbor(const Tile& t_tile) const
 {
     if (t_tile.nw)
     {
@@ -327,7 +331,7 @@ void sg::map::TerrainLayer::UpdateNorthWestNeighbor(sg::map::Tile& t_tile)
     }
 }
 
-void sg::map::TerrainLayer::UpdateNorthEastNeighbor(sg::map::Tile& t_tile)
+void sg::map::TerrainLayer::UpdateNorthEastNeighbor(const Tile& t_tile) const
 {
     if (t_tile.ne)
     {
@@ -341,7 +345,7 @@ void sg::map::TerrainLayer::UpdateNorthEastNeighbor(sg::map::Tile& t_tile)
     }
 }
 
-void sg::map::TerrainLayer::UpdateSouthWestNeighbor(sg::map::Tile& t_tile)
+void sg::map::TerrainLayer::UpdateSouthWestNeighbor(const Tile& t_tile) const
 {
     if (t_tile.sw)
     {
@@ -355,7 +359,7 @@ void sg::map::TerrainLayer::UpdateSouthWestNeighbor(sg::map::Tile& t_tile)
     }
 }
 
-void sg::map::TerrainLayer::UpdateSouthEastNeighbor(sg::map::Tile& t_tile)
+void sg::map::TerrainLayer::UpdateSouthEastNeighbor(const Tile& t_tile) const
 {
     if (t_tile.se)
     {

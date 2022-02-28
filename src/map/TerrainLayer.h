@@ -1,3 +1,21 @@
+// This file is part of the SgCity project.
+//
+// Copyright (c) 2022. stwe <https://github.com/stwe/SgCity>
+//
+// This program is free software; you can redistribute it and/or
+// modify it under the terms of the GNU General Public License
+// as published by the Free Software Foundation; either version 2
+// of the License, or (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program; if not, write to the Free Software
+// Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+
 #pragma once
 
 #include "Layer.h"
@@ -92,7 +110,7 @@ namespace sg::map
         /**
          * Finds the neighbors for every Tile.
          */
-        void AddTileNeighbors();
+        void AddTileNeighbors() const;
 
         /**
          * Stores vertices of all Tiles in a Vbo.
@@ -103,14 +121,14 @@ namespace sg::map
         // Helper
         //-------------------------------------------------
 
-        void UpdateNorthNeighbor(Tile& t_tile);
-        void UpdateSouthNeighbor(Tile& t_tile);
-        void UpdateWestNeighbor(Tile& t_tile);
-        void UpdateEastNeighbor(Tile& t_tile);
+        void UpdateNorthNeighbor(const Tile& t_tile) const;
+        void UpdateSouthNeighbor(const Tile& t_tile) const;
+        void UpdateWestNeighbor(const Tile& t_tile) const;
+        void UpdateEastNeighbor(const Tile& t_tile) const;
 
-        void UpdateNorthWestNeighbor(Tile& t_tile);
-        void UpdateNorthEastNeighbor(Tile& t_tile);
-        void UpdateSouthWestNeighbor(Tile& t_tile);
-        void UpdateSouthEastNeighbor(Tile& t_tile);
+        void UpdateNorthWestNeighbor(const Tile& t_tile) const;
+        void UpdateNorthEastNeighbor(const Tile& t_tile) const;
+        void UpdateSouthWestNeighbor(const Tile& t_tile) const;
+        void UpdateSouthEastNeighbor(const Tile& t_tile) const;
     };
 }

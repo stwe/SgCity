@@ -128,7 +128,7 @@ void sg::ogl::buffer::Vao::CreateStaticWaterVbo()
     vbo->Bind();
 
     // x and z vertex positions, y is set to 0.0 in the vertex shader
-    const std::vector<float> vertices =
+    const std::vector vertices =
     {
          0.0f, 0.0f, // tl
          0.0f, 1.0f, // bl

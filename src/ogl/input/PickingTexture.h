@@ -19,7 +19,6 @@
 #pragma once
 
 #include <cstdint>
-#include <vector>
 
 namespace sg::ogl::input
 {
@@ -30,7 +29,8 @@ namespace sg::ogl::input
         // Ctors. / Dtor.
         //-------------------------------------------------
 
-        PickingTexture();
+        PickingTexture() = delete;
+        PickingTexture(int t_width, int t_height);
 
         PickingTexture(const PickingTexture& t_other) = delete;
         PickingTexture(PickingTexture&& t_other) noexcept = delete;
@@ -38,12 +38,6 @@ namespace sg::ogl::input
         PickingTexture& operator=(PickingTexture&& t_other) noexcept = delete;
 
         ~PickingTexture() noexcept;
-
-        //-------------------------------------------------
-        // Init
-        //-------------------------------------------------
-
-        void Init(int t_width, int t_height);
 
         //-------------------------------------------------
         // Write
@@ -56,6 +50,8 @@ namespace sg::ogl::input
         // Read
         //-------------------------------------------------
 
+        void EnableReading() const;
+        static void DisableReading();
         [[nodiscard]] int ReadMapIndex(int t_x, int t_y) const;
 
     protected:
@@ -89,6 +85,12 @@ namespace sg::ogl::input
          * The depth texture handle.
          */
         uint32_t m_depthTextureId{ 0 };
+
+        //-------------------------------------------------
+        // Init
+        //-------------------------------------------------
+
+        void Init();
 
         //-------------------------------------------------
         // Create

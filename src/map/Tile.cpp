@@ -1,3 +1,21 @@
+// This file is part of the SgCity project.
+//
+// Copyright (c) 2022. stwe <https://github.com/stwe/SgCity>
+//
+// This program is free software; you can redistribute it and/or
+// modify it under the terms of the GNU General Public License
+// as published by the Free Software Foundation; either version 2
+// of the License, or (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program; if not, write to the Free Software
+// Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+
 #include <glm/geometric.hpp>
 #include <imgui.h>
 #include "Tile.h"
@@ -58,7 +76,7 @@ void sg::map::Tile::Lower()
 
 void sg::map::Tile::UpdateNormal()
 {
-    auto normal{ CalcNormal() };
+    const auto normal{ CalcNormal() };
 
     vertices[Tile::TL_1_N_START_INDEX] = normal.x;
     vertices[Tile::TL_1_N_START_INDEX + 1] = normal.y;
@@ -89,10 +107,10 @@ void sg::map::Tile::UpdateNormal()
 // Gpu
 //-------------------------------------------------
 
-void sg::map::Tile::VerticesToGpu(ogl::buffer::Vao& t_vao) const
+void sg::map::Tile::VerticesToGpu(const ogl::buffer::Vao& t_vao) const
 {
     t_vao.vbo->Bind();
-    glBufferSubData(GL_ARRAY_BUFFER, mapIndex * Tile::BYTES_PER_TILE, Tile::BYTES_PER_TILE, vertices.data());
+    glBufferSubData(GL_ARRAY_BUFFER, mapIndex * static_cast<int64_t>(Tile::BYTES_PER_TILE), Tile::BYTES_PER_TILE, vertices.data());
     ogl::buffer::Vbo::Unbind();
 }
 
@@ -108,11 +126,11 @@ void sg::map::Tile::RenderImGui() const
 
     switch (type)
     {
-        case map::Tile::TileType::NONE : ImGui::Text("Type: Terrain"); break;
-        case map::Tile::TileType::RESIDENTIAL : ImGui::Text("Type: Residential"); break;
-        case map::Tile::TileType::COMMERCIAL : ImGui::Text("Type: Commercial"); break;
-        case map::Tile::TileType::INDUSTRIAL : ImGui::Text("Type: Industrial"); break;
-        case map::Tile::TileType::TRAFFIC : ImGui::Text("Type: Road"); break;
+        case Tile::TileType::NONE : ImGui::Text("Type: Terrain"); break;
+        case Tile::TileType::RESIDENTIAL : ImGui::Text("Type: Residential"); break;
+        case Tile::TileType::COMMERCIAL : ImGui::Text("Type: Commercial"); break;
+        case Tile::TileType::INDUSTRIAL : ImGui::Text("Type: Industrial"); break;
+        case Tile::TileType::TRAFFIC : ImGui::Text("Type: Road"); break;
     }
 
     ImGui::Text("Tile index: %d", mapIndex);
@@ -129,9 +147,9 @@ void sg::map::Tile::RenderImGui() const
 void sg::map::Tile::Init()
 {
     const glm::vec3 tl{ mapX, DEFAULT_HEIGHT, mapZ };
-    const glm::vec3 bl{ mapX, DEFAULT_HEIGHT, mapZ + 1 };
-    const glm::vec3 br{ mapX + 1, DEFAULT_HEIGHT, mapZ + 1 };
-    const glm::vec3 tr{ mapX + 1, DEFAULT_HEIGHT, mapZ };
+    const glm::vec3 bl{ mapX, DEFAULT_HEIGHT, mapZ + 1.0f };
+    const glm::vec3 br{ mapX + 1.0f, DEFAULT_HEIGHT, mapZ + 1.0f };
+    const glm::vec3 tr{ mapX + 1.0f, DEFAULT_HEIGHT, mapZ };
 
     CreateMapIndexColor();
 
@@ -155,9 +173,9 @@ void sg::map::Tile::Init()
 void sg::map::Tile::CreateMapIndexColor()
 {
     // convert index into an RGB color
-    int r = (mapIndex & 0x000000FF) >> 0;
-    int g = (mapIndex & 0x0000FF00) >> 8;
-    int b = (mapIndex & 0x00FF0000) >> 16;
+    const int r{ (mapIndex & 0x000000FF) >> 0 };
+    const int g{ (mapIndex & 0x0000FF00) >> 8 };
+    const int b{ (mapIndex & 0x00FF0000) >> 16 };
 
     idColor = glm::vec3(static_cast<float>(r) / 255.0f, static_cast<float>(g) / 255.0f, static_cast<float>(b) / 255.0f);
 }
@@ -165,18 +183,18 @@ void sg::map::Tile::CreateMapIndexColor()
 glm::vec3 sg::map::Tile::CalcNormal() const
 {
     // read out positions
-    auto v0{ glm::vec3(vertices[0], vertices[1], vertices[2]) };
-    auto v1{ glm::vec3(vertices[11], vertices[12], vertices[13]) };
-    auto v2{ glm::vec3(vertices[22], vertices[23], vertices[24]) };
-    auto v3{ glm::vec3(vertices[55], vertices[56], vertices[57]) };
+    const auto v0{ glm::vec3(vertices[0], vertices[1], vertices[2]) };
+    const auto v1{ glm::vec3(vertices[11], vertices[12], vertices[13]) };
+    const auto v2{ glm::vec3(vertices[22], vertices[23], vertices[24]) };
+    const auto v3{ glm::vec3(vertices[55], vertices[56], vertices[57]) };
 
-    std::vector<glm::vec3> vertex = { v0, v1, v2, v3 };
+    const std::vector vertex = { v0, v1, v2, v3 };
 
     // calc normal
     glm::vec3 normal{ 0.0f, 0.0f, 0.0f };
     for (auto i{ 0 }; i < 4; ++i)
     {
-        auto j{ (i + 1) % 4 };
+        const auto j{ (i + 1) % 4 };
         normal.x += (vertex[i].y - vertex[j].y) * (vertex[i].z + vertex[j].z);
         normal.y += (vertex[i].z - vertex[j].z) * (vertex[i].x + vertex[j].x);
         normal.z += (vertex[i].x - vertex[j].x) * (vertex[i].y + vertex[j].y);

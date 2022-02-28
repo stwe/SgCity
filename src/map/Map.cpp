@@ -1,3 +1,21 @@
+// This file is part of the SgCity project.
+//
+// Copyright (c) 2022. stwe <https://github.com/stwe/SgCity>
+//
+// This program is free software; you can redistribute it and/or
+// modify it under the terms of the GNU General Public License
+// as published by the Free Software Foundation; either version 2
+// of the License, or (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program; if not, write to the Free Software
+// Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+
 #include "Map.h"
 #include "Log.h"
 #include "WaterLayer.h"
@@ -36,7 +54,7 @@ void sg::map::Map::Input()
     m_terrainLayer->Input();
 }
 
-void sg::map::Map::Update(gui::Action t_action)
+void sg::map::Map::Update(const gui::Action t_action)
 {
     if (currentTileIndex != INVALID_TILE_INDEX)
     {
@@ -60,7 +78,7 @@ void sg::map::Map::Update(gui::Action t_action)
     }
 }
 
-void sg::map::Map::RenderForMousePicking(const sg::ogl::Window& t_window, const sg::ogl::camera::Camera& t_camera) const
+void sg::map::Map::RenderForMousePicking(const ogl::Window& t_window, const ogl::camera::Camera& t_camera) const
 {
     m_terrainLayer->RenderForMousePicking(t_window, t_camera);
 }
@@ -108,7 +126,7 @@ void sg::map::Map::UpdateCurrentTileIndex()
         ogl::input::MouseInput::GetInstance().GetY()
     );
 
-    if (currentTileIndex < 0 || currentTileIndex > m_terrainLayer->tiles.size() - 1)
+    if (currentTileIndex < 0 || currentTileIndex > static_cast<int>(m_terrainLayer->tiles.size()) - 1)
     {
         currentTileIndex = INVALID_TILE_INDEX;
     }

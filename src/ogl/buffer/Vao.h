@@ -122,6 +122,7 @@ namespace sg::ogl::buffer
         void CreateStaticVbo(const std::vector<float>& t_vertices, int32_t t_drawCount = 0);
 
         /**
+         * Creates a simple square.
          * Binds this Vao and creates a static Vbo.
          *
          * Bufferlayout

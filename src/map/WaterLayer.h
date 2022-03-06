@@ -47,7 +47,7 @@ namespace sg::map
         ~WaterLayer() noexcept override;
 
         //-------------------------------------------------
-        // Logic
+        // Override
         //-------------------------------------------------
 
         void Render(const ogl::Window& t_window, const ogl::camera::Camera& t_camera) const override;
@@ -60,5 +60,11 @@ namespace sg::map
         //-------------------------------------------------
 
         void Init();
+
+        //-------------------------------------------------
+        // Override
+        //-------------------------------------------------
+
+        void CreateTiles() override {}
     };
 }

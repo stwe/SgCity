@@ -1,3 +1,21 @@
+// This file is part of the SgCity project.
+//
+// Copyright (c) 2022. stwe <https://github.com/stwe/SgCity>
+//
+// This program is free software; you can redistribute it and/or
+// modify it under the terms of the GNU General Public License
+// as published by the Free Software Foundation; either version 2
+// of the License, or (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program; if not, write to the Free Software
+// Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+
 #include <glm/gtc/matrix_inverse.hpp>
 #include "BuildingsLayer.h"
 #include "Log.h"
@@ -24,7 +42,7 @@ sg::map::BuildingsLayer::~BuildingsLayer() noexcept
 }
 
 //-------------------------------------------------
-// Logic
+// Override
 //-------------------------------------------------
 
 void sg::map::BuildingsLayer::Render(const ogl::Window& t_window, const ogl::camera::Camera& t_camera) const
@@ -82,7 +100,7 @@ void sg::map::BuildingsLayer::Init()
         glm::vec3(1.0f)
     );
 
-    CreateBuildingTiles();
+    CreateTiles();
     BuildingTilesToGpu();
 
     m_model = std::make_shared<ogl::resource::Model>("E:/Dev/SgCity/resources/model/node_115.obj");
@@ -90,7 +108,11 @@ void sg::map::BuildingsLayer::Init()
     Log::SG_LOG_DEBUG("[BuildingsLayer::Init()] The BuildingsLayer was successfully initialized.");
 }
 
-void sg::map::BuildingsLayer::CreateBuildingTiles()
+//-------------------------------------------------
+// Override
+//-------------------------------------------------
+
+void sg::map::BuildingsLayer::CreateTiles()
 {
     auto i{ 0 };
     for (const auto& tile : tiles)
@@ -102,6 +124,10 @@ void sg::map::BuildingsLayer::CreateBuildingTiles()
         }
     }
 }
+
+//-------------------------------------------------
+// Helper
+//-------------------------------------------------
 
 void sg::map::BuildingsLayer::BuildingTilesToGpu()
 {
@@ -119,11 +145,7 @@ void sg::map::BuildingsLayer::BuildingTilesToGpu()
     }
 }
 
-//-------------------------------------------------
-// Helper
-//-------------------------------------------------
-
-std::unique_ptr<sg::map::BuildingTile> sg::map::BuildingsLayer::CreateBuildingTile(const sg::map::Tile& t_tile, int t_index)
+std::unique_ptr<sg::map::BuildingTile> sg::map::BuildingsLayer::CreateBuildingTile(const Tile& t_tile, const int t_index)
 {
     auto buildingTile{ std::make_unique<BuildingTile>() };
     buildingTile->vertices = t_tile.vertices;

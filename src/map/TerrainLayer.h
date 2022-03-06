@@ -76,9 +76,13 @@ namespace sg::map
         // Logic
         //-------------------------------------------------
 
-        void Input();
-        void Update(gui::Action t_action, int t_currentTileIndex);
         void RenderForMousePicking(const ogl::Window& t_window, const ogl::camera::Camera& t_camera);
+
+        //-------------------------------------------------
+        // Override
+        //-------------------------------------------------
+
+        void UpdateTile(gui::Action t_action, Tile& t_tile) override;
         void Render(const ogl::Window& t_window, const ogl::camera::Camera& t_camera) const override;
 
     protected:
@@ -102,10 +106,18 @@ namespace sg::map
          */
         void Init();
 
+        //-------------------------------------------------
+        // Override
+        //-------------------------------------------------
+
         /**
          * Create all Tiles.
          */
-        void CreateTiles();
+        void CreateTiles() override;
+
+        //-------------------------------------------------
+        // Helper
+        //-------------------------------------------------
 
         /**
          * Finds the neighbors for every Tile.
@@ -117,9 +129,7 @@ namespace sg::map
          */
         void TilesToGpu();
 
-        //-------------------------------------------------
-        // Helper
-        //-------------------------------------------------
+        void UpdateTileVertices(Tile& t_tile) const;
 
         void UpdateNorthNeighbor(const Tile& t_tile) const;
         void UpdateSouthNeighbor(const Tile& t_tile) const;

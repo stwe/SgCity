@@ -20,6 +20,7 @@
 #include "Layer.h"
 #include "Log.h"
 #include "Tile.h"
+#include "gui/MapEditGui.h"
 #include "ogl/buffer/Vao.h"
 
 //-------------------------------------------------
@@ -47,4 +48,43 @@ sg::map::Layer::Layer(const int t_tileCount, std::vector<std::shared_ptr<Tile>> 
 sg::map::Layer::~Layer() noexcept
 {
     Log::SG_LOG_DEBUG("[Layer::~Layer()] Destruct Layer.");
+}
+
+//-------------------------------------------------
+// Logic
+//-------------------------------------------------
+
+void sg::map::Layer::UpdateTile(const gui::Action t_action, Tile& t_tile)
+{
+    Log::SG_LOG_DEBUG("[Layer::UpdateTile()] Update tile.");
+
+    // handle change TileType
+
+    // make residential zone (change TileType to RESIDENTIAL)
+    if (t_action == gui::Action::MAKE_RESIDENTIAL_ZONE)
+    {
+        if (t_tile.type != Tile::TileType::RESIDENTIAL)
+        {
+            t_tile.type = Tile::TileType::RESIDENTIAL;
+            Log::SG_LOG_DEBUG("[Layer::UpdateTile()] Tile Id {} was changed to type RESIDENTIAL.", t_tile.mapIndex);
+        }
+        else
+        {
+            Log::SG_LOG_DEBUG("[Layer::UpdateTile()] Tile Id {} is already type RESIDENTIAL.", t_tile.mapIndex);
+        }
+    }
+
+    // make traffic zone (change TileType to TRAFFIC)
+    if (t_action == gui::Action::MAKE_TRAFFIC_ZONE)
+    {
+        if (t_tile.type != Tile::TileType::TRAFFIC)
+        {
+            t_tile.type = Tile::TileType::TRAFFIC;
+            Log::SG_LOG_DEBUG("[Layer::UpdateTile()] Tile Id {} was changed to type TRAFFIC.", t_tile.mapIndex);
+        }
+        else
+        {
+            Log::SG_LOG_DEBUG("[Layer::UpdateTile()] Tile Id {} is already type TRAFFIC.", t_tile.mapIndex);
+        }
+    }
 }

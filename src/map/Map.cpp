@@ -50,31 +50,16 @@ sg::map::Map::~Map() noexcept
 void sg::map::Map::Input()
 {
     UpdateCurrentTileIndex();
-
-    m_terrainLayer->Input();
 }
 
 void sg::map::Map::Update(const gui::Action t_action)
 {
     if (currentTileIndex != INVALID_TILE_INDEX)
     {
-        if (t_action == gui::Action::RAISE || t_action == gui::Action::LOWER)
-        {
-            m_terrainLayer->Update(t_action, currentTileIndex);
-            currentTileIndex = INVALID_TILE_INDEX;
-        }
+        m_currentTile = m_terrainLayer->tiles[currentTileIndex];
 
-        if (t_action == gui::Action::SET_TRAFFIC)
-        {
-            m_roadsLayer->Update(t_action, currentTileIndex);
-            currentTileIndex = INVALID_TILE_INDEX;
-        }
-
-        if (t_action == gui::Action::INFO)
-        {
-            m_currentTile = m_terrainLayer->tiles[currentTileIndex];
-            currentTileIndex = INVALID_TILE_INDEX;
-        }
+        m_terrainLayer->UpdateTile(t_action, *m_currentTile);
+        currentTileIndex = INVALID_TILE_INDEX;
     }
 }
 

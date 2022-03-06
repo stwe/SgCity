@@ -47,45 +47,6 @@ sg::map::TerrainLayer::~TerrainLayer() noexcept
 // Logic
 //-------------------------------------------------
 
-void sg::map::TerrainLayer::Input()
-{
-    // ...
-}
-
-void sg::map::TerrainLayer::Update(const gui::Action t_action, const int t_currentTileIndex)
-{
-    auto& tile{ *tiles[t_currentTileIndex] };
-
-    // handle only TileType NONE
-    if (tile.type != Tile::TileType::NONE)
-    {
-        return;
-    }
-
-    if (t_action == gui::Action::RAISE)
-    {
-        tile.Raise();
-    }
-
-    if (t_action == gui::Action::LOWER)
-    {
-        tile.Lower();
-    }
-
-    tile.UpdateNormal();
-    tile.VerticesToGpu(*vao);
-
-    UpdateNorthNeighbor(tile);
-    UpdateSouthNeighbor(tile);
-    UpdateEastNeighbor(tile);
-    UpdateWestNeighbor(tile);
-
-    UpdateNorthEastNeighbor(tile);
-    UpdateNorthWestNeighbor(tile);
-    UpdateSouthEastNeighbor(tile);
-    UpdateSouthWestNeighbor(tile);
-}
-
 void sg::map::TerrainLayer::RenderForMousePicking(const ogl::Window& t_window, const ogl::camera::Camera& t_camera)
 {
     if (!m_pickingTexture)
@@ -113,6 +74,34 @@ void sg::map::TerrainLayer::RenderForMousePicking(const ogl::Window& t_window, c
     vao->Unbind();
 
     m_pickingTexture->DisableWriting();
+}
+
+//-------------------------------------------------
+// Override
+//-------------------------------------------------
+
+void sg::map::TerrainLayer::UpdateTile(const gui::Action t_action, Tile& t_tile)
+{
+    // handle base class actions
+    Layer::UpdateTile(t_action, t_tile);
+
+    Log::SG_LOG_DEBUG("[TerrainLayer::UpdateTile()] Update terrain tile.");
+
+    // handle raise and lower terrain
+
+    // raise terrain
+    if (t_action == gui::Action::RAISE)
+    {
+        t_tile.Raise();
+        UpdateTileVertices(t_tile);
+    }
+
+    // lower terrain
+    if (t_action == gui::Action::LOWER)
+    {
+        t_tile.Lower();
+        UpdateTileVertices(t_tile);
+    }
 }
 
 void sg::map::TerrainLayer::Render(const ogl::Window& t_window, const ogl::camera::Camera& t_camera) const
@@ -167,6 +156,10 @@ void sg::map::TerrainLayer::Init()
     Log::SG_LOG_DEBUG("[TerrainLayer::Init()] The TerrainLayer was successfully initialized.");
 }
 
+//-------------------------------------------------
+// Override
+//-------------------------------------------------
+
 void sg::map::TerrainLayer::CreateTiles()
 {
     for (auto z{ 0 }; z < tileCount; ++z)
@@ -179,6 +172,10 @@ void sg::map::TerrainLayer::CreateTiles()
         }
     }
 }
+
+//-------------------------------------------------
+// Helper
+//-------------------------------------------------
 
 void sg::map::TerrainLayer::AddTileNeighbors() const
 {
@@ -244,9 +241,21 @@ void sg::map::TerrainLayer::TilesToGpu()
     }
 }
 
-//-------------------------------------------------
-// Helper
-//-------------------------------------------------
+void sg::map::TerrainLayer::UpdateTileVertices(Tile& t_tile) const
+{
+    t_tile.UpdateNormal();
+    t_tile.VerticesToGpu(*vao);
+
+    UpdateNorthNeighbor(t_tile);
+    UpdateSouthNeighbor(t_tile);
+    UpdateEastNeighbor(t_tile);
+    UpdateWestNeighbor(t_tile);
+
+    UpdateNorthEastNeighbor(t_tile);
+    UpdateNorthWestNeighbor(t_tile);
+    UpdateSouthEastNeighbor(t_tile);
+    UpdateSouthWestNeighbor(t_tile);
+}
 
 void sg::map::TerrainLayer::UpdateNorthNeighbor(const Tile& t_tile) const
 {

@@ -1,3 +1,21 @@
+// This file is part of the SgCity project.
+//
+// Copyright (c) 2022. stwe <https://github.com/stwe/SgCity>
+//
+// This program is free software; you can redistribute it and/or
+// modify it under the terms of the GNU General Public License
+// as published by the Free Software Foundation; either version 2
+// of the License, or (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program; if not, write to the Free Software
+// Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+
 #include <glm/gtc/matrix_inverse.hpp>
 #include "RoadsLayer.h"
 #include "Tile.h"
@@ -74,6 +92,10 @@ void sg::map::RoadsLayer::Update(gui::Action t_action, const int t_tileIndex)
     }
 }
 
+//-------------------------------------------------
+// Override
+//-------------------------------------------------
+
 void sg::map::RoadsLayer::Render(const ogl::Window& t_window, const ogl::camera::Camera& t_camera) const
 {
     if (!vao)
@@ -124,13 +146,17 @@ void sg::map::RoadsLayer::Init()
         glm::vec3(1.0f)
     );
 
-    CreateRoadTiles();
+    CreateTiles();
     RoadTilesToGpu();
 
     Log::SG_LOG_DEBUG("[RoadsLayer::Init()] The RoadsLayer was successfully initialized.");
 }
 
-void sg::map::RoadsLayer::CreateRoadTiles()
+//-------------------------------------------------
+// Override
+//-------------------------------------------------
+
+void sg::map::RoadsLayer::CreateTiles()
 {
     auto i{ 0 };
     for (const auto& tile : tiles)
@@ -142,6 +168,10 @@ void sg::map::RoadsLayer::CreateRoadTiles()
         }
     }
 }
+
+//-------------------------------------------------
+// Helper
+//-------------------------------------------------
 
 void sg::map::RoadsLayer::RoadTilesToGpu()
 {
@@ -158,10 +188,6 @@ void sg::map::RoadsLayer::RoadTilesToGpu()
         roadTile->VerticesToGpu(*vao);
     }
 }
-
-//-------------------------------------------------
-// Helper
-//-------------------------------------------------
 
 std::unique_ptr<sg::map::RoadTile> sg::map::RoadsLayer::CreateRoadTile(const sg::map::Tile& t_tile, const int t_index)
 {

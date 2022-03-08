@@ -121,9 +121,25 @@ void sg::map::TerrainLayer::Render(const ogl::Window& t_window, const ogl::camer
     const auto n{ glm::inverseTranspose(glm::mat3(mv)) };
     shaderProgram.SetUniform("normalMatrix", n);
 
-    const auto& texture{ ogl::resource::ResourceManager::LoadTexture("E:/Dev/SgCity/resources/texture/grass.png") };
-    texture.BindForReading(GL_TEXTURE0);
+    const auto& grassTexture{ ogl::resource::ResourceManager::LoadTexture("E:/Dev/SgCity/resources/texture/grass.png") };
+    grassTexture.BindForReading(GL_TEXTURE0);
     shaderProgram.SetUniform("diffuseMap", 0);
+
+    const auto& rTexture{ ogl::resource::ResourceManager::LoadTexture("E:/Dev/SgCity/resources/texture/r.png", true) };
+    rTexture.BindForReading(GL_TEXTURE1);
+    shaderProgram.SetUniform("rMap", 1);
+
+    const auto& cTexture{ ogl::resource::ResourceManager::LoadTexture("E:/Dev/SgCity/resources/texture/c.png", true) };
+    cTexture.BindForReading(GL_TEXTURE2);
+    shaderProgram.SetUniform("cMap", 2);
+
+    const auto& iTexture{ ogl::resource::ResourceManager::LoadTexture("E:/Dev/SgCity/resources/texture/i.png", true) };
+    iTexture.BindForReading(GL_TEXTURE3);
+    shaderProgram.SetUniform("iMap", 3);
+
+    const auto& trafficTexture{ ogl::resource::ResourceManager::LoadTexture("E:/Dev/SgCity/resources/texture/traffic.jpg") };
+    trafficTexture.BindForReading(GL_TEXTURE4);
+    shaderProgram.SetUniform("trafficMap", 4);
 
     vao->DrawPrimitives();
 

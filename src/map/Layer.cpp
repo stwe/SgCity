@@ -60,31 +60,31 @@ void sg::map::Layer::UpdateTile(const gui::Action t_action, Tile& t_tile)
 
     // handle change TileType
 
-    // make residential zone (change TileType to RESIDENTIAL)
-    if (t_action == gui::Action::MAKE_RESIDENTIAL_ZONE)
+    auto setTileType = [&](const Tile::TileType t_tileType) -> void
     {
-        if (t_tile.type != Tile::TileType::RESIDENTIAL)
+        if (t_tile.type != t_tileType)
         {
-            t_tile.type = Tile::TileType::RESIDENTIAL;
-            Log::SG_LOG_DEBUG("[Layer::UpdateTile()] Tile Id {} was changed to type RESIDENTIAL.", t_tile.mapIndex);
+            t_tile.UpdateTileType(t_tileType);
+            t_tile.VerticesToGpu(*vao);
+            Log::SG_LOG_DEBUG("[Layer::UpdateTile()] Tile Id {} was changed to a new type.", t_tile.mapIndex);
         }
-        else
-        {
-            Log::SG_LOG_DEBUG("[Layer::UpdateTile()] Tile Id {} is already type RESIDENTIAL.", t_tile.mapIndex);
-        }
-    }
+    };
 
-    // make traffic zone (change TileType to TRAFFIC)
-    if (t_action == gui::Action::MAKE_TRAFFIC_ZONE)
+    switch (t_action)
     {
-        if (t_tile.type != Tile::TileType::TRAFFIC)
-        {
-            t_tile.type = Tile::TileType::TRAFFIC;
-            Log::SG_LOG_DEBUG("[Layer::UpdateTile()] Tile Id {} was changed to type TRAFFIC.", t_tile.mapIndex);
-        }
-        else
-        {
-            Log::SG_LOG_DEBUG("[Layer::UpdateTile()] Tile Id {} is already type TRAFFIC.", t_tile.mapIndex);
-        }
+    case gui::Action::MAKE_RESIDENTIAL_ZONE:
+        setTileType(Tile::TileType::RESIDENTIAL);
+        break;
+    case gui::Action::MAKE_COMMERCIAL_ZONE:
+        setTileType(Tile::TileType::COMMERCIAL);
+        break;
+    case gui::Action::MAKE_INDUSTRIAL_ZONE:
+        setTileType(Tile::TileType::INDUSTRIAL);
+        break;
+    case gui::Action::MAKE_TRAFFIC_ZONE:
+        setTileType(Tile::TileType::TRAFFIC);
+        break;
+    default:
+        break;
     }
 }

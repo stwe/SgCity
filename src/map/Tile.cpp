@@ -50,24 +50,24 @@ sg::map::Tile::~Tile() noexcept
 
 void sg::map::Tile::Raise()
 {
-    vertices[Tile::TL_1_Y] += RAISE_Y;
-    vertices[Tile::BL_1_Y] += RAISE_Y;
-    vertices[Tile::BR_1_Y] += RAISE_Y;
+    vertices[TL_1_Y] += RAISE_Y;
+    vertices[BL_1_Y] += RAISE_Y;
+    vertices[BR_1_Y] += RAISE_Y;
 
-    vertices[Tile::TL_2_Y] += RAISE_Y;
-    vertices[Tile::BR_2_Y] += RAISE_Y;
-    vertices[Tile::TR_2_Y] += RAISE_Y;
+    vertices[TL_2_Y] += RAISE_Y;
+    vertices[BR_2_Y] += RAISE_Y;
+    vertices[TR_2_Y] += RAISE_Y;
 }
 
 void sg::map::Tile::Lower()
 {
-    vertices[Tile::TL_1_Y] -= RAISE_Y;
-    vertices[Tile::BL_1_Y] -= RAISE_Y;
-    vertices[Tile::BR_1_Y] -= RAISE_Y;
+    vertices[TL_1_Y] -= RAISE_Y;
+    vertices[BL_1_Y] -= RAISE_Y;
+    vertices[BR_1_Y] -= RAISE_Y;
 
-    vertices[Tile::TL_2_Y] -= RAISE_Y;
-    vertices[Tile::BR_2_Y] -= RAISE_Y;
-    vertices[Tile::TR_2_Y] -= RAISE_Y;
+    vertices[TL_2_Y] -= RAISE_Y;
+    vertices[BR_2_Y] -= RAISE_Y;
+    vertices[TR_2_Y] -= RAISE_Y;
 }
 
 //-------------------------------------------------
@@ -78,29 +78,49 @@ void sg::map::Tile::UpdateNormal()
 {
     const auto normal{ CalcNormal() };
 
-    vertices[Tile::TL_1_N_START_INDEX] = normal.x;
-    vertices[Tile::TL_1_N_START_INDEX + 1] = normal.y;
-    vertices[Tile::TL_1_N_START_INDEX + 2] = normal.z;
+    vertices[TL_1_N_START_INDEX] = normal.x;
+    vertices[TL_1_N_START_INDEX + 1] = normal.y;
+    vertices[TL_1_N_START_INDEX + 2] = normal.z;
 
-    vertices[Tile::BL_1_N_START_INDEX] = normal.x;
-    vertices[Tile::BL_1_N_START_INDEX + 1] = normal.y;
-    vertices[Tile::BL_1_N_START_INDEX + 2] = normal.z;
+    vertices[BL_1_N_START_INDEX] = normal.x;
+    vertices[BL_1_N_START_INDEX + 1] = normal.y;
+    vertices[BL_1_N_START_INDEX + 2] = normal.z;
 
-    vertices[Tile::BR_1_N_START_INDEX] = normal.x;
-    vertices[Tile::BR_1_N_START_INDEX + 1] = normal.y;
-    vertices[Tile::BR_1_N_START_INDEX + 2] = normal.z;
+    vertices[BR_1_N_START_INDEX] = normal.x;
+    vertices[BR_1_N_START_INDEX + 1] = normal.y;
+    vertices[BR_1_N_START_INDEX + 2] = normal.z;
 
-    vertices[Tile::TL_2_N_START_INDEX] = normal.x;
-    vertices[Tile::TL_2_N_START_INDEX + 1] = normal.y;
-    vertices[Tile::TL_2_N_START_INDEX + 2] = normal.z;
+    vertices[TL_2_N_START_INDEX] = normal.x;
+    vertices[TL_2_N_START_INDEX + 1] = normal.y;
+    vertices[TL_2_N_START_INDEX + 2] = normal.z;
 
-    vertices[Tile::BR_2_N_START_INDEX] = normal.x;
-    vertices[Tile::BR_2_N_START_INDEX + 1] = normal.y;
-    vertices[Tile::BR_2_N_START_INDEX + 2] = normal.z;
+    vertices[BR_2_N_START_INDEX] = normal.x;
+    vertices[BR_2_N_START_INDEX + 1] = normal.y;
+    vertices[BR_2_N_START_INDEX + 2] = normal.z;
 
-    vertices[Tile::TR_2_N_START_INDEX] = normal.x;
-    vertices[Tile::TR_2_N_START_INDEX + 1] = normal.y;
-    vertices[Tile::TR_2_N_START_INDEX + 2] = normal.z;
+    vertices[TR_2_N_START_INDEX] = normal.x;
+    vertices[TR_2_N_START_INDEX + 1] = normal.y;
+    vertices[TR_2_N_START_INDEX + 2] = normal.z;
+}
+
+//-------------------------------------------------
+// TileType
+//-------------------------------------------------
+
+void sg::map::Tile::UpdateTileType(const TileType t_tileType)
+{
+    // set type
+    type = t_tileType;
+
+    // update vertices
+    const auto textureNr{ static_cast<float>(t_tileType) };
+    vertices[TL_1_TEXTURE_INDEX] = textureNr;
+    vertices[BL_1_TEXTURE_INDEX] = textureNr;
+    vertices[BR_1_TEXTURE_INDEX] = textureNr;
+
+    vertices[TL_2_TEXTURE_INDEX] = textureNr;
+    vertices[BR_2_TEXTURE_INDEX] = textureNr;
+    vertices[TR_2_TEXTURE_INDEX] = textureNr;
 }
 
 //-------------------------------------------------
@@ -126,11 +146,11 @@ void sg::map::Tile::RenderImGui() const
 
     switch (type)
     {
-        case Tile::TileType::NONE : ImGui::Text("Type: Terrain"); break;
-        case Tile::TileType::RESIDENTIAL : ImGui::Text("Type: Residential"); break;
-        case Tile::TileType::COMMERCIAL : ImGui::Text("Type: Commercial"); break;
-        case Tile::TileType::INDUSTRIAL : ImGui::Text("Type: Industrial"); break;
-        case Tile::TileType::TRAFFIC : ImGui::Text("Type: Road"); break;
+        case TileType::NONE : ImGui::Text("Type: None"); break;
+        case TileType::RESIDENTIAL : ImGui::Text("Type: Residential"); break;
+        case TileType::COMMERCIAL : ImGui::Text("Type: Commercial"); break;
+        case TileType::INDUSTRIAL : ImGui::Text("Type: Industrial"); break;
+        case TileType::TRAFFIC : ImGui::Text("Type: Traffic"); break;
     }
 
     ImGui::Text("Tile index: %d", mapIndex);
@@ -155,15 +175,17 @@ void sg::map::Tile::Init()
 
     vertices =
     {
-        // pos            // uv       // id color                      // normal
-        tl.x, tl.y, tl.z, 0.0f, 1.0f, idColor.x, idColor.y, idColor.z, 0.0f, 1.0f, 0.0f,
-        bl.x, bl.y, bl.z, 0.0f, 0.0f, idColor.x, idColor.y, idColor.z, 0.0f, 1.0f, 0.0f,
-        br.x, br.y, br.z, 1.0f, 0.0f, idColor.x, idColor.y, idColor.z, 0.0f, 1.0f, 0.0f,
+        // pos            // uv       // id color                      // normal         // texture nr
+        tl.x, tl.y, tl.z, 0.0f, 1.0f, idColor.x, idColor.y, idColor.z, 0.0f, 1.0f, 0.0f, 0,
+        bl.x, bl.y, bl.z, 0.0f, 0.0f, idColor.x, idColor.y, idColor.z, 0.0f, 1.0f, 0.0f, 0,
+        br.x, br.y, br.z, 1.0f, 0.0f, idColor.x, idColor.y, idColor.z, 0.0f, 1.0f, 0.0f, 0,
 
-        tl.x, tl.y, tl.z, 0.0f, 1.0f, idColor.x, idColor.y, idColor.z, 0.0f, 1.0f, 0.0f,
-        br.x, br.y, br.z, 1.0f, 0.0f, idColor.x, idColor.y, idColor.z, 0.0f, 1.0f, 0.0f,
-        tr.x, tr.y, tr.z, 1.0f, 1.0f, idColor.x, idColor.y, idColor.z, 0.0f, 1.0f, 0.0f,
+        tl.x, tl.y, tl.z, 0.0f, 1.0f, idColor.x, idColor.y, idColor.z, 0.0f, 1.0f, 0.0f, 0,
+        br.x, br.y, br.z, 1.0f, 0.0f, idColor.x, idColor.y, idColor.z, 0.0f, 1.0f, 0.0f, 0,
+        tr.x, tr.y, tr.z, 1.0f, 1.0f, idColor.x, idColor.y, idColor.z, 0.0f, 1.0f, 0.0f, 0
     };
+
+    UpdateTileType(TileType::NONE);
 }
 
 //-------------------------------------------------
@@ -183,10 +205,10 @@ void sg::map::Tile::CreateMapIndexColor()
 glm::vec3 sg::map::Tile::CalcNormal() const
 {
     // read out positions
-    const auto v0{ glm::vec3(vertices[0], vertices[1], vertices[2]) };
-    const auto v1{ glm::vec3(vertices[11], vertices[12], vertices[13]) };
-    const auto v2{ glm::vec3(vertices[22], vertices[23], vertices[24]) };
-    const auto v3{ glm::vec3(vertices[55], vertices[56], vertices[57]) };
+    const auto v0{ glm::vec3(vertices[TL_1_Y - 1], vertices[TL_1_Y], vertices[TL_1_Y + 1]) };
+    const auto v1{ glm::vec3(vertices[BL_1_Y - 1], vertices[BL_1_Y], vertices[BL_1_Y + 1]) };
+    const auto v2{ glm::vec3(vertices[BR_1_Y - 1], vertices[BR_1_Y], vertices[BR_1_Y + 1]) };
+    const auto v3{ glm::vec3(vertices[TR_2_Y - 1], vertices[TR_2_Y], vertices[TR_2_Y + 1]) };
 
     const std::vector vertex = { v0, v1, v2, v3 };
 

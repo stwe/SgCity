@@ -35,11 +35,11 @@ namespace sg::map
         //-------------------------------------------------
 
         /**
-         * Position (3 Floats), Uv (2 Floats), Id color (3 Floats), Normal (3 Floats)
-         * -> 11 Floats x 4 Bytes per Float -> 44 Bytes per Vertex
-         * -> 6 Vertices per Tile = 264 Bytes
+         * Position (3 Floats), Uv (2 Floats), Id color (3 Floats), Normal (3 Floats), TextureNr (1 Float)
+         * -> 12 Floats x 4 Bytes per Float -> 48 Bytes per Vertex
+         * -> 6 Vertices per Tile = 288 Bytes
          */
-        static constexpr auto BYTES_PER_TILE{ 264 };
+        static constexpr auto BYTES_PER_TILE{ 288 };
 
         /**
          * Vertices per Tile.
@@ -72,12 +72,12 @@ namespace sg::map
         // Height value index of each vertex
 
         static constexpr auto TL_1_Y{ 1 };
-        static constexpr auto BL_1_Y{ 12 };
-        static constexpr auto BR_1_Y{ 23 };
+        static constexpr auto BL_1_Y{ 13 };
+        static constexpr auto BR_1_Y{ 25 };
 
-        static constexpr auto TL_2_Y{ 34 };
-        static constexpr auto BR_2_Y{ 45 };
-        static constexpr auto TR_2_Y{ 56 };
+        static constexpr auto TL_2_Y{ 37 };
+        static constexpr auto BR_2_Y{ 49 };
+        static constexpr auto TR_2_Y{ 61 };
 
         static constexpr std::array<int, 6> Y_INDEX =
         {
@@ -88,12 +88,22 @@ namespace sg::map
         // Start index of normals
 
         static constexpr auto TL_1_N_START_INDEX{ 8 };
-        static constexpr auto BL_1_N_START_INDEX{ 19 };
-        static constexpr auto BR_1_N_START_INDEX{ 30 };
+        static constexpr auto BL_1_N_START_INDEX{ 20 };
+        static constexpr auto BR_1_N_START_INDEX{ 32 };
 
-        static constexpr auto TL_2_N_START_INDEX{ 41 };
-        static constexpr auto BR_2_N_START_INDEX{ 52 };
-        static constexpr auto TR_2_N_START_INDEX{ 63 };
+        static constexpr auto TL_2_N_START_INDEX{ 44 };
+        static constexpr auto BR_2_N_START_INDEX{ 56 };
+        static constexpr auto TR_2_N_START_INDEX{ 68 };
+
+        // Index of texture numbers
+
+        static constexpr auto TL_1_TEXTURE_INDEX{ 11 };
+        static constexpr auto BL_1_TEXTURE_INDEX{ 23 };
+        static constexpr auto BR_1_TEXTURE_INDEX{ 35 };
+
+        static constexpr auto TL_2_TEXTURE_INDEX{ 47 };
+        static constexpr auto BR_2_TEXTURE_INDEX{ 59 };
+        static constexpr auto TR_2_TEXTURE_INDEX{ 71 };
 
         //-------------------------------------------------
         // Types
@@ -137,6 +147,11 @@ namespace sg::map
          */
         glm::vec3 idColor{ glm::vec3(0.0f) };
 
+        /**
+         * The type of the Tile.
+         */
+        TileType type{ TileType::NONE };
+
         // Neighbors
 
         std::shared_ptr<Tile> n;
@@ -148,11 +163,6 @@ namespace sg::map
         std::shared_ptr<Tile> ne;
         std::shared_ptr<Tile> sw;
         std::shared_ptr<Tile> se;
-
-        /**
-         * The type of the Tile.
-         */
-        TileType type{ TileType::NONE };
 
         //-------------------------------------------------
         // Ctors. / Dtor.
@@ -198,6 +208,15 @@ namespace sg::map
          * Updates the normals of each vertex.
          */
         void UpdateNormal();
+
+        //-------------------------------------------------
+        // TileType
+        //-------------------------------------------------
+
+        /**
+         * Sets tile type and updates the vertices.
+         */
+        void UpdateTileType(TileType t_tileType);
 
         //-------------------------------------------------
         // Gpu

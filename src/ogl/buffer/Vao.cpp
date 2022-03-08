@@ -71,16 +71,19 @@ void sg::ogl::buffer::Vao::CreateEmptyDynamicVbo(const uint32_t t_size, const in
     Vbo::Unbind();
 
     // enable location 0 (position)
-    vbo->AddFloatAttribute(0, 3, 11, 0);
+    vbo->AddFloatAttribute(0, 3, 12, 0);
 
     // enable location 1 (uv)
-    vbo->AddFloatAttribute(1, 2, 11, 3);
+    vbo->AddFloatAttribute(1, 2, 12, 3);
 
     // enable location 2 (idColor)
-    vbo->AddFloatAttribute(2, 3, 11, 5);
+    vbo->AddFloatAttribute(2, 3, 12, 5);
 
     // enable location 3 (normal)
-    vbo->AddFloatAttribute(3, 3, 11, 8);
+    vbo->AddFloatAttribute(3, 3, 12, 8);
+
+    // enable location 4 (textureNr)
+    vbo->AddFloatAttribute(4, 1, 12, 11);
 
     Unbind();
 

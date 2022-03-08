@@ -29,6 +29,8 @@ namespace sg::gui
         RAISE,                  // raise terrain
         LOWER,                  // lower terrain
         MAKE_RESIDENTIAL_ZONE,  // make a residential zone
+        MAKE_COMMERCIAL_ZONE,   // make a commercial zone
+        MAKE_INDUSTRIAL_ZONE,   // make a industrial zone
         MAKE_TRAFFIC_ZONE,      // make a traffic zone
         INFO                    // get terrain info
     };
@@ -60,10 +62,12 @@ namespace sg::gui
             "Raise terrain",
             "Lower terrain",
             "Make residential zone",
+            "Make commercial zone",
+            "Make industrial zone",
             "Make traffic zone",
             "Info"
         };
 
-        std::vector<bool> m_buttons{ true, false, false, false, false };
+        std::vector<bool> m_buttons{ true, false, false, false, false, false, false };
     };
 }

@@ -34,3 +34,5 @@ conanbuildinfo.cmake
 !/resources/texture/building.png
 !/resources/texture/grass.png
 !/resources/texture/r.png
+!/resources/texture/c.png
+!/resources/texture/i.png

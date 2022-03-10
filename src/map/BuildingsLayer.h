@@ -19,7 +19,6 @@
 #pragma once
 
 #include "Layer.h"
-#include "BuildingTile.h"
 
 //-------------------------------------------------
 // Forward declarations
@@ -36,6 +35,9 @@ namespace sg::ogl::resource
 
 namespace sg::map
 {
+    /**
+     * Represents the BuildingsLayer.
+     */
     class BuildingsLayer : public Layer
     {
     public:
@@ -44,7 +46,13 @@ namespace sg::map
         //-------------------------------------------------
 
         BuildingsLayer() = delete;
-        BuildingsLayer(int t_tileCount, std::vector<std::shared_ptr<Tile>> t_tiles);
+
+        /**
+         * Constructs a new BuildingsLayer object.
+         *
+         * @param t_tiles The Tile objects.
+         */
+        explicit BuildingsLayer(std::vector<std::shared_ptr<Tile>> t_tiles);
 
         BuildingsLayer(const BuildingsLayer& t_other) = delete;
         BuildingsLayer(BuildingsLayer&& t_other) noexcept = delete;
@@ -71,11 +79,6 @@ namespace sg::map
          */
         std::shared_ptr<ogl::resource::Model> m_model;
 
-        /**
-         * An array holding the BuildingTile objects.
-         */
-        std::vector<std::shared_ptr<BuildingTile>> m_buildingTiles;
-
         //-------------------------------------------------
         // Init
         //-------------------------------------------------
@@ -89,20 +92,6 @@ namespace sg::map
         // Override
         //-------------------------------------------------
 
-        /**
-         * Create tiles.
-         */
-        void CreateTiles() override;
-
-        //-------------------------------------------------
-        // Helper
-        //-------------------------------------------------
-
-        /**
-         * Stores vertices in a Vbo.
-         */
-        void BuildingTilesToGpu();
-
-        static std::unique_ptr<BuildingTile> CreateBuildingTile(const Tile& t_tile, int t_index);
+        void CreateTiles() override {}
     };
 }

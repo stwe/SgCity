@@ -85,7 +85,6 @@ namespace sg::ogl::resource
         // Models
         //-------------------------------------------------
 
-        static std::shared_ptr<Model> LoadModel(const std::string& t_path);
         static std::shared_ptr<Model> LoadModel(const std::string& t_path, unsigned int t_pFlags = aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_CalcTangentSpace | aiProcess_GenSmoothNormals);
 
     protected:

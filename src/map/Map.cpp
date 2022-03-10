@@ -94,8 +94,8 @@ void sg::map::Map::Init()
 
     m_waterLayer = std::make_unique<WaterLayer>(m_tileCount);
     m_terrainLayer = std::make_unique<TerrainLayer>(m_tileCount);
-    m_roadsLayer = std::make_unique<RoadsLayer>(m_tileCount, m_terrainLayer->tiles);
-    m_buildingsLayer = std::make_unique<BuildingsLayer>(m_tileCount, m_terrainLayer->tiles);
+    m_roadsLayer = std::make_unique<RoadsLayer>(m_terrainLayer->tiles);
+    m_buildingsLayer = std::make_unique<BuildingsLayer>(m_terrainLayer->tiles);
 
     Log::SG_LOG_DEBUG("[Map::Init()] The map was successfully initialized.");
 }

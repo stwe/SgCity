@@ -47,7 +47,7 @@ namespace sg::map
         //-------------------------------------------------
 
         RoadsLayer() = delete;
-        RoadsLayer(int t_tileCount, std::vector<std::shared_ptr<Tile>> t_tiles);
+        explicit RoadsLayer(std::vector<std::shared_ptr<Tile>> t_tiles);
 
         RoadsLayer(const RoadsLayer& t_other) = delete;
         RoadsLayer(RoadsLayer&& t_other) noexcept = delete;

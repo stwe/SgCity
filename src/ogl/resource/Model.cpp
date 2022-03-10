@@ -65,7 +65,7 @@ void sg::ogl::resource::Model::Render(
     const auto modelMatrix{ math::Transform::CreateModelMatrix(
     t_position,
     glm::vec3(0.0f, 0.0f, 0.0f),
-    glm::vec3(0.25f)
+    glm::vec3(1.0f)
     ) };
 
     shaderProgram.SetUniform("model", modelMatrix);

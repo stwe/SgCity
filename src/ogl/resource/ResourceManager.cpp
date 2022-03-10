@@ -37,11 +37,6 @@ sg::ogl::resource::ShaderProgram& sg::ogl::resource::ResourceManager::LoadShader
 // Models
 //-------------------------------------------------
 
-std::shared_ptr<sg::ogl::resource::Model> sg::ogl::resource::ResourceManager::LoadModel(const std::string& t_path)
-{
-    return LoadModel(t_path, aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_CalcTangentSpace | aiProcess_GenSmoothNormals);
-}
-
 std::shared_ptr<sg::ogl::resource::Model> sg::ogl::resource::ResourceManager::LoadModel(const std::string& t_path, unsigned int t_pFlags)
 {
     if (models.count(t_path) == 0)

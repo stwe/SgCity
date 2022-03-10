@@ -38,9 +38,8 @@ sg::map::Layer::Layer(const int t_tileCount)
     Log::SG_LOG_DEBUG("[Layer::Layer()] Create Layer.");
 }
 
-sg::map::Layer::Layer(const int t_tileCount, std::vector<std::shared_ptr<Tile>> t_tiles)
-    : tileCount{ t_tileCount }
-    , tiles{ std::move(t_tiles) }
+sg::map::Layer::Layer(std::vector<std::shared_ptr<Tile>> t_tiles)
+    : tiles{ std::move(t_tiles) }
 {
     Log::SG_LOG_DEBUG("[Layer::Layer()] Create Layer.");
 }

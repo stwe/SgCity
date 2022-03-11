@@ -62,9 +62,13 @@ void sg::ogl::resource::Model::Render(
     const auto& shaderProgram{ ResourceManager::LoadShaderProgram("E:/Dev/SgCity/resources/shader/model") };
     shaderProgram.Bind();
 
+    // todo: tmp code
+    glm::vec3 p{ t_position };
+    p.y += 1.0f;
+
     const auto modelMatrix{ math::Transform::CreateModelMatrix(
-    t_position,
-    glm::vec3(0.0f, 0.0f, 0.0f),
+    p,
+    glm::vec3(0.0f, 0.0f, 180.0f),
     glm::vec3(1.0f)
     ) };
 
@@ -76,12 +80,17 @@ void sg::ogl::resource::Model::Render(
     {
         mesh->vao->Bind();
 
-        // todo: wird momentan nicht verwendet; diffuse map auslesen
-        //const auto& texture{ ResourceManager::LoadTexture("E:/Dev/SgCity/resources/texture/building.png", true) };
-        //texture.BindForReading(GL_TEXTURE0);
-        //shaderProgram.SetUniform("diffuseMap", 0);
-
         shaderProgram.SetUniform("diffuseColor", mesh->defaultMaterial->kd);
+
+        shaderProgram.SetUniform("hasDiffuseMap", mesh->defaultMaterial->HasDiffuseMap());
+        if (mesh->defaultMaterial->HasDiffuseMap())
+        {
+            shaderProgram.SetUniform("diffuseMap", 0);
+
+            // todo: create a static function in Texture
+            glActiveTexture(GL_TEXTURE0);
+            glBindTexture(GL_TEXTURE_2D, mesh->defaultMaterial->mapKd);
+        }
 
         mesh->vao->DrawPrimitives();
         mesh->vao->Unbind();
@@ -305,11 +314,10 @@ std::unique_ptr<sg::ogl::resource::Mesh> sg::ogl::resource::Model::ProcessMesh(c
     return meshUniquePtr;
 }
 
-std::vector<uint32_t> sg::ogl::resource::Model::LoadMaterialTextures(aiMaterial* t_mat, aiTextureType t_type) const
+std::vector<uint32_t> sg::ogl::resource::Model::LoadMaterialTextures(const aiMaterial* t_mat, const aiTextureType t_type) const
 {
     std::vector<uint32_t> textures;
 
-    /*
     for (auto i{ 0u }; i < t_mat->GetTextureCount(t_type); ++i)
     {
         aiString str;
@@ -319,9 +327,9 @@ std::vector<uint32_t> sg::ogl::resource::Model::LoadMaterialTextures(aiMaterial*
             throw SG_EXCEPTION("[Model::LoadMaterialTextures()] Error while loading material texture.");
         }
 
-        textures.push_back(m_application->GetTextureManager().GetTextureIdFromPath(m_directory + "/" + str.C_Str()));
+        const auto& texture{ ResourceManager::LoadTexture(m_directory + "/" + str.C_Str()) };
+        textures.push_back(texture.id);
     }
-    */
 
     return textures;
 }

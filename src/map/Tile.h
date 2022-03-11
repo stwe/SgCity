@@ -115,7 +115,8 @@ namespace sg::map
             RESIDENTIAL,
             COMMERCIAL,
             INDUSTRIAL,
-            TRAFFIC
+            TRAFFIC,
+            PLANTS
         };
 
         //-------------------------------------------------

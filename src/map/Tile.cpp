@@ -146,11 +146,12 @@ void sg::map::Tile::RenderImGui() const
 
     switch (type)
     {
-        case TileType::NONE : ImGui::Text("Type: None"); break;
-        case TileType::RESIDENTIAL : ImGui::Text("Type: Residential"); break;
-        case TileType::COMMERCIAL : ImGui::Text("Type: Commercial"); break;
-        case TileType::INDUSTRIAL : ImGui::Text("Type: Industrial"); break;
-        case TileType::TRAFFIC : ImGui::Text("Type: Traffic"); break;
+    case TileType::NONE : ImGui::Text("Type: None"); break;
+    case TileType::RESIDENTIAL : ImGui::Text("Type: Residential"); break;
+    case TileType::COMMERCIAL : ImGui::Text("Type: Commercial"); break;
+    case TileType::INDUSTRIAL : ImGui::Text("Type: Industrial"); break;
+    case TileType::TRAFFIC : ImGui::Text("Type: Traffic"); break;
+    case TileType::PLANTS : ImGui::Text("Type: Plants"); break;
     }
 
     ImGui::Text("Tile index: %d", mapIndex);

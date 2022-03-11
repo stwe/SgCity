@@ -119,7 +119,7 @@ namespace sg::ogl::resource
         void LoadFromFile(unsigned int t_pFlags);
         void ProcessNode(const aiNode* t_node, const aiScene* t_scene);
         std::unique_ptr<Mesh> ProcessMesh(const aiMesh* t_mesh, const aiScene* t_scene) const;
-        std::vector<uint32_t> LoadMaterialTextures(aiMaterial* t_mat, aiTextureType t_type) const;
+        std::vector<uint32_t> LoadMaterialTextures(const aiMaterial* t_mat, aiTextureType t_type) const;
 
         //-------------------------------------------------
         // Clean up

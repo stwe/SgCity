@@ -32,7 +32,8 @@ namespace sg::gui
         MAKE_COMMERCIAL_ZONE,   // make a commercial zone
         MAKE_INDUSTRIAL_ZONE,   // make a industrial zone
         MAKE_TRAFFIC_ZONE,      // make a traffic zone
-        INFO                    // get terrain info
+        CREATE_PLANT,           // create a tree
+        INFO                    // get tile info
     };
 
     class MapEditGui
@@ -65,9 +66,10 @@ namespace sg::gui
             "Make commercial zone",
             "Make industrial zone",
             "Make traffic zone",
+            "Create a plant",
             "Info"
         };
 
-        std::vector<bool> m_buttons{ true, false, false, false, false, false, false };
+        std::vector<bool> m_buttons{ true, false, false, false, false, false, false, false };
     };
 }

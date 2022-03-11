@@ -58,6 +58,11 @@ namespace sg::map
     class BuildingsLayer;
 
     /**
+     * Forward declaration class PlantsLayer.
+     */
+    class PlantsLayer;
+
+    /**
      * Forward declaration class Tile.
      */
     class Tile;
@@ -147,6 +152,11 @@ namespace sg::map
          * The buildings Layer.
          */
         std::unique_ptr<BuildingsLayer> m_buildingsLayer;
+
+        /**
+         * The plants layer.
+         */
+        std::unique_ptr<PlantsLayer> m_plantsLayer;
 
         /**
          * Current Tile object.

@@ -83,6 +83,9 @@ void sg::map::Layer::UpdateTile(const gui::Action t_action, Tile& t_tile)
     case gui::Action::MAKE_TRAFFIC_ZONE:
         setTileType(Tile::TileType::TRAFFIC);
         break;
+    case gui::Action::CREATE_PLANT:
+        setTileType(Tile::TileType::PLANTS);
+        break;
     default:
         break;
     }

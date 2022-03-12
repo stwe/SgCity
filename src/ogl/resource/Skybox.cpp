@@ -22,6 +22,7 @@
 #include "SgException.h"
 #include "stb_image.h"
 #include "ogl/OpenGL.h"
+#include "ogl/buffer/Vao.h"
 
 //-------------------------------------------------
 // Ctors. / Dtor.
@@ -71,12 +72,11 @@ void sg::ogl::resource::Skybox::Render(const Window& t_window, const camera::Cam
     shaderProgram.SetUniform("viewMatrix", glm::mat4(glm::mat3(t_camera.GetViewMatrix())));
     shaderProgram.SetUniform("projectionMatrix", t_window.GetProjectionMatrix());
 
-    glBindVertexArray(skyboxVao);
-
     BindForReading();
 
-    glDrawArrays(GL_TRIANGLES, 0, 36);
-    glBindVertexArray(0);
+    m_vao->Bind();
+    m_vao->DrawPrimitives();
+    m_vao->Unbind();
 
     ShaderProgram::Unbind();
 
@@ -97,13 +97,8 @@ void sg::ogl::resource::Skybox::CreateId()
 
 void sg::ogl::resource::Skybox::CreateBuffer()
 {
-    glGenVertexArrays(1, &skyboxVao);
-    glGenBuffers(1, &skyboxVbo);
-    glBindVertexArray(skyboxVao);
-    glBindBuffer(GL_ARRAY_BUFFER, skyboxVbo);
-    glBufferData(GL_ARRAY_BUFFER, SKYBOX_VERTICES.size() * 4, SKYBOX_VERTICES.data(), GL_STATIC_DRAW);
-    glEnableVertexAttribArray(0);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+    m_vao = std::make_unique<buffer::Vao>();
+    m_vao->CreateSkyboxVbo();
 }
 
 //-------------------------------------------------

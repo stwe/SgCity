@@ -153,6 +153,72 @@ void sg::ogl::buffer::Vao::CreateStaticWaterVbo()
     Unbind();
 }
 
+void sg::ogl::buffer::Vao::CreateSkyboxVbo()
+{
+    SG_ASSERT(!vbo, "[Vao::CreateSkyboxVbo()] Vbo already exists.")
+
+    Bind();
+
+    vbo = std::make_unique<Vbo>();
+    vbo->Bind();
+
+    const std::vector vertices
+    {
+        -1.0f,  1.0f, -1.0f,
+        -1.0f, -1.0f, -1.0f,
+         1.0f, -1.0f, -1.0f,
+         1.0f, -1.0f, -1.0f,
+         1.0f,  1.0f, -1.0f,
+        -1.0f,  1.0f, -1.0f,
+
+        -1.0f, -1.0f,  1.0f,
+        -1.0f, -1.0f, -1.0f,
+        -1.0f,  1.0f, -1.0f,
+        -1.0f,  1.0f, -1.0f,
+        -1.0f,  1.0f,  1.0f,
+        -1.0f, -1.0f,  1.0f,
+
+         1.0f, -1.0f, -1.0f,
+         1.0f, -1.0f,  1.0f,
+         1.0f,  1.0f,  1.0f,
+         1.0f,  1.0f,  1.0f,
+         1.0f,  1.0f, -1.0f,
+         1.0f, -1.0f, -1.0f,
+
+        -1.0f, -1.0f,  1.0f,
+        -1.0f,  1.0f,  1.0f,
+         1.0f,  1.0f,  1.0f,
+         1.0f,  1.0f,  1.0f,
+         1.0f, -1.0f,  1.0f,
+        -1.0f, -1.0f,  1.0f,
+
+        -1.0f,  1.0f, -1.0f,
+         1.0f,  1.0f, -1.0f,
+         1.0f,  1.0f,  1.0f,
+         1.0f,  1.0f,  1.0f,
+        -1.0f,  1.0f,  1.0f,
+        -1.0f,  1.0f, -1.0f,
+
+        -1.0f, -1.0f, -1.0f,
+        -1.0f, -1.0f,  1.0f,
+         1.0f, -1.0f, -1.0f,
+         1.0f, -1.0f, -1.0f,
+        -1.0f, -1.0f,  1.0f,
+         1.0f, -1.0f,  1.0f
+    };
+
+    drawCount = 36;
+    constexpr int64_t floatsPerVertex{ 3 };
+
+    glBufferData(GL_ARRAY_BUFFER, drawCount * floatsPerVertex * static_cast<int64_t>(sizeof(float)), vertices.data(), GL_STATIC_DRAW);
+    Vbo::Unbind();
+
+    // enable location 0 (position)
+    vbo->AddFloatAttribute(0, 3, 3, 0);
+
+    Unbind();
+}
+
 void sg::ogl::buffer::Vao::CreateModelVertexDataVbo(const std::vector<float>& t_vertices, const int32_t t_drawCount)
 {
     SG_ASSERT(!vbo, "[Vao::CreateModelVertexDataVbo()] Vbo already exists.")

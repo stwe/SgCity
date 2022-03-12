@@ -112,8 +112,8 @@ namespace sg::ogl::buffer
         /**
          * Binds this Vao and creates a static Vbo. The given vertices data are copied into the Vbo.
          *
-         * Bufferlayout:
-         * -------------
+         * Bufferlayout
+         * ------------
          * location 0 (position) 3 floats
          * location 1 (uv)       2 floats
          *
@@ -131,6 +131,15 @@ namespace sg::ogl::buffer
          * location 0 (position) 2 floats
          */
         void CreateStaticWaterVbo();
+
+        /**
+         * Binds this Vao and creates a static Vbo for a Skybox.
+         *
+         * Bufferlayout
+         * ------------
+         * location 0 (position) 3 floats
+         */
+        void CreateSkyboxVbo();
 
         // todo:
 

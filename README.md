@@ -11,6 +11,10 @@ look and feel of old city building simulations from the 90s.
 
 <img src="https://github.com/stwe/SgCity/blob/main/resources/devlog/2022-03-12.png" width="500" height="400" />
 
+
+<img src="https://github.com/stwe/SgCity/blob/main/resources/devlog/2022-03-12(2).png" width="500" height="400" />
+
+
 ## Requirements
 
 - [GLFW](https://www.glfw.org/)

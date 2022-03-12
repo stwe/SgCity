@@ -31,8 +31,13 @@ conanbuildinfo.cmake
 
 !/resources/devlog/*.png
 #!/resources/model/*.obj
-!/resources/texture/building.png
-!/resources/texture/grass.png
-!/resources/texture/r.png
+
 !/resources/texture/c.png
+!/resources/texture/grass.png
 !/resources/texture/i.png
+!/resources/texture/info.png
+!/resources/texture/lower.png
+!/resources/texture/plants.png
+!/resources/texture/r.png
+!/resources/texture/raise.png
+!/resources/texture/t.png

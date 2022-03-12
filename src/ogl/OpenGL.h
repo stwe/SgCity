@@ -117,6 +117,22 @@ namespace sg::ogl
             glProvokingVertex(GL_FIRST_VERTEX_CONVENTION);
         }
 
+        /**
+         * Set depth function to default.
+         */
+        static void SetDefaultDepthFunction()
+        {
+            glDepthFunc(GL_LESS);
+        }
+
+        /**
+         * Change depth function so depth test passes when values are equal to depth buffer's content.
+         */
+        static void SetEqualDepthFunction()
+        {
+            glDepthFunc(GL_LEQUAL);
+        }
+
     protected:
 
     private:

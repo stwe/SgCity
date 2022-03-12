@@ -36,6 +36,11 @@ namespace sg::gui
     class MapEditGui;
 }
 
+namespace sg::ogl::resource
+{
+    class Skybox;
+}
+
 //-------------------------------------------------
 // Application
 //-------------------------------------------------
@@ -120,6 +125,11 @@ namespace sg
          * Widgets to edit the map layers.
          */
         std::unique_ptr<gui::MapEditGui> m_mapEditGui;
+
+        /**
+         * A Skybox object.
+         */
+        std::unique_ptr<ogl::resource::Skybox> m_skybox;
 
         /**
          * So that events are only executed once.

@@ -22,6 +22,7 @@
 #include "Log.h"
 #include "ogl/OpenGL.h"
 #include "ogl/input/MouseInput.h"
+#include "ogl/resource/Skybox.h"
 #include "map/Map.h"
 #include "gui/MapEditGui.h"
 
@@ -73,6 +74,9 @@ void sg::Application::Init()
     // create gui
     m_mapEditGui = std::make_unique<gui::MapEditGui>();
 
+    // create skybox
+    m_skybox = std::make_unique<ogl::resource::Skybox>();
+
     Log::SG_LOG_DEBUG("[Application::Init()] The application was successfully initialized.");
 }
 
@@ -107,8 +111,9 @@ void sg::Application::Render() const
 
     StartFrame();
 
-    // (2) render scene
+    // (2) render scene && skybox
     m_map->Render(m_window, m_camera);
+    m_skybox->Render(m_window, m_camera);
 
     // (3) render gui
     ogl::Window::ImGuiBegin();

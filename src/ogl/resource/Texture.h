@@ -38,6 +38,8 @@ namespace sg::ogl::resource
         //-------------------------------------------------
 
         uint32_t id{ 0 };
+        int width{ 0 };
+        int height{ 0 };
 
         //-------------------------------------------------
         // Ctors. / Dtor.
@@ -71,8 +73,6 @@ namespace sg::ogl::resource
 
         std::string m_path;
         bool m_loadVerticalFlipped{ false };
-        int m_width{ 0 };
-        int m_height{ 0 };
         int m_format{ 0 };
         int m_channels{ 0 };
 

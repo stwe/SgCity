@@ -91,10 +91,10 @@ void sg::ogl::resource::Texture::LoadFromFile()
 {
     stbi_set_flip_vertically_on_load(m_loadVerticalFlipped);
 
-    if (auto* const image{ stbi_load(m_path.c_str(), &m_width, &m_height, &m_channels, 0) })
+    if (auto* const image{ stbi_load(m_path.c_str(), &width, &height, &m_channels, 0) })
     {
-        SG_ASSERT(m_width, "[Texture::LoadFromFile()] Invalid image format.")
-        SG_ASSERT(m_height, "[Texture::LoadFromFile()] Invalid image format.")
+        SG_ASSERT(width, "[Texture::LoadFromFile()] Invalid image format.")
+        SG_ASSERT(height, "[Texture::LoadFromFile()] Invalid image format.")
         SG_ASSERT(m_channels, "[Texture::LoadFromFile()] Invalid image format.")
 
         if (m_channels == STBI_grey)
@@ -108,7 +108,7 @@ void sg::ogl::resource::Texture::LoadFromFile()
 
         Bind();
 
-        glTexImage2D(GL_TEXTURE_2D, 0, m_format, m_width, m_height, 0, m_format, GL_UNSIGNED_BYTE, image);
+        glTexImage2D(GL_TEXTURE_2D, 0, m_format, width, height, 0, m_format, GL_UNSIGNED_BYTE, image);
         glGenerateMipmap(GL_TEXTURE_2D);
 
         stbi_image_free(image);

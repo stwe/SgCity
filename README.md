@@ -9,7 +9,7 @@ look and feel of old city building simulations from the 90s.
 [![Codacy Badge](https://app.codacy.com/project/badge/Grade/51367f1966914a838f48dc864ddfdd79)](https://www.codacy.com/gh/stwe/SgCity/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=stwe/SgCity&amp;utm_campaign=Badge_Grade)
 
 
-<img src="https://github.com/stwe/SgCity/blob/main/resources/devlog/2022-01-01.png" width="500" height="400" />
+<img src="https://github.com/stwe/SgCity/blob/main/resources/devlog/2022-03-12.png" width="500" height="400" />
 
 ## Requirements
 

@@ -54,25 +54,17 @@ sg::ogl::resource::Model::~Model() noexcept
 void sg::ogl::resource::Model::Render(
     const Window& t_window,
     const camera::Camera& t_camera,
-    const glm::vec3& t_position
-    ) const
+    const glm::vec3& t_position,
+    const glm::vec3& t_rotation,
+    const glm::vec3& t_scale
+) const
 {
     OpenGL::EnableAlphaBlending();
 
     const auto& shaderProgram{ ResourceManager::LoadShaderProgram("E:/Dev/SgCity/resources/shader/model") };
     shaderProgram.Bind();
 
-    // todo: tmp code
-    glm::vec3 p{ t_position };
-    p.y += 1.0f;
-
-    const auto modelMatrix{ math::Transform::CreateModelMatrix(
-    p,
-    glm::vec3(0.0f, 0.0f, 180.0f),
-    glm::vec3(1.0f)
-    ) };
-
-    shaderProgram.SetUniform("model", modelMatrix);
+    shaderProgram.SetUniform("model", math::Transform::CreateModelMatrix(t_position, t_rotation, t_scale));
     shaderProgram.SetUniform("view", t_camera.GetViewMatrix());
     shaderProgram.SetUniform("projection", t_window.GetProjectionMatrix());
 
@@ -99,6 +91,15 @@ void sg::ogl::resource::Model::Render(
     ShaderProgram::Unbind();
 
     OpenGL::DisableBlending();
+}
+
+void sg::ogl::resource::Model::Render(
+    const Window& t_window,
+    const camera::Camera& t_camera,
+    const glm::vec3& t_position
+) const
+{
+    Render(t_window, t_camera, t_position, glm::vec3(0.0f), glm::vec3(1.0f));
 }
 
 //-------------------------------------------------

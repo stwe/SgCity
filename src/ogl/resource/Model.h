@@ -95,6 +95,23 @@ namespace sg::ogl::resource
          * @param t_window The current window to get the projection matrix.
          * @param t_camera The camera to get the view matrix.
          * @param t_position The position of the model.
+         * @param t_rotation The rotation of the model.
+         * @param t_scale The scale of the model.
+         */
+        void Render(
+            const Window& t_window,
+            const camera::Camera& t_camera,
+            const glm::vec3& t_position,
+            const glm::vec3& t_rotation,
+            const glm::vec3& t_scale
+        ) const;
+
+        /**
+         * Renders the model.
+         *
+         * @param t_window The current window to get the projection matrix.
+         * @param t_camera The camera to get the view matrix.
+         * @param t_position The position of the model.
          */
         void Render(
             const Window& t_window,

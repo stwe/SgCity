@@ -18,8 +18,8 @@
 
 #pragma once
 
+#include <imgui.h>
 #include <vector>
-#include <string>
 #include "map/Map.h"
 
 namespace sg::gui
@@ -46,6 +46,15 @@ namespace sg::gui
         Action action{ Action::RAISE };
 
         //-------------------------------------------------
+        // Ctors. / Dtor.
+        //-------------------------------------------------
+
+        MapEditGui()
+        {
+            m_buttonTextures = CreateButtonTextures();
+        }
+
+        //-------------------------------------------------
         // Logic
         //-------------------------------------------------
 
@@ -55,10 +64,14 @@ namespace sg::gui
 
     private:
         //-------------------------------------------------
-        // Member
+        // Constants
         //-------------------------------------------------
 
-        std::vector<std::string> m_buttonNames
+        /**
+         * A text label identifying an element.
+         * Can be used as a tooltip.
+         */
+        inline static const std::vector<std::string> BUTTON_NAMES
         {
             "Raise terrain",
             "Lower terrain",
@@ -70,6 +83,33 @@ namespace sg::gui
             "Info"
         };
 
-        std::vector<bool> m_buttons{ true, false, false, false, false, false, false, false };
+        static constexpr int FRAME_PADDING{ 1 };                                     // -1 == uses default padding (style.FramePadding)
+        inline static const auto SIZE{ ImVec2(32.0f, 32.0f) };                 // Size of the image we want to make visible
+        inline static const auto UV0{ ImVec2(0.0f, 0.0f) };                    // UV coordinates for lower-left
+        inline static const auto BG{ ImVec4(0.0f, 0.0f, 0.0f, 1.0f) };   // Black background
+        inline static const auto TINT{ ImVec4(1.0f, 1.0f, 1.0f, 1.0f) }; // No tint
+
+        //-------------------------------------------------
+        // Member
+        //-------------------------------------------------
+
+        /**
+         * A texture handle for each menu entry.
+         */
+        std::vector<ImTextureID> m_buttonTextures;
+
+        /**
+         * Indicates whether a menu item is active.
+         */
+        inline static std::vector<bool> m_buttons{ true, false, false, false, false, false, false, false };
+
+        //-------------------------------------------------
+        // Init
+        //-------------------------------------------------
+
+        /**
+         * Loads a texture for each menu entry.
+         */
+        static std::vector<void*> CreateButtonTextures();
     };
 }

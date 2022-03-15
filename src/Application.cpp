@@ -107,21 +107,37 @@ void sg::Application::Update()
 void sg::Application::Render() const
 {
     // (1) render for mousepicking
+    // ---------------------------
+    // Bind fbo
+    // OpenGL::SetClearColor()
+    // Clear()
+    // Draw ...
+    // Unbind fbo
     m_map->RenderForMousePicking(m_window, m_camera);
 
-    StartFrame();
+    // (2) render for water
+    // --------------------
+    // Bind fbo
+    // OpenGL::SetClearColor()
+    // Clear()
+    // Draw ...
+    // Unbind fbo
+    m_map->RenderForWater(m_window, m_camera, *m_skybox);
 
-    // (2) render scene && skybox
+    // (3) render scene && gui
+    // -----------------------
+
+    StartFrame(); // clear
+
     m_map->Render(m_window, m_camera);
     m_skybox->Render(m_window, m_camera);
 
-    // (3) render gui
     ogl::Window::ImGuiBegin();
     m_mapEditGui->RenderImGui(*m_map);
     m_map->RenderImGui();
     ogl::Window::ImGuiEnd();
 
-    EndFrame();
+    EndFrame(); // window update
 }
 
 //-------------------------------------------------

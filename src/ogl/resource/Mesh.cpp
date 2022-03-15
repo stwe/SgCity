@@ -41,7 +41,7 @@ sg::ogl::resource::Mesh::Mesh(std::string t_name)
 
 sg::ogl::resource::Mesh::~Mesh() noexcept
 {
-    Log::SG_LOG_DEBUG("[Mesh::Mesh()] Destruct Mesh.");
+    Log::SG_LOG_DEBUG("[Mesh::~Mesh()] Destruct Mesh.");
 }
 
 //-------------------------------------------------

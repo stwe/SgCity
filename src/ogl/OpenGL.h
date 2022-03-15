@@ -133,6 +133,22 @@ namespace sg::ogl
             glDepthFunc(GL_LEQUAL);
         }
 
+        /**
+         * Enable depth testing.
+         */
+        static void EnableDepthTesting()
+        {
+            glEnable(GL_DEPTH_TEST);
+        }
+
+        /** Disable depth testing.
+         *
+         */
+        static void DisableDepthTesting()
+        {
+            glDisable(GL_DEPTH_TEST);
+        }
+
     protected:
 
     private:

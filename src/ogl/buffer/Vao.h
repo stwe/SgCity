@@ -141,6 +141,16 @@ namespace sg::ogl::buffer
          */
         void CreateSkyboxVbo();
 
+        /**
+         * Creates a simple square for a Gui.
+         * Binds this Vao and creates a static Vbo.
+         *
+         * Bufferlayout
+         * ------------
+         * location 0 (position) 2 floats
+         */
+        void CreateGuiVbo();
+
         // todo:
 
         void CreateModelVertexDataVbo(const std::vector<float>& t_vertices, int32_t t_drawCount);

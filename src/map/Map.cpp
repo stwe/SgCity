@@ -24,6 +24,8 @@
 #include "BuildingsLayer.h"
 #include "PlantsLayer.h"
 #include "gui/MapEditGui.h"
+#include "ogl/OpenGL.h"
+#include "ogl/buffer/WaterFbos.h"
 #include "ogl/input/PickingTexture.h"
 #include "ogl/input/MouseInput.h"
 
@@ -69,6 +71,23 @@ void sg::map::Map::RenderForMousePicking(const ogl::Window& t_window, const ogl:
     m_terrainLayer->RenderForMousePicking(t_window, t_camera);
 }
 
+// todo: StartFrame
+// todo: render skybox
+
+void sg::map::Map::RenderForWater(
+    const ogl::Window& t_window,
+    const ogl::camera::Camera& t_camera,
+    const ogl::resource::Skybox& t_skybox
+) const
+{
+    m_waterFbos->BindReflectionFboAsRenderTarget();
+    ogl::OpenGL::SetClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+    ogl::OpenGL::Clear();
+    m_terrainLayer->Render(t_window, t_camera);
+    t_skybox.Render(t_window, t_camera);
+    m_waterFbos->UnbindRenderTarget();
+}
+
 void sg::map::Map::Render(const ogl::Window& t_window, const ogl::camera::Camera& t_camera) const
 {
     m_terrainLayer->Render(t_window, t_camera);
@@ -80,6 +99,20 @@ void sg::map::Map::Render(const ogl::Window& t_window, const ogl::camera::Camera
 
 void sg::map::Map::RenderImGui() const
 {
+    ImGui::Begin("Reflection texture");
+
+    if (m_waterFbos->reflectionColorTextureId)
+    {
+        ImGui::Image(
+            reinterpret_cast<ImTextureID>(static_cast<uintptr_t>(m_waterFbos->reflectionColorTextureId)),
+            ImVec2(128.0f, 128.0f),
+            ImVec2(0.0f, 0.0f),
+            ImVec2(1.0f, -1.0f)
+        );
+    }
+
+    ImGui::End();
+
     if (m_currentTile)
     {
         m_currentTile->RenderImGui();
@@ -99,6 +132,9 @@ void sg::map::Map::Init()
     m_roadsLayer = std::make_unique<RoadsLayer>(m_terrainLayer->tiles);
     m_buildingsLayer = std::make_unique<BuildingsLayer>(m_terrainLayer->tiles);
     m_plantsLayer = std::make_unique<PlantsLayer>(m_terrainLayer->tiles);
+
+    // todo: width, height from config or static vars or window class
+    m_waterFbos = std::make_unique<ogl::buffer::WaterFbos>(1024, 768);
 
     Log::SG_LOG_DEBUG("[Map::Init()] The map was successfully initialized.");
 }

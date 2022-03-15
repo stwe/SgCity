@@ -219,6 +219,36 @@ void sg::ogl::buffer::Vao::CreateSkyboxVbo()
     Unbind();
 }
 
+void sg::ogl::buffer::Vao::CreateGuiVbo()
+{
+    SG_ASSERT(!vbo, "[Vao::CreateGuiVbo()] Vbo already exists.")
+
+    Bind();
+
+    vbo = std::make_unique<Vbo>();
+    vbo->Bind();
+
+    // to render with GL_TRIANGLE_STRIP
+    const std::vector vertices =
+    {
+        -1.0f,  1.0f,
+        -1.0f, -1.0f,
+         1.0f,  1.0f,
+         1.0f, -1.0f
+    };
+
+    drawCount = 4;
+    constexpr int64_t floatsPerVertex{ 2 };
+
+    glBufferData(GL_ARRAY_BUFFER, drawCount * floatsPerVertex * static_cast<int64_t>(sizeof(float)), vertices.data(), GL_STATIC_DRAW);
+    Vbo::Unbind();
+
+    // enable location 0 (position)
+    vbo->AddFloatAttribute(0, 2, 2, 0);
+
+    Unbind();
+}
+
 void sg::ogl::buffer::Vao::CreateModelVertexDataVbo(const std::vector<float>& t_vertices, const int32_t t_drawCount)
 {
     SG_ASSERT(!vbo, "[Vao::CreateModelVertexDataVbo()] Vbo already exists.")

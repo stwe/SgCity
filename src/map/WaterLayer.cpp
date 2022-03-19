@@ -17,6 +17,7 @@
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 #include "WaterLayer.h"
+#include "Application.h"
 #include "Log.h"
 #include "ogl/OpenGL.h"
 #include "ogl/math/Transform.h"
@@ -41,11 +42,22 @@ sg::map::WaterLayer::~WaterLayer() noexcept
 }
 
 //-------------------------------------------------
-// Logic
+// Override
 //-------------------------------------------------
 
-void sg::map::WaterLayer::Render(const sg::ogl::Window& t_window, const sg::ogl::camera::Camera& t_camera) const
+void sg::map::WaterLayer::Update()
 {
+    m_moveFactor += 0.006f * static_cast<float>(Application::FRAME_TIME);
+    m_moveFactor = fmod(m_moveFactor, 1.0f);
+}
+
+void sg::map::WaterLayer::Render(
+    const ogl::Window& t_window,
+    const ogl::camera::Camera& t_camera,
+    const glm::vec4& t_plane
+) const
+{
+    ogl::OpenGL::EnableAlphaBlending();
     ogl::OpenGL::EnableFaceCulling();
 
     vao->Bind();
@@ -57,12 +69,42 @@ void sg::map::WaterLayer::Render(const sg::ogl::Window& t_window, const sg::ogl:
     shaderProgram.SetUniform("view", t_camera.GetViewMatrix());
     shaderProgram.SetUniform("projection", t_window.GetProjectionMatrix());
 
+    // todo: method in texture
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, m_waterFbos->reflectionColorTextureId);
+    shaderProgram.SetUniform("reflectionTexture", 0);
+
+    glActiveTexture(GL_TEXTURE1);
+    glBindTexture(GL_TEXTURE_2D, m_waterFbos->refractionColorTextureId);
+    shaderProgram.SetUniform("refractionTexture", 1);
+
+    const auto& dudvTexture{ ogl::resource::ResourceManager::LoadTexture("E:/Dev/SgCity/resources/water/waterDUDV.png") };
+    glActiveTexture(GL_TEXTURE2);
+    glBindTexture(GL_TEXTURE_2D, dudvTexture.id);
+    shaderProgram.SetUniform("dudvTexture", 2);
+
+    const auto& normalTexture{ ogl::resource::ResourceManager::LoadTexture("E:/Dev/SgCity/resources/water/normal.png") };
+    glActiveTexture(GL_TEXTURE3);
+    glBindTexture(GL_TEXTURE_2D, normalTexture.id);
+    shaderProgram.SetUniform("normalTexture", 3);
+
+    glActiveTexture(GL_TEXTURE4);
+    glBindTexture(GL_TEXTURE_2D, m_waterFbos->refractionDepthTextureId);
+    shaderProgram.SetUniform("depthTexture", 4);
+
+    shaderProgram.SetUniform("cameraPosition", t_camera.GetPosition());
+    shaderProgram.SetUniform("moveFactor", m_moveFactor);
+
+    shaderProgram.SetUniform("lightPosition", glm::vec3(0.5, 1.0, 0.0));
+    shaderProgram.SetUniform("lightColor", glm::vec3(0.8, 0.8, 0.8));
+
     vao->DrawPrimitives();
 
     ogl::resource::ShaderProgram::Unbind();
     vao->Unbind();
 
     ogl::OpenGL::DisableFaceCulling();
+    ogl::OpenGL::DisableBlending();
 }
 
 //-------------------------------------------------
@@ -73,8 +115,8 @@ void sg::map::WaterLayer::Init()
 {
     Log::SG_LOG_DEBUG("[WaterLayer::Init()] Initialize the WaterLayer.");
 
-    position = glm::vec3(0.0f, -0.8f, 0.0f);
-
+    m_waterFbos = std::make_unique<ogl::buffer::WaterFbos>(Application::SCREEN_WIDTH, Application::SCREEN_HEIGHT);
+    position = glm::vec3(0.0f, -WATER_HEIGHT, 0.0f);
     modelMatrix = ogl::math::Transform::CreateModelMatrix(
         position,
         glm::vec3(0.0f),

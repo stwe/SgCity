@@ -16,6 +16,7 @@ uniform mat4 model;
 uniform mat4 view;
 uniform mat4 projection;
 uniform mat3 normalMatrix;
+uniform vec4 plane;
 
 void main()
 {
@@ -26,7 +27,9 @@ void main()
     vec3 baseColor = vec3(0.0, 0.8, 0.0);
     float intensity = max(dot(n, lightDirection), 0.0);
 
-    gl_Position = projection * view * model * vec4(aPosition, 1.0);
+    vec4 worldPosition = model * vec4(aPosition, 1.0);
+    gl_Position = projection * view * worldPosition;
+    gl_ClipDistance[0] = dot(worldPosition, plane);
     vUv = aUv;
 
     vColor = max(intensity * baseColor, ambientIntensity * baseColor);

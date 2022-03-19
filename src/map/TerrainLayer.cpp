@@ -104,7 +104,11 @@ void sg::map::TerrainLayer::UpdateTile(const gui::Action t_action, Tile& t_tile)
     }
 }
 
-void sg::map::TerrainLayer::Render(const ogl::Window& t_window, const ogl::camera::Camera& t_camera) const
+void sg::map::TerrainLayer::Render(
+    const ogl::Window& t_window,
+    const ogl::camera::Camera& t_camera,
+    const glm::vec4& t_plane
+) const
 {
     ogl::OpenGL::EnableFaceCulling();
 
@@ -116,6 +120,7 @@ void sg::map::TerrainLayer::Render(const ogl::Window& t_window, const ogl::camer
     shaderProgram.SetUniform("model", modelMatrix);
     shaderProgram.SetUniform("view", t_camera.GetViewMatrix());
     shaderProgram.SetUniform("projection", t_window.GetProjectionMatrix());
+    shaderProgram.SetUniform("plane", t_plane);
 
     const auto mv{ t_camera.GetViewMatrix() * modelMatrix };
     const auto n{ glm::inverseTranspose(glm::mat3(mv)) };

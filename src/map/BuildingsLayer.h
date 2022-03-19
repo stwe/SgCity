@@ -65,7 +65,36 @@ namespace sg::map
         // Override
         //-------------------------------------------------
 
-        void Render(const ogl::Window& t_window, const ogl::camera::Camera& t_camera) const override;
+        /**
+         * Input handling.
+         */
+        void Input() override {}
+
+        /**
+         * Updates the Layer.
+         */
+        void Update() override {}
+
+        /**
+         * Updates a Layer tile.
+         *
+         * @param t_action Indicates what should be done with the given tile.
+         * @param t_tile The tile.
+         */
+        void UpdateTile(gui::Action t_action, Tile& t_tile) override {}
+
+        /**
+         * Render the Layer.
+         *
+         * @param t_window The Window object.
+         * @param t_camera The Camera object.
+         * @param t_plane The clipping plane.
+         */
+        void Render(
+            const ogl::Window& t_window,
+            const ogl::camera::Camera& t_camera,
+            const glm::vec4& t_plane = glm::vec4(0.0f)
+        ) const override;
 
     protected:
 
@@ -92,6 +121,9 @@ namespace sg::map
         // Override
         //-------------------------------------------------
 
+        /**
+         * Creates Layer tiles.
+         */
         void CreateTiles() override {}
     };
 }

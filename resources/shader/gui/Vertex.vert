@@ -1,20 +1,10 @@
 #version 330
 
-// gui/Vertex.vert
-
-// In
-
 layout (location = 0) in vec2 aPosition;
-
-// Out
 
 out vec2 vUv;
 
-// Uniforms
-
 uniform mat4 transformationMatrix;
-
-// Main
 
 void main()
 {

@@ -143,7 +143,7 @@ namespace sg
         void Init();
         void Input();
         void Update();
-        void Render() const;
+        void Render();
 
         //-------------------------------------------------
         // Game loop

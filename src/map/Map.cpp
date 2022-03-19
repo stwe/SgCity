@@ -64,6 +64,8 @@ void sg::map::Map::Update(const gui::Action t_action)
         m_terrainLayer->UpdateTile(t_action, *m_currentTile);
         currentTileIndex = INVALID_TILE_INDEX;
     }
+
+    m_waterLayer->Update();
 }
 
 void sg::map::Map::RenderForMousePicking(const ogl::Window& t_window, const ogl::camera::Camera& t_camera) const
@@ -76,21 +78,46 @@ void sg::map::Map::RenderForMousePicking(const ogl::Window& t_window, const ogl:
 
 void sg::map::Map::RenderForWater(
     const ogl::Window& t_window,
-    const ogl::camera::Camera& t_camera,
+    ogl::camera::Camera& t_camera,
     const ogl::resource::Skybox& t_skybox
 ) const
 {
-    m_waterFbos->BindReflectionFboAsRenderTarget();
+    ogl::OpenGL::EnableClipping();
+
     ogl::OpenGL::SetClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+
+    // reflection - everything above the water
+    m_waterLayer->GetWaterFbos().BindReflectionFboAsRenderTarget();
     ogl::OpenGL::Clear();
-    m_terrainLayer->Render(t_window, t_camera);
+
+    const auto distance{ 2.0f * (t_camera.GetPosition().y - WaterLayer::WATER_HEIGHT) };
+    t_camera.GetPosition().y -= distance;
+    t_camera.InvertPitch();
+    t_camera.Update();
+
+    // todo
+    m_terrainLayer->Render(t_window, t_camera, glm::vec4(0.0f, 1.0f, 0.0f, WaterLayer::WATER_HEIGHT + 1.0f));
     t_skybox.Render(t_window, t_camera);
-    m_waterFbos->UnbindRenderTarget();
+
+    t_camera.GetPosition().y += distance;
+    t_camera.InvertPitch();
+    t_camera.Update();
+
+    m_waterLayer->GetWaterFbos().UnbindRenderTarget();
+
+    // refraction - everything below the water
+    m_waterLayer->GetWaterFbos().BindRefractionFboAsRenderTarget();
+    ogl::OpenGL::Clear();
+    m_terrainLayer->Render(t_window, t_camera, glm::vec4(0.0f, -1.0f, 0.0f, -WaterLayer::WATER_HEIGHT));
+    t_skybox.Render(t_window, t_camera);
+    m_waterLayer->GetWaterFbos().UnbindRenderTarget();
+
+    ogl::OpenGL::DisableClipping();
 }
 
 void sg::map::Map::Render(const ogl::Window& t_window, const ogl::camera::Camera& t_camera) const
 {
-    m_terrainLayer->Render(t_window, t_camera);
+    m_terrainLayer->Render(t_window, t_camera, glm::vec4(0.0f, -1.0f, 0.0f, 100000.0f));
     m_waterLayer->Render(t_window, t_camera);
     m_roadsLayer->Render(t_window, t_camera);
     m_buildingsLayer->Render(t_window, t_camera);
@@ -99,12 +126,24 @@ void sg::map::Map::Render(const ogl::Window& t_window, const ogl::camera::Camera
 
 void sg::map::Map::RenderImGui() const
 {
-    ImGui::Begin("Reflection texture");
+    ImGui::Begin("Water");
 
-    if (m_waterFbos->reflectionColorTextureId)
+    ImGui::Text("reflection");
+    if (m_waterLayer->GetWaterFbos().reflectionColorTextureId)
     {
         ImGui::Image(
-            reinterpret_cast<ImTextureID>(static_cast<uintptr_t>(m_waterFbos->reflectionColorTextureId)),
+            reinterpret_cast<ImTextureID>(static_cast<uintptr_t>(m_waterLayer->GetWaterFbos().reflectionColorTextureId)),
+            ImVec2(128.0f, 128.0f),
+            ImVec2(0.0f, 0.0f),
+            ImVec2(1.0f, -1.0f)
+        );
+    }
+
+    ImGui::Text("refraction");
+    if (m_waterLayer->GetWaterFbos().refractionColorTextureId)
+    {
+        ImGui::Image(
+            reinterpret_cast<ImTextureID>(static_cast<uintptr_t>(m_waterLayer->GetWaterFbos().refractionColorTextureId)),
             ImVec2(128.0f, 128.0f),
             ImVec2(0.0f, 0.0f),
             ImVec2(1.0f, -1.0f)
@@ -132,9 +171,6 @@ void sg::map::Map::Init()
     m_roadsLayer = std::make_unique<RoadsLayer>(m_terrainLayer->tiles);
     m_buildingsLayer = std::make_unique<BuildingsLayer>(m_terrainLayer->tiles);
     m_plantsLayer = std::make_unique<PlantsLayer>(m_terrainLayer->tiles);
-
-    // todo: width, height from config or static vars or window class
-    m_waterFbos = std::make_unique<ogl::buffer::WaterFbos>(1024, 768);
 
     Log::SG_LOG_DEBUG("[Map::Init()] The map was successfully initialized.");
 }

@@ -32,11 +32,6 @@ namespace sg::gui
     enum class Action;
 }
 
-namespace sg::ogl::buffer
-{
-    class WaterFbos;
-}
-
 //-------------------------------------------------
 // Map
 //-------------------------------------------------
@@ -126,7 +121,7 @@ namespace sg::map
         void RenderForMousePicking(const ogl::Window& t_window, const ogl::camera::Camera& t_camera) const;
         void RenderForWater(
             const ogl::Window& t_window,
-            const ogl::camera::Camera& t_camera,
+            ogl::camera::Camera& t_camera,
             const ogl::resource::Skybox& t_skybox
             ) const;
         void Render(const ogl::Window& t_window, const ogl::camera::Camera& t_camera) const;
@@ -173,11 +168,6 @@ namespace sg::map
          * Current Tile object.
          */
         std::shared_ptr<Tile> m_currentTile;
-
-        /**
-         * The Framebuffer objects for the water.
-         */
-        std::unique_ptr<ogl::buffer::WaterFbos> m_waterFbos;
 
         //-------------------------------------------------
         // Init

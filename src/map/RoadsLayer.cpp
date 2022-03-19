@@ -42,33 +42,31 @@ sg::map::RoadsLayer::~RoadsLayer() noexcept
 }
 
 //-------------------------------------------------
-// Logic
+// Override
 //-------------------------------------------------
 
-void sg::map::RoadsLayer::Update(gui::Action t_action, const int t_tileIndex)
+void sg::map::RoadsLayer::UpdateTile(gui::Action t_action, Tile& t_tile)
 {
-    auto& terrainTile{ *tiles[t_tileIndex] };
-
     // return if TileType is already TRAFFIC
-    if (terrainTile.type == Tile::TileType::TRAFFIC)
+    if (t_tile.type == Tile::TileType::TRAFFIC)
     {
         return;
     }
 
-    Log::SG_LOG_DEBUG("[RoadsLayer::Update()] Built a road at {}.", t_tileIndex);
+    Log::SG_LOG_DEBUG("[RoadsLayer::Update()] Built a road at {}.", t_tile.mapIndex);
 
-    if (!CheckTerrainForRoad(terrainTile))
+    if (!CheckTerrainForRoad(t_tile))
     {
-        Log::SG_LOG_DEBUG("[RoadsLayer::Update()] No road can be built at {}.", t_tileIndex);
+        //Log::SG_LOG_DEBUG("[RoadsLayer::Update()] No road can be built at {}.", t_tileIndex);
         return;
     }
 
     // create road tile
-    auto i{ static_cast<int>(m_roadTiles.size()) };
-    m_roadTiles.push_back(std::move(CreateRoadTile(terrainTile, i)));
+    const auto i{ static_cast<int>(m_roadTiles.size()) };
+    m_roadTiles.push_back(std::move(CreateRoadTile(t_tile, i)));
 
     // set TRAFFIC TileType
-    terrainTile.type = Tile::TileType::TRAFFIC;
+    t_tile.type = Tile::TileType::TRAFFIC;
 
     // create a new Vao if necessary
     if (!vao)
@@ -92,11 +90,11 @@ void sg::map::RoadsLayer::Update(gui::Action t_action, const int t_tileIndex)
     }
 }
 
-//-------------------------------------------------
-// Override
-//-------------------------------------------------
-
-void sg::map::RoadsLayer::Render(const ogl::Window& t_window, const ogl::camera::Camera& t_camera) const
+void sg::map::RoadsLayer::Render(
+    const ogl::Window& t_window,
+    const ogl::camera::Camera& t_camera,
+    const glm::vec4& t_plane
+) const
 {
     if (!vao)
     {
@@ -107,7 +105,7 @@ void sg::map::RoadsLayer::Render(const ogl::Window& t_window, const ogl::camera:
 
     vao->Bind();
 
-    auto& shaderProgram{ ogl::resource::ResourceManager::LoadShaderProgram("E:/Dev/SgCity/resources/shader/map") };
+    const auto& shaderProgram{ ogl::resource::ResourceManager::LoadShaderProgram("E:/Dev/SgCity/resources/shader/map") };
     shaderProgram.Bind();
 
     shaderProgram.SetUniform("model", modelMatrix);

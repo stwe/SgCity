@@ -43,7 +43,11 @@ sg::map::PlantsLayer::~PlantsLayer() noexcept
 // Override
 //-------------------------------------------------
 
-void sg::map::PlantsLayer::Render(const ogl::Window& t_window, const ogl::camera::Camera& t_camera) const
+void sg::map::PlantsLayer::Render(
+    const ogl::Window& t_window,
+    const ogl::camera::Camera& t_camera,
+    const glm::vec4& t_plane
+) const
 {
     for (const auto& tile : tiles)
     {

@@ -104,8 +104,9 @@ void sg::Application::Update()
     m_map->Update(m_mapEditGui->action);
 }
 
-void sg::Application::Render() const
+void sg::Application::Render()
 {
+    // ---------------------------
     // (1) render for mousepicking
     // ---------------------------
     // Bind fbo
@@ -115,6 +116,7 @@ void sg::Application::Render() const
     // Unbind fbo
     m_map->RenderForMousePicking(m_window, m_camera);
 
+    // --------------------
     // (2) render for water
     // --------------------
     // Bind fbo
@@ -124,10 +126,10 @@ void sg::Application::Render() const
     // Unbind fbo
     m_map->RenderForWater(m_window, m_camera, *m_skybox);
 
+    // -----------------------
     // (3) render scene && gui
     // -----------------------
-
-    StartFrame(); // clear
+    StartFrame();
 
     m_map->Render(m_window, m_camera);
     m_skybox->Render(m_window, m_camera);
@@ -137,7 +139,7 @@ void sg::Application::Render() const
     m_map->RenderImGui();
     ogl::Window::ImGuiEnd();
 
-    EndFrame(); // window update
+    EndFrame();
 }
 
 //-------------------------------------------------

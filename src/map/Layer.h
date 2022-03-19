@@ -123,6 +123,11 @@ namespace sg::map
         virtual void Input() {}
 
         /**
+         * Updates the Layer.
+         */
+        virtual void Update() {}
+
+        /**
          * Updates a Layer tile.
          *
          * @param t_action Indicates what should be done with the given tile.
@@ -135,8 +140,13 @@ namespace sg::map
          *
          * @param t_window The Window object.
          * @param t_camera The Camera object.
+         * @param t_plane The clipping plane.
          */
-        virtual void Render(const ogl::Window& t_window, const ogl::camera::Camera& t_camera) const = 0;
+        virtual void Render(
+            const ogl::Window& t_window,
+            const ogl::camera::Camera& t_camera,
+            const glm::vec4& t_plane = glm::vec4(0.0f)
+        ) const = 0;
 
     protected:
 

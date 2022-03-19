@@ -19,6 +19,7 @@
 #pragma once
 
 #include "Layer.h"
+#include "ogl/buffer/WaterFbos.h"
 
 //-------------------------------------------------
 // WaterLayer
@@ -27,11 +28,20 @@
 namespace sg::map
 {
     /**
-     * Creates and renders a simple blue quad.
+     * Creates and renders the water.
      */
     class WaterLayer : public Layer
     {
     public:
+        //-------------------------------------------------
+        // Constants
+        //-------------------------------------------------
+
+        /**
+         * The sea level.
+         */
+        static constexpr auto WATER_HEIGHT{ 0.8f };
+
         //-------------------------------------------------
         // Ctors. / Dtor.
         //-------------------------------------------------
@@ -47,14 +57,56 @@ namespace sg::map
         ~WaterLayer() noexcept override;
 
         //-------------------------------------------------
+        // Getter
+        //-------------------------------------------------
+
+        [[nodiscard]] const ogl::buffer::WaterFbos& GetWaterFbos() const { return *m_waterFbos; }
+
+        //-------------------------------------------------
         // Override
         //-------------------------------------------------
 
-        void Render(const ogl::Window& t_window, const ogl::camera::Camera& t_camera) const override;
+        /**
+         * Input handling.
+         */
+        void Input() override {}
+
+        /**
+         * Updates the Layer.
+         */
+        void Update() override;
+
+        /**
+         * Updates a Layer tile.
+         *
+         * @param t_action Indicates what should be done with the given tile.
+         * @param t_tile The tile.
+         */
+        void UpdateTile(gui::Action t_action, Tile& t_tile) override {}
+
+        /**
+         * Render the Layer.
+         *
+         * @param t_window The Window object.
+         * @param t_camera The Camera object.
+         * @param t_plane The clipping plane.
+         */
+        void Render(
+            const ogl::Window& t_window,
+            const ogl::camera::Camera& t_camera,
+            const glm::vec4& t_plane = glm::vec4(0.0f)
+        ) const override;
 
     protected:
 
     private:
+        //-------------------------------------------------
+        // Member
+        //-------------------------------------------------
+
+        std::unique_ptr<ogl::buffer::WaterFbos> m_waterFbos;
+        float m_moveFactor{ 0.0f };
+
         //-------------------------------------------------
         // Init
         //-------------------------------------------------
@@ -65,6 +117,9 @@ namespace sg::map
         // Override
         //-------------------------------------------------
 
+        /**
+         * Creates Layer tiles.
+         */
         void CreateTiles() override {}
     };
 }

@@ -141,12 +141,29 @@ namespace sg::ogl
             glEnable(GL_DEPTH_TEST);
         }
 
-        /** Disable depth testing.
-         *
+        /**
+         * Disable depth testing.
          */
         static void DisableDepthTesting()
         {
             glDisable(GL_DEPTH_TEST);
+        }
+
+        /**
+         * Enable clipping.
+         */
+        static void EnableClipping()
+        {
+            glEnable(GL_CLIP_DISTANCE0);
+        }
+
+        /**
+         * Disable clipping.
+         */
+        static void DisableClipping()
+        {
+
+            glDisable(GL_CLIP_DISTANCE0);
         }
 
     protected:

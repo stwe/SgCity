@@ -73,9 +73,6 @@ void sg::map::Map::RenderForMousePicking(const ogl::Window& t_window, const ogl:
     m_terrainLayer->RenderForMousePicking(t_window, t_camera);
 }
 
-// todo: StartFrame
-// todo: render skybox
-
 void sg::map::Map::RenderForWater(
     const ogl::Window& t_window,
     ogl::camera::Camera& t_camera,
@@ -83,7 +80,6 @@ void sg::map::Map::RenderForWater(
 ) const
 {
     ogl::OpenGL::EnableClipping();
-
     ogl::OpenGL::SetClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 
     // reflection - everything above the water
@@ -95,9 +91,11 @@ void sg::map::Map::RenderForWater(
     t_camera.InvertPitch();
     t_camera.Update();
 
-    // todo
-    m_terrainLayer->Render(t_window, t_camera, glm::vec4(0.0f, 1.0f, 0.0f, WaterLayer::WATER_HEIGHT + 1.0f));
-    t_skybox.Render(t_window, t_camera);
+    m_terrainLayer->Render(t_window, t_camera, glm::vec4(0.0f, 1.0f, 0.0f, WaterLayer::WATER_HEIGHT));
+    m_roadsLayer->Render(t_window, t_camera, glm::vec4(0.0f, 1.0f, 0.0f, WaterLayer::WATER_HEIGHT));
+    m_buildingsLayer->Render(t_window, t_camera, glm::vec4(0.0f, 1.0f, 0.0f, WaterLayer::WATER_HEIGHT));
+    m_plantsLayer->Render(t_window, t_camera, glm::vec4(0.0f, 1.0f, 0.0f, WaterLayer::WATER_HEIGHT));
+    //t_skybox.Render(t_window, t_camera);
 
     t_camera.GetPosition().y += distance;
     t_camera.InvertPitch();
@@ -109,7 +107,6 @@ void sg::map::Map::RenderForWater(
     m_waterLayer->GetWaterFbos().BindRefractionFboAsRenderTarget();
     ogl::OpenGL::Clear();
     m_terrainLayer->Render(t_window, t_camera, glm::vec4(0.0f, -1.0f, 0.0f, -WaterLayer::WATER_HEIGHT));
-    t_skybox.Render(t_window, t_camera);
     m_waterLayer->GetWaterFbos().UnbindRenderTarget();
 
     ogl::OpenGL::DisableClipping();
@@ -117,11 +114,11 @@ void sg::map::Map::RenderForWater(
 
 void sg::map::Map::Render(const ogl::Window& t_window, const ogl::camera::Camera& t_camera) const
 {
-    m_terrainLayer->Render(t_window, t_camera, glm::vec4(0.0f, -1.0f, 0.0f, 100000.0f));
-    m_waterLayer->Render(t_window, t_camera);
-    m_roadsLayer->Render(t_window, t_camera);
-    m_buildingsLayer->Render(t_window, t_camera);
-    m_plantsLayer->Render(t_window, t_camera);
+    m_terrainLayer->Render(t_window, t_camera, glm::vec4(0.0f, 1.0f, 0.0f, 100000.0f));
+    m_waterLayer->Render(t_window, t_camera, glm::vec4(0.0f, 1.0f, 0.0f, 100000.0f));
+    m_roadsLayer->Render(t_window, t_camera, glm::vec4(0.0f, 1.0f, 0.0f, 100000.0f));
+    m_buildingsLayer->Render(t_window, t_camera, glm::vec4(0.0f, 1.0f, 0.0f, 100000.0f));
+    m_plantsLayer->Render(t_window, t_camera, glm::vec4(0.0f, 1.0f, 0.0f, 100000.0f));
 }
 
 void sg::map::Map::RenderImGui() const

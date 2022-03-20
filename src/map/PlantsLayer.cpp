@@ -56,9 +56,9 @@ void sg::map::PlantsLayer::Render(
             m_model->Render(
                 t_window,
                 t_camera,
-                glm::vec3(tile->mapX + 0.5f, 1.0f, tile->mapZ + 0.5f),
+                glm::vec3(tile->mapX + 0.5f, 2.0f, tile->mapZ + 0.5f),
                 glm::vec3(0.0f, 0.0f, 180.0f),
-                glm::vec3(1.0f)
+                glm::vec3(2.0f)
             );
         }
     }

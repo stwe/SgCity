@@ -133,12 +133,12 @@ void sg::ogl::buffer::Vao::CreateStaticWaterVbo()
     // x and z vertex positions, y is set to 0.0 in the vertex shader
     const std::vector vertices =
     {
-         0.0f, 0.0f, // tl
-         0.0f, 1.0f, // bl
-         1.0f, 1.0f, // br
-         0.0f, 0.0f, // tl
-         1.0f, 1.0f, // br
-         1.0f, 0.0f  // tr
+        -1.0f, -1.0f,
+        -1.0f,  1.0f,
+         1.0f, -1.0f,
+         1.0f, -1.0f,
+        -1.0f,  1.0f,
+         1.0f,  1.0f
     };
 
     drawCount = 6;

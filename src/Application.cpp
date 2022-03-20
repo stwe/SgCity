@@ -18,6 +18,7 @@
 
 #include <sstream>
 #include <imgui.h>
+#include <glm/gtc/type_ptr.hpp>
 #include "Application.h"
 #include "Log.h"
 #include "ogl/OpenGL.h"
@@ -135,11 +136,22 @@ void sg::Application::Render()
     m_skybox->Render(m_window, m_camera);
 
     ogl::Window::ImGuiBegin();
+
+    RenderImGui();
     m_mapEditGui->RenderImGui(*m_map);
     m_map->RenderImGui();
     ogl::Window::ImGuiEnd();
 
     EndFrame();
+}
+
+void sg::Application::RenderImGui()
+{
+    ImGui::Begin("Application");
+
+    ImGui::SliderFloat3("Camera", value_ptr(m_camera.GetPosition()), -100.0f, 100.0f);
+
+    ImGui::End();
 }
 
 //-------------------------------------------------

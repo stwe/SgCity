@@ -116,11 +116,11 @@ void sg::map::WaterLayer::Init()
     Log::SG_LOG_DEBUG("[WaterLayer::Init()] Initialize the WaterLayer.");
 
     m_waterFbos = std::make_unique<ogl::buffer::WaterFbos>(Application::SCREEN_WIDTH, Application::SCREEN_HEIGHT);
-    position = glm::vec3(0.0f, -WATER_HEIGHT, 0.0f);
+    position = glm::vec3(tileCount / 2, -WATER_HEIGHT, tileCount / 2);
     modelMatrix = ogl::math::Transform::CreateModelMatrix(
         position,
         glm::vec3(0.0f),
-        glm::vec3(static_cast<float>(tileCount))
+        glm::vec3(static_cast<float>(tileCount) * 0.5f, 1.0f, static_cast<float>(tileCount) * 0.5f)
     );
 
     vao = std::make_unique<ogl::buffer::Vao>();

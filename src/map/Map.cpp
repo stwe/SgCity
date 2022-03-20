@@ -115,15 +115,16 @@ void sg::map::Map::RenderForWater(
 void sg::map::Map::Render(const ogl::Window& t_window, const ogl::camera::Camera& t_camera) const
 {
     m_terrainLayer->Render(t_window, t_camera, glm::vec4(0.0f, 1.0f, 0.0f, 100000.0f));
-    m_waterLayer->Render(t_window, t_camera, glm::vec4(0.0f, 1.0f, 0.0f, 100000.0f));
     m_roadsLayer->Render(t_window, t_camera, glm::vec4(0.0f, 1.0f, 0.0f, 100000.0f));
     m_buildingsLayer->Render(t_window, t_camera, glm::vec4(0.0f, 1.0f, 0.0f, 100000.0f));
     m_plantsLayer->Render(t_window, t_camera, glm::vec4(0.0f, 1.0f, 0.0f, 100000.0f));
+
+    m_waterLayer->Render(t_window, t_camera, glm::vec4(0.0f, 1.0f, 0.0f, 100000.0f));
 }
 
 void sg::map::Map::RenderImGui() const
 {
-    ImGui::Begin("Water");
+    ImGui::Begin("Map");
 
     ImGui::Text("reflection");
     if (m_waterLayer->GetWaterFbos().reflectionColorTextureId)

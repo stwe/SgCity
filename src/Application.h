@@ -114,7 +114,7 @@ namespace sg
         /**
          * A camera to move around the map.
          */
-        ogl::camera::Camera m_camera{ glm::vec3(5.0f, 1.3f, 7.0f), -90.0f, -13.0f };
+        ogl::camera::Camera m_camera{ glm::vec3(0.0f, 10.0f, 14.0f), 45.0f, -26.0f };
 
         /**
          * The Map object.
@@ -144,6 +144,7 @@ namespace sg
         void Input();
         void Update();
         void Render();
+        void RenderImGui();
 
         //-------------------------------------------------
         // Game loop

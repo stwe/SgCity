@@ -140,7 +140,7 @@ void sg::map::Tile::VerticesToGpu(const ogl::buffer::Vao& t_vao) const
 
 void sg::map::Tile::RenderImGui() const
 {
-    ImGui::Begin("Tile info");
+    ImGui::Begin("Tile");
 
     ImGui::Separator();
 

@@ -27,7 +27,7 @@
 
 void sg::gui::MapEditGui::RenderImGui(map::Map& t_map)
 {
-    ImGui::Begin("Game Menu");
+    ImGui::Begin("Map edit");
     ImGui::Text("Press the Escape key to exit.");
     ImGui::Separator();
     ImGui::Text("Mouse x: %d", ogl::input::MouseInput::GetInstance().GetX());

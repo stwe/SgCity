@@ -40,7 +40,7 @@ namespace sg::map
         /**
          * The sea level.
          */
-        static constexpr auto WATER_HEIGHT{ 0.25f };
+        static constexpr auto WATER_HEIGHT{ 0.1f };
 
         //-------------------------------------------------
         // Ctors. / Dtor.

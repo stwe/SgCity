@@ -47,6 +47,15 @@ namespace sg::map
     {
     public:
         //-------------------------------------------------
+        // Member
+        //-------------------------------------------------
+
+        /**
+         * An object holding the Fbo for mouse picking.
+         */
+        std::unique_ptr<ogl::input::PickingTexture> pickingTexture;
+
+        //-------------------------------------------------
         // Ctors. / Dtor.
         //-------------------------------------------------
 
@@ -65,12 +74,6 @@ namespace sg::map
         TerrainLayer& operator=(TerrainLayer&& t_other) noexcept = delete;
 
         ~TerrainLayer() noexcept override;
-
-        //-------------------------------------------------
-        // Getter
-        //-------------------------------------------------
-
-        [[nodiscard]] const auto& GetPickingTexture() const { return *m_pickingTexture; }
 
         //-------------------------------------------------
         // Logic
@@ -116,15 +119,6 @@ namespace sg::map
     protected:
 
     private:
-        //-------------------------------------------------
-        // Member
-        //-------------------------------------------------
-
-        /**
-         * An object holding the Fbo for mouse picking.
-         */
-        std::unique_ptr<ogl::input::PickingTexture> m_pickingTexture;
-
         //-------------------------------------------------
         // Init
         //-------------------------------------------------

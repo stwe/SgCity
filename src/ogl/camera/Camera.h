@@ -93,7 +93,12 @@ namespace sg::ogl::camera
         // Update
         //-------------------------------------------------
 
-        void InvertPitch() { m_pitch = -m_pitch; }
+        void InvertPitch()
+        {
+            m_pitch = -m_pitch;
+            Update();
+        }
+
         void Update();
 
         //-------------------------------------------------

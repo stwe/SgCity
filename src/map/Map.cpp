@@ -89,7 +89,6 @@ void sg::map::Map::RenderForWater(
     const auto distance{ 2.0f * (t_camera.GetPosition().y - WaterLayer::WATER_HEIGHT) };
     t_camera.GetPosition().y -= distance;
     t_camera.InvertPitch();
-    t_camera.Update();
 
     m_terrainLayer->Render(t_window, t_camera, glm::vec4(0.0f, 1.0f, 0.0f, WaterLayer::WATER_HEIGHT));
     m_roadsLayer->Render(t_window, t_camera, glm::vec4(0.0f, 1.0f, 0.0f, WaterLayer::WATER_HEIGHT));
@@ -99,7 +98,6 @@ void sg::map::Map::RenderForWater(
 
     t_camera.GetPosition().y += distance;
     t_camera.InvertPitch();
-    t_camera.Update();
 
     m_waterLayer->GetWaterFbos().UnbindRenderTarget();
 
@@ -179,7 +177,12 @@ void sg::map::Map::Init()
 
 void sg::map::Map::UpdateCurrentTileIndex()
 {
-    currentTileIndex = m_terrainLayer->GetPickingTexture().ReadMapIndex(
+    if (!m_terrainLayer->pickingTexture)
+    {
+        return;
+    }
+
+    currentTileIndex = m_terrainLayer->pickingTexture->ReadMapIndex(
         ogl::input::MouseInput::GetInstance().GetX(),
         ogl::input::MouseInput::GetInstance().GetY()
     );

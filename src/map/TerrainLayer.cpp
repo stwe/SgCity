@@ -49,12 +49,12 @@ sg::map::TerrainLayer::~TerrainLayer() noexcept
 
 void sg::map::TerrainLayer::RenderForMousePicking(const ogl::Window& t_window, const ogl::camera::Camera& t_camera)
 {
-    if (!m_pickingTexture)
+    if (!pickingTexture)
     {
-        m_pickingTexture = std::make_unique<ogl::input::PickingTexture>(t_window.GetWidth(), t_window.GetHeight());
+        pickingTexture = std::make_unique<ogl::input::PickingTexture>(t_window.GetWidth(), t_window.GetHeight());
     }
 
-    m_pickingTexture->EnableWriting();
+    pickingTexture->EnableWriting();
 
     ogl::OpenGL::SetClearColor(1.0f, 1.0f, 1.0f, 1.0f);
     ogl::OpenGL::Clear();
@@ -73,7 +73,7 @@ void sg::map::TerrainLayer::RenderForMousePicking(const ogl::Window& t_window, c
     ogl::resource::ShaderProgram::Unbind();
     vao->Unbind();
 
-    m_pickingTexture->DisableWriting();
+    pickingTexture->DisableWriting();
 }
 
 //-------------------------------------------------

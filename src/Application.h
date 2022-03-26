@@ -21,6 +21,8 @@
 #include <memory>
 #include "ogl/Window.h"
 #include "ogl/camera/Camera.h"
+#include "event/Event.h"
+#include "eventpp/eventqueue.h"
 
 //-------------------------------------------------
 // Forward declarations
@@ -135,6 +137,11 @@ namespace sg
          * So that events are only executed once.
          */
         bool m_handleMouseEvent{ true };
+
+        /**
+         * The event queue.
+         */
+        eventpp::EventQueue<event::SgEventType, void(std::shared_ptr<event::SgEvent>)> m_eventQueue;
 
         //-------------------------------------------------
         // Logic

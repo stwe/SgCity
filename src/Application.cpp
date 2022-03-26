@@ -21,6 +21,7 @@
 #include <glm/gtc/type_ptr.hpp>
 #include "Application.h"
 #include "Log.h"
+#include "eventpp/utilities/argumentadapter.h"
 #include "ogl/OpenGL.h"
 #include "ogl/input/MouseInput.h"
 #include "ogl/resource/Skybox.h"
@@ -77,6 +78,19 @@ void sg::Application::Init()
 
     // create skybox
     m_skybox = std::make_unique<ogl::resource::Skybox>();
+
+
+
+    /////////////////////
+    // todo: tmp code
+    m_eventQueue.appendListener(
+        event::SgEventType::KEY_PRESSED,
+        eventpp::argumentAdapter<void(std::shared_ptr<event::KeyPressedEvent>)>([](std::shared_ptr<event::KeyPressedEvent> t_event) {
+            Log::SG_LOG_DEBUG("Key {} Pressed Event", t_event->key);
+            })
+    );
+
+
 
     Log::SG_LOG_DEBUG("[Application::Init()] The application was successfully initialized.");
 }
@@ -177,6 +191,14 @@ void sg::Application::GameLoop()
 
         Input();
 
+
+
+        /////////////////////
+        // todo: tmp code
+        const auto result{ m_eventQueue.process() };
+
+
+
         while (dt >= 1.0)
         {
             Update();
@@ -251,6 +273,18 @@ void sg::Application::InputKey()
 {
     if (m_window.IsKeyPressed(GLFW_KEY_W))
     {
+
+
+
+        /////////////////////
+        // todo: tmp code
+        m_eventQueue.enqueue(
+            event::SgEventType::KEY_PRESSED,
+            std::make_unique<event::KeyPressedEvent>(99)
+        );
+
+
+
         m_camera.ProcessKeyboard(ogl::camera::Camera::Direction::FORWARD);
     }
 

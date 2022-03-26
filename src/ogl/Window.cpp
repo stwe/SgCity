@@ -229,7 +229,7 @@ void sg::ogl::Window::InitWindow()
     glfwShowWindow(GetWindowHandle());
 
     // enable depth && stencil buffer
-    ogl::OpenGL::EnableDepthAndStencilTesting();
+    OpenGL::EnableDepthAndStencilTesting();
 }
 
 void sg::ogl::Window::InitProjectionMatrix()

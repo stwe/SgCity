@@ -127,15 +127,15 @@ namespace sg::ogl
         [[nodiscard]] bool WindowShouldClose() const;
 
         //-------------------------------------------------
-        // Input
+        // Input Polling
         //-------------------------------------------------
 
         /**
-         * Poll the key status.
+         * Poll the key pressed status.
          *
          * @param t_keyCode A constant such as GLFW_KEY_W or GLFW_KEY_SPACE
          *
-         * @return true if GLFW_PRESS
+         * @return true if GLFW_PRESS or GLFW_REPEAT
          */
         [[nodiscard]] bool IsKeyPressed(int t_keyCode) const;
 
@@ -143,6 +143,23 @@ namespace sg::ogl
          * Close if Esc key was pressed.
          */
         void CloseIfEscKeyPressed() const;
+
+        /**
+         * Poll the mouse button pressed status.
+         *
+         * @return true if GLFW_PRESS
+         */
+        [[nodiscard]] bool IsMouseButtonPressed(int t_button) const;
+
+        /**
+         * Returns the mouse position.
+         *
+         * @return glm::vec2
+         */
+        [[nodiscard]] glm::vec2 GetMousePosition() const;
+
+        [[nodiscard]] float GetMouseX() const { return GetMousePosition().x; }
+        [[nodiscard]] float GetMouseY() const { return GetMousePosition().y; }
 
         //-------------------------------------------------
         // ImGui

@@ -128,7 +128,8 @@ bool sg::ogl::Window::WindowShouldClose() const
 
 bool sg::ogl::Window::IsKeyPressed(const int t_keyCode) const
 {
-    return glfwGetKey(m_windowHandle, t_keyCode) == GLFW_PRESS;
+    return glfwGetKey(m_windowHandle, t_keyCode) == GLFW_PRESS ||
+        glfwGetKey(m_windowHandle, t_keyCode) == GLFW_REPEAT;
 }
 
 void sg::ogl::Window::CloseIfEscKeyPressed() const
@@ -137,6 +138,18 @@ void sg::ogl::Window::CloseIfEscKeyPressed() const
     {
         glfwSetWindowShouldClose(m_windowHandle, true);
     }
+}
+
+bool sg::ogl::Window::IsMouseButtonPressed(const int t_button) const
+{
+    return glfwGetMouseButton(m_windowHandle, t_button) == GLFW_PRESS;
+}
+
+glm::vec2 sg::ogl::Window::GetMousePosition() const
+{
+    double x, y;
+    glfwGetCursorPos(m_windowHandle, &x, &y);
+    return { static_cast<float>(x), static_cast<float>(y) };
 }
 
 //-------------------------------------------------

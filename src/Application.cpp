@@ -21,9 +21,7 @@
 #include <glm/gtc/type_ptr.hpp>
 #include "Application.h"
 #include "Log.h"
-#include "eventpp/utilities/argumentadapter.h"
 #include "ogl/OpenGL.h"
-#include "ogl/input/MouseInput.h"
 #include "ogl/resource/Skybox.h"
 #include "map/Map.h"
 #include "gui/MapEditGui.h"
@@ -64,14 +62,11 @@ void sg::Application::Init()
 {
     Log::SG_LOG_DEBUG("[Application::Init()] Initializing application.");
 
-    // init window
-    m_window.Init();
-
-    // init mouse - register callbacks
-    ogl::input::MouseInput::Init(m_window);
+    // create && init window
+    m_window = std::make_shared<ogl::Window>(SCREEN_WIDTH, SCREEN_HEIGHT, "SgCity Sandbox");
 
     // create && init map tiles
-    m_map = std::make_unique<map::Map>(TILE_COUNT);
+    m_map = std::make_unique<map::Map>(m_window, TILE_COUNT);
 
     // create gui
     m_mapEditGui = std::make_unique<gui::MapEditGui>();
@@ -79,35 +74,19 @@ void sg::Application::Init()
     // create skybox
     m_skybox = std::make_unique<ogl::resource::Skybox>();
 
-
-
-    /////////////////////
-    // todo: tmp code
-    m_eventQueue.appendListener(
-        event::SgEventType::KEY_PRESSED,
-        eventpp::argumentAdapter<void(std::shared_ptr<event::KeyPressedEvent>)>([](std::shared_ptr<event::KeyPressedEvent> t_event) {
-            Log::SG_LOG_DEBUG("Key {} Pressed Event", t_event->key);
-            })
-    );
-
-
-
     Log::SG_LOG_DEBUG("[Application::Init()] The application was successfully initialized.");
 }
 
 void sg::Application::Input()
 {
     // Esc key closes the app
-    m_window.CloseIfEscKeyPressed();
+    m_window->Input();
 
     // do nothing when the mouse is over the ImGui window
     if (ImGui::GetIO().WantCaptureMouse)
     {
         return;
     }
-
-    // updated mouse stuff
-    ogl::input::MouseInput::GetInstance().Input();
 
     InputRightMouseButton();
     InputLeftMouseButton();
@@ -129,7 +108,7 @@ void sg::Application::Render()
     // Clear()
     // Draw ...
     // Unbind fbo
-    m_map->RenderForMousePicking(m_window, m_camera);
+    m_map->RenderForMousePicking(m_camera);
 
     // --------------------
     // (2) render for water
@@ -139,15 +118,15 @@ void sg::Application::Render()
     // Clear()
     // Draw ...
     // Unbind fbo
-    m_map->RenderForWater(m_window, m_camera, *m_skybox);
+    m_map->RenderForWater(m_camera, *m_skybox);
 
     // -----------------------
     // (3) render scene && gui
     // -----------------------
     StartFrame();
 
-    m_map->Render(m_window, m_camera);
-    m_skybox->Render(m_window, m_camera);
+    m_map->Render(m_camera);
+    m_skybox->Render(*m_window, m_camera);
 
     ogl::Window::ImGuiBegin();
 
@@ -183,21 +162,13 @@ void sg::Application::GameLoop()
     auto fps{ 0 };
     auto updates{ 0 };
 
-    while(!m_window.WindowShouldClose())
+    while(!m_window->WindowShouldClose())
     {
         const auto now{ glfwGetTime() };
         dt += (now - lastTime) / FRAME_TIME;
         lastTime = now;
 
         Input();
-
-
-
-        /////////////////////
-        // todo: tmp code
-        const auto result{ m_eventQueue.process() };
-
-
 
         while (dt >= 1.0)
         {
@@ -215,11 +186,11 @@ void sg::Application::GameLoop()
 
             std::stringstream ss;
 #ifdef SG_CITY_DEBUG_BUILD
-            ss << m_window.GetTitle() << " [DEBUG BUILD] " << "   |   Fps: " << fps << "   |   Updates: " << updates;
+            ss << m_window->GetTitle() << " [DEBUG BUILD] " << "   |   Fps: " << fps << "   |   Updates: " << updates;
 #else
             ss << m_window.GetTitle() << " [RELEASE BUILD] " << "   |   Fps: " << fps << "   |   Updates: " << updates;
 #endif
-            glfwSetWindowTitle(m_window.GetWindowHandle(), ss.str().c_str());
+            glfwSetWindowTitle(m_window->GetWindowHandle(), ss.str().c_str());
 
             updates = 0;
             fps = 0;
@@ -239,7 +210,7 @@ void sg::Application::StartFrame()
 
 void sg::Application::EndFrame() const
 {
-    m_window.Update();
+    m_window->Update();
 }
 
 //-------------------------------------------------
@@ -249,12 +220,12 @@ void sg::Application::EndFrame() const
 void sg::Application::InputLeftMouseButton()
 {
     // workaround: handle *not* left mouse button
-    if (!ogl::input::MouseInput::GetInstance().IsLeftButtonPressed())
+    if (!m_window->IsMouseButtonPressed(GLFW_MOUSE_BUTTON_LEFT))
     {
         m_handleMouseEvent = true;
     }
 
-    if (ogl::input::MouseInput::GetInstance().IsLeftButtonPressed() && m_handleMouseEvent)
+    if (m_window->IsMouseButtonPressed(GLFW_MOUSE_BUTTON_LEFT) && m_handleMouseEvent)
     {
         m_map->Input();
         m_handleMouseEvent = false;
@@ -263,57 +234,46 @@ void sg::Application::InputLeftMouseButton()
 
 void sg::Application::InputRightMouseButton()
 {
-    if (ogl::input::MouseInput::GetInstance().IsRightButtonPressed())
+    if (m_window->IsMouseButtonPressed(GLFW_MOUSE_BUTTON_RIGHT))
     {
-        m_camera.ProcessMouse(ogl::input::MouseInput::GetInstance().GetDisplVec());
+        // todo
+        //m_camera.ProcessMouse(ogl::input::MouseInput::GetInstance().GetDisplVec());
     }
 }
 
 void sg::Application::InputKey()
 {
-    if (m_window.IsKeyPressed(GLFW_KEY_W))
+    if (m_window->IsKeyPressed(GLFW_KEY_W))
     {
-
-
-
-        /////////////////////
-        // todo: tmp code
-        m_eventQueue.enqueue(
-            event::SgEventType::KEY_PRESSED,
-            std::make_unique<event::KeyPressedEvent>(99)
-        );
-
-
-
         m_camera.ProcessKeyboard(ogl::camera::Camera::Direction::FORWARD);
     }
 
-    if (m_window.IsKeyPressed(GLFW_KEY_S))
+    if (m_window->IsKeyPressed(GLFW_KEY_S))
     {
         m_camera.ProcessKeyboard(ogl::camera::Camera::Direction::BACKWARD);
     }
 
-    if (m_window.IsKeyPressed(GLFW_KEY_A))
+    if (m_window->IsKeyPressed(GLFW_KEY_A))
     {
         m_camera.ProcessKeyboard(ogl::camera::Camera::Direction::LEFT);
     }
 
-    if (m_window.IsKeyPressed(GLFW_KEY_D))
+    if (m_window->IsKeyPressed(GLFW_KEY_D))
     {
         m_camera.ProcessKeyboard(ogl::camera::Camera::Direction::RIGHT);
     }
 
-    if (m_window.IsKeyPressed(GLFW_KEY_O))
+    if (m_window->IsKeyPressed(GLFW_KEY_O))
     {
         m_camera.ProcessKeyboard(ogl::camera::Camera::Direction::UP);
     }
 
-    if (m_window.IsKeyPressed(GLFW_KEY_U))
+    if (m_window->IsKeyPressed(GLFW_KEY_U))
     {
         m_camera.ProcessKeyboard(ogl::camera::Camera::Direction::DOWN);
     }
 
-    if (m_window.IsKeyPressed(GLFW_KEY_I))
+    if (m_window->IsKeyPressed(GLFW_KEY_I))
     {
         Log::SG_LOG_DEBUG("Camera position: x: {}, y: {}, z: {}, yaw: {}, pitch: {}",
                           m_camera.GetPosition().x,

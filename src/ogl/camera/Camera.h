@@ -56,8 +56,8 @@ namespace sg::ogl::camera
         //-------------------------------------------------
 
         Camera() = delete;
-        Camera(const glm::vec3& t_position, float t_yaw, float t_pitch);
         explicit Camera(const glm::vec3& t_position);
+        Camera(const glm::vec3& t_position, float t_yaw, float t_pitch);
 
         Camera(const Camera& t_other) = delete;
         Camera(Camera&& t_other) noexcept = delete;

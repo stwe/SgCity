@@ -19,8 +19,6 @@
 #pragma once
 
 #include <memory>
-#include "ogl/Window.h"
-#include "ogl/camera/Camera.h"
 #include "ogl/resource/Skybox.h"
 
 //-------------------------------------------------
@@ -101,9 +99,10 @@ namespace sg::map
         /**
          * Constructs a new Map object.
          *
+         * @param t_window The Window object.
          * @param t_tileCount The number of tiles in x and z direction.
          */
-        explicit Map(int t_tileCount);
+        Map(std::shared_ptr<ogl::Window> t_window, int t_tileCount);
 
         Map(const Map& t_other) = delete;
         Map(Map&& t_other) noexcept = delete;
@@ -113,18 +112,23 @@ namespace sg::map
         ~Map() noexcept;
 
         //-------------------------------------------------
+        // Getter
+        //-------------------------------------------------
+
+        [[nodiscard]] ogl::Window& GetWindow() const { return *m_window; }
+
+        //-------------------------------------------------
         // Logic
         //-------------------------------------------------
 
         void Input();
         void Update(gui::Action t_action);
-        void RenderForMousePicking(const ogl::Window& t_window, const ogl::camera::Camera& t_camera) const;
+        void RenderForMousePicking(const ogl::camera::Camera& t_camera) const;
         void RenderForWater(
-            const ogl::Window& t_window,
             ogl::camera::Camera& t_camera,
             const ogl::resource::Skybox& t_skybox
             ) const;
-        void Render(const ogl::Window& t_window, const ogl::camera::Camera& t_camera) const;
+        void Render(const ogl::camera::Camera& t_camera) const;
         void RenderImGui() const;
 
     protected:
@@ -133,6 +137,11 @@ namespace sg::map
         //-------------------------------------------------
         // Member
         //-------------------------------------------------
+
+        /**
+         * The Window object.
+         */
+        std::shared_ptr<ogl::Window> m_window;
 
         /*
          * The number of tiles in x and z direction.

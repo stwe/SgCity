@@ -27,14 +27,14 @@
 #include "ogl/OpenGL.h"
 #include "ogl/buffer/WaterFbos.h"
 #include "ogl/input/PickingTexture.h"
-#include "ogl/input/MouseInput.h"
 
 //-------------------------------------------------
 // Ctors. / Dtor.
 //-------------------------------------------------
 
-sg::map::Map::Map(const int t_tileCount)
-    : m_tileCount{ t_tileCount }
+sg::map::Map::Map(std::shared_ptr<ogl::Window> t_window, const int t_tileCount)
+    : m_window{ std::move(t_window) }
+    , m_tileCount{ t_tileCount }
 {
     Log::SG_LOG_DEBUG("[Map::Map()] Create Map.");
 
@@ -68,13 +68,12 @@ void sg::map::Map::Update(const gui::Action t_action)
     m_waterLayer->Update();
 }
 
-void sg::map::Map::RenderForMousePicking(const ogl::Window& t_window, const ogl::camera::Camera& t_camera) const
+void sg::map::Map::RenderForMousePicking(const ogl::camera::Camera& t_camera) const
 {
-    m_terrainLayer->RenderForMousePicking(t_window, t_camera);
+    m_terrainLayer->RenderForMousePicking(*m_window, t_camera);
 }
 
 void sg::map::Map::RenderForWater(
-    const ogl::Window& t_window,
     ogl::camera::Camera& t_camera,
     const ogl::resource::Skybox& t_skybox
 ) const
@@ -90,10 +89,10 @@ void sg::map::Map::RenderForWater(
     t_camera.GetPosition().y -= distance;
     t_camera.InvertPitch();
 
-    m_terrainLayer->Render(t_window, t_camera, glm::vec4(0.0f, 1.0f, 0.0f, WaterLayer::WATER_HEIGHT));
-    m_roadsLayer->Render(t_window, t_camera, glm::vec4(0.0f, 1.0f, 0.0f, WaterLayer::WATER_HEIGHT));
-    m_buildingsLayer->Render(t_window, t_camera, glm::vec4(0.0f, 1.0f, 0.0f, WaterLayer::WATER_HEIGHT));
-    m_plantsLayer->Render(t_window, t_camera, glm::vec4(0.0f, 1.0f, 0.0f, WaterLayer::WATER_HEIGHT));
+    m_terrainLayer->Render(*m_window, t_camera, glm::vec4(0.0f, 1.0f, 0.0f, WaterLayer::WATER_HEIGHT));
+    m_roadsLayer->Render(*m_window, t_camera, glm::vec4(0.0f, 1.0f, 0.0f, WaterLayer::WATER_HEIGHT));
+    m_buildingsLayer->Render(*m_window, t_camera, glm::vec4(0.0f, 1.0f, 0.0f, WaterLayer::WATER_HEIGHT));
+    m_plantsLayer->Render(*m_window, t_camera, glm::vec4(0.0f, 1.0f, 0.0f, WaterLayer::WATER_HEIGHT));
     //t_skybox.Render(t_window, t_camera);
 
     t_camera.GetPosition().y += distance;
@@ -104,20 +103,20 @@ void sg::map::Map::RenderForWater(
     // refraction - everything below the water
     m_waterLayer->GetWaterFbos().BindRefractionFboAsRenderTarget();
     ogl::OpenGL::Clear();
-    m_terrainLayer->Render(t_window, t_camera, glm::vec4(0.0f, -1.0f, 0.0f, -WaterLayer::WATER_HEIGHT));
+    m_terrainLayer->Render(*m_window, t_camera, glm::vec4(0.0f, -1.0f, 0.0f, -WaterLayer::WATER_HEIGHT));
     m_waterLayer->GetWaterFbos().UnbindRenderTarget();
 
     ogl::OpenGL::DisableClipping();
 }
 
-void sg::map::Map::Render(const ogl::Window& t_window, const ogl::camera::Camera& t_camera) const
+void sg::map::Map::Render(const ogl::camera::Camera& t_camera) const
 {
-    m_terrainLayer->Render(t_window, t_camera, glm::vec4(0.0f, 1.0f, 0.0f, 100000.0f));
-    m_roadsLayer->Render(t_window, t_camera, glm::vec4(0.0f, 1.0f, 0.0f, 100000.0f));
-    m_buildingsLayer->Render(t_window, t_camera, glm::vec4(0.0f, 1.0f, 0.0f, 100000.0f));
-    m_plantsLayer->Render(t_window, t_camera, glm::vec4(0.0f, 1.0f, 0.0f, 100000.0f));
+    m_terrainLayer->Render(*m_window, t_camera, glm::vec4(0.0f, 1.0f, 0.0f, 100000.0f));
+    m_roadsLayer->Render(*m_window, t_camera, glm::vec4(0.0f, 1.0f, 0.0f, 100000.0f));
+    m_buildingsLayer->Render(*m_window, t_camera, glm::vec4(0.0f, 1.0f, 0.0f, 100000.0f));
+    m_plantsLayer->Render(*m_window, t_camera, glm::vec4(0.0f, 1.0f, 0.0f, 100000.0f));
 
-    m_waterLayer->Render(t_window, t_camera, glm::vec4(0.0f, 1.0f, 0.0f, 100000.0f));
+    m_waterLayer->Render(*m_window, t_camera, glm::vec4(0.0f, 1.0f, 0.0f, 100000.0f));
 }
 
 void sg::map::Map::RenderImGui() const
@@ -183,8 +182,8 @@ void sg::map::Map::UpdateCurrentTileIndex()
     }
 
     currentTileIndex = m_terrainLayer->pickingTexture->ReadMapIndex(
-        ogl::input::MouseInput::GetInstance().GetX(),
-        ogl::input::MouseInput::GetInstance().GetY()
+        static_cast<int>(m_window->GetMouseX()),
+        static_cast<int>(m_window->GetMouseY())
     );
 
     if (currentTileIndex < 0 || currentTileIndex > static_cast<int>(m_terrainLayer->tiles.size()) - 1)

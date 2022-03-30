@@ -19,10 +19,7 @@
 #pragma once
 
 #include <memory>
-#include "ogl/Window.h"
 #include "ogl/camera/Camera.h"
-#include "event/Event.h"
-#include "eventpp/eventqueue.h"
 
 //-------------------------------------------------
 // Forward declarations
@@ -36,6 +33,11 @@ namespace sg::map
 namespace sg::gui
 {
     class MapEditGui;
+}
+
+namespace sg::ogl
+{
+    class Window;
 }
 
 namespace sg::ogl::resource
@@ -83,9 +85,6 @@ namespace sg
         // Ctors. / Dtor.
         //-------------------------------------------------
 
-        /**
-         * Constructs a new Application object.
-         */
         Application();
 
         Application(const Application& t_other) = delete;
@@ -109,9 +108,9 @@ namespace sg
         //-------------------------------------------------
 
         /**
-         * A Glfw window.
+         * A window.
          */
-        ogl::Window m_window{ SCREEN_WIDTH, SCREEN_HEIGHT, "SgCity Sandbox" };
+        std::shared_ptr<ogl::Window> m_window;
 
         /**
          * A camera to move around the map.
@@ -137,11 +136,6 @@ namespace sg
          * So that events are only executed once.
          */
         bool m_handleMouseEvent{ true };
-
-        /**
-         * The event queue.
-         */
-        eventpp::EventQueue<event::SgEventType, void(std::shared_ptr<event::SgEvent>)> m_eventQueue;
 
         //-------------------------------------------------
         // Logic

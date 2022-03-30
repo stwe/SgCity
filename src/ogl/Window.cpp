@@ -29,9 +29,8 @@
 //-------------------------------------------------
 
 sg::ogl::Window::Window()
-{
-    Log::SG_LOG_DEBUG("[Window::Window()] Create Window.");
-}
+    : Window(MIN_WIDTH, MIN_HEIGHT, "SgCity")
+{}
 
 sg::ogl::Window::Window(const int t_width, const int t_height, std::string t_title)
     : m_title{ std::move(t_title) }
@@ -49,6 +48,8 @@ sg::ogl::Window::Window(const int t_width, const int t_height, std::string t_tit
     {
         m_height = MIN_HEIGHT;
     }
+
+    Init();
 }
 
 sg::ogl::Window::~Window() noexcept
@@ -96,15 +97,9 @@ GLFWwindow* sg::ogl::Window::GetWindowHandle() const
 // Logic
 //-------------------------------------------------
 
-void sg::ogl::Window::Init()
+void sg::ogl::Window::Input()
 {
-    Log::SG_LOG_DEBUG("[Window::Init()] Initializing window.");
-
-    InitWindow();
-    InitProjectionMatrix();
-    InitImGui();
-
-    Log::SG_LOG_DEBUG("[Window::Init()] The window was successfully initialized.");
+    CloseIfEscKeyPressed();
 }
 
 void sg::ogl::Window::Update() const
@@ -172,6 +167,17 @@ void sg::ogl::Window::ImGuiEnd()
 //-------------------------------------------------
 // Init
 //-------------------------------------------------
+
+void sg::ogl::Window::Init()
+{
+    Log::SG_LOG_DEBUG("[Window::Init()] Initializing window.");
+
+    InitWindow();
+    InitProjectionMatrix();
+    InitImGui();
+
+    Log::SG_LOG_DEBUG("[Window::Init()] The window was successfully initialized.");
+}
 
 void sg::ogl::Window::InitWindow()
 {

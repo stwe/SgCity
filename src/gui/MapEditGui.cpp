@@ -18,7 +18,6 @@
 
 #include "MapEditGui.h"
 #include "Log.h"
-#include "ogl/input/MouseInput.h"
 #include "ogl/resource/ResourceManager.h"
 
 //-------------------------------------------------
@@ -30,8 +29,8 @@ void sg::gui::MapEditGui::RenderImGui(map::Map& t_map)
     ImGui::Begin("Map edit");
     ImGui::Text("Press the Escape key to exit.");
     ImGui::Separator();
-    ImGui::Text("Mouse x: %d", ogl::input::MouseInput::GetInstance().GetX());
-    ImGui::Text("Mouse y: %d", ogl::input::MouseInput::GetInstance().GetY());
+    ImGui::Text("Mouse x: %d", t_map.GetWindow().GetMouseX());
+    ImGui::Text("Mouse y: %d", t_map.GetWindow().GetMouseY());
 
     ImGui::Separator();
 

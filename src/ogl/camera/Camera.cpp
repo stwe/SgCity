@@ -23,18 +23,14 @@
 // Ctors. / Dtor.
 //-------------------------------------------------
 
+sg::ogl::camera::Camera::Camera(const glm::vec3& t_position)
+    : Camera(t_position, 90.0f, 0.0f)
+{}
+
 sg::ogl::camera::Camera::Camera(const glm::vec3& t_position, const float t_yaw, const float t_pitch)
     : m_position{ t_position }
     , m_yaw{ t_yaw }
     , m_pitch{ t_pitch }
-{
-    Log::SG_LOG_DEBUG("[Camera::Camera()] Create Camera.");
-
-    Update();
-}
-
-sg::ogl::camera::Camera::Camera(const glm::vec3& t_position)
-    : m_position{ t_position }
 {
     Log::SG_LOG_DEBUG("[Camera::Camera()] Create Camera.");
 

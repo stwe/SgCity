@@ -25,6 +25,9 @@
 // Forward declarations
 //-------------------------------------------------
 
+/**
+ * Forward declaration struct GLFWwindow.
+ */
 struct GLFWwindow;
 
 //-------------------------------------------------
@@ -72,6 +75,9 @@ namespace sg::ogl
         // Ctors. / Dtor.
         //-------------------------------------------------
 
+        /**
+         * Constructs a new Window object.
+         */
         Window();
 
         /**
@@ -106,9 +112,9 @@ namespace sg::ogl
         //-------------------------------------------------
 
         /**
-         * Initializing class.
+         * Window specific input logic.
          */
-        void Init();
+        void Input();
 
         /**
          * Swaps the front and back buffers and checks if any events are triggered.
@@ -158,14 +164,28 @@ namespace sg::ogl
          */
         [[nodiscard]] glm::vec2 GetMousePosition() const;
 
+        /**
+         * Returns the mouse x position.
+         */
         [[nodiscard]] float GetMouseX() const { return GetMousePosition().x; }
+
+        /**
+         * Returns the mouse y position.
+         */
         [[nodiscard]] float GetMouseY() const { return GetMousePosition().y; }
 
         //-------------------------------------------------
         // ImGui
         //-------------------------------------------------
 
+        /**
+         * Start new ImGui frame.
+         */
         static void ImGuiBegin();
+
+        /**
+         * Render ImGui into screen.
+         */
         static void ImGuiEnd();
 
     protected:
@@ -208,6 +228,11 @@ namespace sg::ogl
         //-------------------------------------------------
         // Init
         //-------------------------------------------------
+
+        /**
+         * Initializing class.
+         */
+        void Init();
 
         /**
          * The Window initialization code.

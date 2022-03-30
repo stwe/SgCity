@@ -33,7 +33,7 @@ namespace sg::event
         KEY_PRESSED, KEY_RELEASED,
 
         // mouse
-        MOUSE_BUTTON_PRESSED, MOUSE_BUTTON_RELEASED, MOUSE_MOVED, MOUSE_SCROLLED
+        MOUSE_BUTTON_PRESSED, MOUSE_BUTTON_RELEASED, MOUSE_MOVED, MOUSE_SCROLLED, MOUSE_ENTER
     };
 
     //-------------------------------------------------
@@ -53,26 +53,26 @@ namespace sg::event
 
     struct KeyPressedEvent : SgEvent
     {
+        int key;
+        int repeatCount;
+
         explicit KeyPressedEvent(const int t_key, const int t_repeatCount = 0)
             : key{ t_key }
             , repeatCount{ t_repeatCount }
         {
             type = SgEventType::KEY_PRESSED;
         }
-
-        int key;
-        int repeatCount;
     };
 
     struct KeyReleasedEvent : SgEvent
     {
+        int key;
+
         explicit KeyReleasedEvent(const int t_key)
             : key{ t_key }
         {
             type = SgEventType::KEY_RELEASED;
         }
-
-        int key;
     };
 
     //-------------------------------------------------
@@ -120,10 +120,21 @@ namespace sg::event
         float yOffset;
 
         MouseScrolledEvent(const float t_xOffset, const float t_yOffset)
-            : xOffset(t_xOffset),
-              yOffset(t_yOffset)
+            : xOffset{ t_xOffset }
+            , yOffset{ t_yOffset }
         {
             type = SgEventType::MOUSE_SCROLLED;
+        }
+    };
+
+    struct MouseEnterEvent : SgEvent
+    {
+        bool enter;
+
+        explicit MouseEnterEvent(const bool t_enter)
+            : enter{ t_enter }
+        {
+            type = SgEventType::MOUSE_ENTER;
         }
     };
 }

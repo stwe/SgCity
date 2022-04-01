@@ -77,17 +77,12 @@ namespace sg::ogl
 
         /**
          * Constructs a new Window object.
-         */
-        Window();
-
-        /**
-         * Constructs a new Window object.
          *
          * @param t_width The width of the window.
          * @param t_height The height of the window.
          * @param t_title The title of the window.
          */
-        Window(int t_width, int t_height, std::string t_title);
+        Window(int t_width = MIN_WIDTH, int t_height = MIN_HEIGHT, std::string t_title = "SgCity");
 
         Window(const Window& t_other) = delete;
         Window(Window&& t_other) noexcept = delete;
@@ -116,10 +111,14 @@ namespace sg::ogl
          */
         void Input();
 
+        //-------------------------------------------------
+        // Rendering
+        //-------------------------------------------------
+
         /**
          * Swaps the front and back buffers and checks if any events are triggered.
          */
-        void Update() const;
+        void SwapBuffersAndCallEvents() const;
 
         //-------------------------------------------------
         // Helper

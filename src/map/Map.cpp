@@ -85,8 +85,8 @@ void sg::map::Map::RenderForWater(
     m_waterLayer->GetWaterFbos().BindReflectionFboAsRenderTarget();
     ogl::OpenGL::Clear();
 
-    const auto distance{ 2.0f * (t_camera.GetPosition().y - WaterLayer::WATER_HEIGHT) };
-    t_camera.GetPosition().y -= distance;
+    const auto distance{ 2.0f * (t_camera.position.y - WaterLayer::WATER_HEIGHT) };
+    t_camera.position.y -= distance;
     t_camera.InvertPitch();
 
     m_terrainLayer->Render(*m_window, t_camera, glm::vec4(0.0f, 1.0f, 0.0f, WaterLayer::WATER_HEIGHT));
@@ -95,7 +95,7 @@ void sg::map::Map::RenderForWater(
     m_plantsLayer->Render(*m_window, t_camera, glm::vec4(0.0f, 1.0f, 0.0f, WaterLayer::WATER_HEIGHT));
     //t_skybox.Render(t_window, t_camera);
 
-    t_camera.GetPosition().y += distance;
+    t_camera.position.y += distance;
     t_camera.InvertPitch();
 
     m_waterLayer->GetWaterFbos().UnbindRenderTarget();

@@ -92,7 +92,7 @@ void sg::map::WaterLayer::Render(
     glBindTexture(GL_TEXTURE_2D, m_waterFbos->refractionDepthTextureId);
     shaderProgram.SetUniform("depthTexture", 4);
 
-    shaderProgram.SetUniform("cameraPosition", t_camera.GetPosition());
+    shaderProgram.SetUniform("cameraPosition", t_camera.position);
     shaderProgram.SetUniform("moveFactor", m_moveFactor);
 
     shaderProgram.SetUniform("lightPosition", glm::vec3(0.5, 1.0, 0.0));

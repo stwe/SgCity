@@ -28,10 +28,6 @@
 // Ctors. / Dtor.
 //-------------------------------------------------
 
-sg::ogl::Window::Window()
-    : Window(MIN_WIDTH, MIN_HEIGHT, "SgCity")
-{}
-
 sg::ogl::Window::Window(const int t_width, const int t_height, std::string t_title)
     : m_title{ std::move(t_title) }
     , m_width{ t_width }
@@ -102,7 +98,11 @@ void sg::ogl::Window::Input()
     CloseIfEscKeyPressed();
 }
 
-void sg::ogl::Window::Update() const
+//-------------------------------------------------
+// Rendering
+//-------------------------------------------------
+
+void sg::ogl::Window::SwapBuffersAndCallEvents() const
 {
     glfwSwapBuffers(m_windowHandle);
     glfwPollEvents();
@@ -118,7 +118,7 @@ bool sg::ogl::Window::WindowShouldClose() const
 }
 
 //-------------------------------------------------
-// Input
+// Input Polling
 //-------------------------------------------------
 
 bool sg::ogl::Window::IsKeyPressed(const int t_keyCode) const
@@ -186,9 +186,9 @@ void sg::ogl::Window::InitWindow()
     // Setup an error callback.
     glfwSetErrorCallback(
         [](const int t_error, const char* t_description)
-         {
-             Log::SG_LOG_ERROR("GLFW Error ({}) {}", t_error, t_description);
-         }
+        {
+            Log::SG_LOG_ERROR("GLFW Error ({}) {}", t_error, t_description);
+        }
     );
 
     // Initialize GLFW.

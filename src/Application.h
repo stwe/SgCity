@@ -19,7 +19,6 @@
 #pragma once
 
 #include <memory>
-#include "ogl/camera/Camera.h"
 
 //-------------------------------------------------
 // Forward declarations
@@ -38,6 +37,11 @@ namespace sg::gui
 namespace sg::ogl
 {
     class Window;
+}
+
+namespace sg::ogl::camera
+{
+    class Camera;
 }
 
 namespace sg::ogl::resource
@@ -108,14 +112,14 @@ namespace sg
         //-------------------------------------------------
 
         /**
-         * A window.
+         * A Window object.
          */
         std::shared_ptr<ogl::Window> m_window;
 
         /**
-         * A camera to move around the map.
+         * A Camera object.
          */
-        ogl::camera::Camera m_camera{ glm::vec3(0.0f, 10.0f, 14.0f), 45.0f, -26.0f };
+        std::unique_ptr<ogl::camera::Camera> m_camera;
 
         /**
          * The Map object.
@@ -159,13 +163,5 @@ namespace sg
 
         static void StartFrame();
         void EndFrame() const;
-
-        //-------------------------------------------------
-        // Logic helper
-        //-------------------------------------------------
-
-        void InputLeftMouseButton();
-        void InputRightMouseButton();
-        void InputKey();
     };
 }

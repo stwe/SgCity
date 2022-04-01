@@ -18,23 +18,27 @@
 
 #include "Camera.h"
 #include "Log.h"
+#include "ogl/OpenGL.h"
+#include "ogl/Window.h"
 
 //-------------------------------------------------
 // Ctors. / Dtor.
 //-------------------------------------------------
 
-sg::ogl::camera::Camera::Camera(const glm::vec3& t_position)
-    : Camera(t_position, 90.0f, 0.0f)
-{}
-
-sg::ogl::camera::Camera::Camera(const glm::vec3& t_position, const float t_yaw, const float t_pitch)
-    : m_position{ t_position }
-    , m_yaw{ t_yaw }
-    , m_pitch{ t_pitch }
+sg::ogl::camera::Camera::Camera(
+    std::shared_ptr<sg::ogl::Window> t_window,
+    const glm::vec3& t_position,
+    const float t_yaw,
+    const float t_pitch
+)
+    : m_window{ std::move(t_window) }
+    , position{ t_position }
+    , yaw{ t_yaw }
+    , pitch{ t_pitch }
 {
     Log::SG_LOG_DEBUG("[Camera::Camera()] Create Camera.");
 
-    Update();
+    UpdateCameraVectors();
 }
 
 sg::ogl::camera::Camera::~Camera() noexcept
@@ -43,66 +47,147 @@ sg::ogl::camera::Camera::~Camera() noexcept
 }
 
 //-------------------------------------------------
-// Update
+// Logic
 //-------------------------------------------------
 
-void sg::ogl::camera::Camera::Update()
+void sg::ogl::camera::Camera::Input()
 {
-    // Calculate the new Front vector.
-    glm::vec3 front;
-    front.x = glm::cos(glm::radians(m_yaw)) * glm::cos(glm::radians(m_pitch));
-    front.y = glm::sin(glm::radians(m_pitch));
-    front.z = glm::sin(glm::radians(m_yaw)) * glm::cos(glm::radians(m_pitch));
-    m_front = glm::normalize(front);
+    // keyboard
 
-    // Also re-calculate the Right and Up vector.
-    m_right = glm::normalize(glm::cross(m_front, m_worldUp));
-    m_up = glm::normalize(glm::cross(m_right, m_front));
+    if (m_window->IsKeyPressed(GLFW_KEY_W))
+    {
+        ProcessKeyboard(ogl::camera::Camera::Direction::FORWARD);
+    }
+
+    if (m_window->IsKeyPressed(GLFW_KEY_S))
+    {
+        ProcessKeyboard(ogl::camera::Camera::Direction::BACKWARD);
+    }
+
+    if (m_window->IsKeyPressed(GLFW_KEY_A))
+    {
+        ProcessKeyboard(ogl::camera::Camera::Direction::LEFT);
+    }
+
+    if (m_window->IsKeyPressed(GLFW_KEY_D))
+    {
+        ProcessKeyboard(ogl::camera::Camera::Direction::RIGHT);
+    }
+
+    if (m_window->IsKeyPressed(GLFW_KEY_O))
+    {
+        ProcessKeyboard(ogl::camera::Camera::Direction::UP);
+    }
+
+    if (m_window->IsKeyPressed(GLFW_KEY_U))
+    {
+        ProcessKeyboard(ogl::camera::Camera::Direction::DOWN);
+    }
+
+    if (m_window->IsKeyPressed(GLFW_KEY_I))
+    {
+        Log::SG_LOG_DEBUG("Camera position: x: {}, y: {}, z: {}, yaw: {}, pitch: {}",
+            position.x,
+            position.y,
+            position.z,
+            yaw,
+            pitch
+        );
+    }
+
+    // mouse
+
+    if (m_window->IsMouseButtonPressed(GLFW_MOUSE_BUTTON_RIGHT))
+    {
+        auto displVec{ glm::vec2(0.0f) };
+        const auto currentPosition{ m_window->GetMousePosition() };
+
+        if (m_lastMouse.x > 0 && m_lastMouse.y > 0)
+        {
+            const auto deltax{ currentPosition.x - m_lastMouse.x };
+            const auto deltay{ currentPosition.y - m_lastMouse.y };
+
+            const auto rotateX{ deltax != 0 };
+            const auto rotateY{ deltay != 0 };
+
+            if (rotateX)
+            {
+                displVec.y = static_cast<float>(deltax);
+            }
+
+            if (rotateY)
+            {
+                displVec.x = static_cast<float>(deltay);
+            }
+        }
+
+        m_lastMouse.x = currentPosition.x;
+        m_lastMouse.y = currentPosition.y;
+
+        ProcessMouse(displVec);
+    }
 }
 
 //-------------------------------------------------
 // Keyboard && Mouse
 //-------------------------------------------------
 
-void sg::ogl::camera::Camera::ProcessKeyboard(const camera::Camera::Direction t_direction)
+void sg::ogl::camera::Camera::ProcessKeyboard(const Direction t_direction)
 {
     if (t_direction == Direction::FORWARD)
-        m_position += m_front * m_movementSpeed;
+        position += m_front * m_movementSpeed;
     if (t_direction == Direction::BACKWARD)
-        m_position -= m_front * m_movementSpeed;
+        position -= m_front * m_movementSpeed;
     if (t_direction == Direction::LEFT)
-        m_position -= m_right * m_movementSpeed;
+        position -= m_right * m_movementSpeed;
     if (t_direction == Direction::RIGHT)
-        m_position += m_right * m_movementSpeed;
+        position += m_right * m_movementSpeed;
     if (t_direction == Direction::UP)
-        m_position += m_up * m_movementSpeed;
+        position += m_up * m_movementSpeed;
     if (t_direction == Direction::DOWN)
-        m_position -= m_up * m_movementSpeed;
+        position -= m_up * m_movementSpeed;
 }
 
 void sg::ogl::camera::Camera::ProcessMouse(const glm::vec2& t_displVec)
 {
-    m_yaw += t_displVec.y * m_mouseSensitivity;
-    m_pitch -= t_displVec.x * m_mouseSensitivity;
+    yaw += t_displVec.y * m_mouseSensitivity;
+    pitch -= t_displVec.x * m_mouseSensitivity;
 
-    if (m_yaw > 359.0f)
+    if (yaw > 359.0f)
     {
-        m_yaw = 359.0f;
+        yaw = 359.0f;
     }
-    else if (m_yaw < -359.0f)
+    else if (yaw < -359.0f)
     {
-        m_yaw = -359.0f;
-    }
-
-    if (m_pitch > 89.0f)
-    {
-        m_pitch = 89.0f;
-    }
-    else if (m_pitch < -89.0f)
-    {
-        m_pitch = -89.0f;
+        yaw = -359.0f;
     }
 
-    // Update Front, Right and Up Vectors using the updated Euler angles.
-    Update();
+    if (pitch > 89.0f)
+    {
+        pitch = 89.0f;
+    }
+    else if (pitch < -89.0f)
+    {
+        pitch = -89.0f;
+    }
+
+    UpdateCameraVectors();
+}
+
+//-------------------------------------------------
+// Euler angles
+//-------------------------------------------------
+
+void sg::ogl::camera::Camera::UpdateCameraVectors()
+{
+    // Calculate the new Front vector.
+    glm::vec3 front;
+    front.x = glm::cos(glm::radians(yaw)) * glm::cos(glm::radians(pitch));
+    front.y = glm::sin(glm::radians(pitch));
+    front.z = glm::sin(glm::radians(yaw)) * glm::cos(glm::radians(pitch));
+    m_front = glm::normalize(front);
+
+    // Also re-calculate the Right and Up vector.
+    m_right = glm::normalize(glm::cross(m_front, m_worldUp));
+    m_up = glm::normalize(glm::cross(m_right, m_front));
 }

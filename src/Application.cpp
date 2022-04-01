@@ -22,8 +22,6 @@
 #include "Application.h"
 #include "Log.h"
 #include "ogl/OpenGL.h"
-#include "ogl/resource/Skybox.h"
-#include "map/Map.h"
 #include "gui/MapEditGui.h"
 
 //-------------------------------------------------
@@ -65,6 +63,9 @@ void sg::Application::Init()
     // create && init window
     m_window = std::make_shared<ogl::Window>(SCREEN_WIDTH, SCREEN_HEIGHT, "SgCity Sandbox");
 
+    // create && init camera
+    m_camera = std::make_unique<ogl::camera::Camera>(m_window, glm::vec3(0.0f, 10.0f, 14.0f), 45.0f, -26.0f);
+
     // create && init map tiles
     m_map = std::make_unique<map::Map>(m_window, TILE_COUNT);
 
@@ -88,9 +89,20 @@ void sg::Application::Input()
         return;
     }
 
-    InputRightMouseButton();
-    InputLeftMouseButton();
-    InputKey();
+    // WASD
+    m_camera->Input();
+
+    // workaround: handle *not* left mouse button
+    if (!m_window->IsMouseButtonPressed(GLFW_MOUSE_BUTTON_LEFT))
+    {
+        m_handleMouseEvent = true;
+    }
+
+    if (m_window->IsMouseButtonPressed(GLFW_MOUSE_BUTTON_LEFT) && m_handleMouseEvent)
+    {
+        m_map->Input();
+        m_handleMouseEvent = false;
+    }
 }
 
 void sg::Application::Update()
@@ -108,7 +120,7 @@ void sg::Application::Render()
     // Clear()
     // Draw ...
     // Unbind fbo
-    m_map->RenderForMousePicking(m_camera);
+    m_map->RenderForMousePicking(*m_camera);
 
     // --------------------
     // (2) render for water
@@ -118,15 +130,15 @@ void sg::Application::Render()
     // Clear()
     // Draw ...
     // Unbind fbo
-    m_map->RenderForWater(m_camera, *m_skybox);
+    m_map->RenderForWater(*m_camera, *m_skybox);
 
     // -----------------------
     // (3) render scene && gui
     // -----------------------
     StartFrame();
 
-    m_map->Render(m_camera);
-    m_skybox->Render(*m_window, m_camera);
+    m_map->Render(*m_camera);
+    m_skybox->Render(*m_window, *m_camera);
 
     ogl::Window::ImGuiBegin();
 
@@ -142,7 +154,7 @@ void sg::Application::RenderImGui()
 {
     ImGui::Begin("Application");
 
-    ImGui::SliderFloat3("Camera", value_ptr(m_camera.GetPosition()), -100.0f, 100.0f);
+    ImGui::SliderFloat3("Camera", value_ptr(m_camera->position), -100.0f, 100.0f);
 
     ImGui::End();
 }
@@ -210,77 +222,5 @@ void sg::Application::StartFrame()
 
 void sg::Application::EndFrame() const
 {
-    m_window->Update();
-}
-
-//-------------------------------------------------
-// Logic helper
-//-------------------------------------------------
-
-void sg::Application::InputLeftMouseButton()
-{
-    // workaround: handle *not* left mouse button
-    if (!m_window->IsMouseButtonPressed(GLFW_MOUSE_BUTTON_LEFT))
-    {
-        m_handleMouseEvent = true;
-    }
-
-    if (m_window->IsMouseButtonPressed(GLFW_MOUSE_BUTTON_LEFT) && m_handleMouseEvent)
-    {
-        m_map->Input();
-        m_handleMouseEvent = false;
-    }
-}
-
-void sg::Application::InputRightMouseButton()
-{
-    if (m_window->IsMouseButtonPressed(GLFW_MOUSE_BUTTON_RIGHT))
-    {
-        // todo
-        //m_camera.ProcessMouse(ogl::input::MouseInput::GetInstance().GetDisplVec());
-    }
-}
-
-void sg::Application::InputKey()
-{
-    if (m_window->IsKeyPressed(GLFW_KEY_W))
-    {
-        m_camera.ProcessKeyboard(ogl::camera::Camera::Direction::FORWARD);
-    }
-
-    if (m_window->IsKeyPressed(GLFW_KEY_S))
-    {
-        m_camera.ProcessKeyboard(ogl::camera::Camera::Direction::BACKWARD);
-    }
-
-    if (m_window->IsKeyPressed(GLFW_KEY_A))
-    {
-        m_camera.ProcessKeyboard(ogl::camera::Camera::Direction::LEFT);
-    }
-
-    if (m_window->IsKeyPressed(GLFW_KEY_D))
-    {
-        m_camera.ProcessKeyboard(ogl::camera::Camera::Direction::RIGHT);
-    }
-
-    if (m_window->IsKeyPressed(GLFW_KEY_O))
-    {
-        m_camera.ProcessKeyboard(ogl::camera::Camera::Direction::UP);
-    }
-
-    if (m_window->IsKeyPressed(GLFW_KEY_U))
-    {
-        m_camera.ProcessKeyboard(ogl::camera::Camera::Direction::DOWN);
-    }
-
-    if (m_window->IsKeyPressed(GLFW_KEY_I))
-    {
-        Log::SG_LOG_DEBUG("Camera position: x: {}, y: {}, z: {}, yaw: {}, pitch: {}",
-                          m_camera.GetPosition().x,
-                          m_camera.GetPosition().y,
-                          m_camera.GetPosition().z,
-                          m_camera.GetYaw(),
-                          m_camera.GetPitch()
-        );
-    }
+    m_window->SwapBuffersAndCallEvents();
 }

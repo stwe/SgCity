@@ -184,17 +184,69 @@ namespace sg::ogl::camera
         // Member
         //-------------------------------------------------
 
+        /**
+         * A Window object.
+         */
         std::shared_ptr<ogl::Window> m_window;
 
+        /**
+         * The camera velocity.
+         */
         float m_movementSpeed{ MOVEMENT_SPEED };
-        float m_mouseSensitivity{ MOUSE_SENSITIVITY };
 
+        /**
+         * The front vector.
+         */
         glm::vec3 m_front{ glm::vec3(0.0f, 0.0f, 1.0f) };
+
+        /**
+         * The up axis.
+         */
         glm::vec3 m_up{ glm::vec3(0.0f, 1.0f, 0.0f) };
+
+        /**
+         * The world up vector.
+         */
         glm::vec3 m_worldUp{ glm::vec3(0.0f, 1.0f, 0.0f) };
+
+        /**
+         * The right axis.
+         */
         glm::vec3 m_right{ glm::vec3(1.0f, 0.0f, 0.0f) };
 
-        glm::vec2 m_lastMouse{ glm::vec2(0.0f) };
+        /**
+         * The mouse sensitivity.
+         */
+        float m_mouseSensitivity{ MOUSE_SENSITIVITY };
+
+        /**
+         * The previous mouse position.
+         */
+        glm::vec2 m_previousPosition{ glm::vec2(-1.0, -1.0) };
+
+        /**
+         * The current mouse position.
+         */
+        glm::vec2 m_currentPosition{ glm::vec2(0.0, 0.0) };
+
+        /**
+         * The mouse displacement from the previousPos.
+         */
+        glm::vec2 m_displVec{ glm::vec2(0.0f, 0.0f) };
+
+        /**
+         * Info whether the mouse is in the window.
+         */
+        bool m_inWindow{ false };
+
+        //-------------------------------------------------
+        // Init
+        //-------------------------------------------------
+
+        /**
+         * Adds event handlers.
+         */
+        void InitListeners();
 
         //-------------------------------------------------
         // Keyboard && Mouse
@@ -209,10 +261,8 @@ namespace sg::ogl::camera
 
         /**
          * Processes input received from the mouse.
-         *
-         * @param t_displVec The offset.
          */
-        void ProcessMouse(const glm::vec2& t_displVec);
+        void ProcessMouse();
 
         //-------------------------------------------------
         // Euler angles

@@ -17,18 +17,17 @@
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 #include "EventManager.h"
-#include "ogl/OpenGL.h"
 
 //-------------------------------------------------
 // Init
 //-------------------------------------------------
 
-void sg::event::EventManager::SetKeyboardGlfwCallbacks(const ogl::Window& t_window)
+void sg::event::EventManager::SetKeyboardGlfwCallbacks(GLFWwindow* m_windowHandle)
 {
     // Registers a callback that will be invoked when a key is pressed or released
     glfwSetKeyCallback
     (
-        t_window.GetWindowHandle(),
+        m_windowHandle,
         [](GLFWwindow* t_window, const int t_key, const int t_scanCode, const int t_action, const int t_mods)
         {
             switch (t_action)
@@ -48,12 +47,12 @@ void sg::event::EventManager::SetKeyboardGlfwCallbacks(const ogl::Window& t_wind
     );
 }
 
-void sg::event::EventManager::SetMouseGlfwCallbacks(const ogl::Window& t_window)
+void sg::event::EventManager::SetMouseGlfwCallbacks(GLFWwindow* m_windowHandle)
 {
     // Registers a callback that will be invoked when the mouse is moved.
     glfwSetCursorPosCallback
     (
-        t_window.GetWindowHandle(),
+        m_windowHandle,
         [](GLFWwindow* t_window, const double t_x, const double t_y)
         {
             eventDispatcher.dispatch(
@@ -69,7 +68,7 @@ void sg::event::EventManager::SetMouseGlfwCallbacks(const ogl::Window& t_window)
     // Registers a callback that will be invoked when a scrolling device is used.
     glfwSetScrollCallback
     (
-        t_window.GetWindowHandle(),
+        m_windowHandle,
         [](GLFWwindow* t_window, const double t_xOffset, const double t_yOffset)
         {
             eventDispatcher.dispatch(
@@ -85,7 +84,7 @@ void sg::event::EventManager::SetMouseGlfwCallbacks(const ogl::Window& t_window)
     // Registers a callback that will be invoked when the mouse enters our window.
     glfwSetCursorEnterCallback
     (
-        t_window.GetWindowHandle(),
+        m_windowHandle,
         [](GLFWwindow* t_window, const int t_entered)
         {
             eventDispatcher.dispatch(SgEventType::MOUSE_ENTER, MouseEnterEvent(t_entered));
@@ -95,7 +94,7 @@ void sg::event::EventManager::SetMouseGlfwCallbacks(const ogl::Window& t_window)
     // Registers a callback that will be invoked when a mouse button is pressed or released.
     glfwSetMouseButtonCallback
     (
-        t_window.GetWindowHandle(),
+        m_windowHandle,
         [](GLFWwindow* t_window, const int t_button, const int t_action, const int t_mods)
         {
             switch (t_action)

@@ -27,6 +27,8 @@
 #include "ogl/OpenGL.h"
 #include "ogl/buffer/WaterFbos.h"
 #include "ogl/input/PickingTexture.h"
+#include "event/EventManager.h"
+#include "eventpp/utilities/argumentadapter.h"
 
 //-------------------------------------------------
 // Ctors. / Dtor.
@@ -49,11 +51,6 @@ sg::map::Map::~Map() noexcept
 //-------------------------------------------------
 // Logic
 //-------------------------------------------------
-
-void sg::map::Map::Input()
-{
-    UpdateCurrentTileIndex();
-}
 
 void sg::map::Map::Update(const gui::Action t_action)
 {
@@ -167,7 +164,28 @@ void sg::map::Map::Init()
     m_buildingsLayer = std::make_unique<BuildingsLayer>(m_terrainLayer->tiles);
     m_plantsLayer = std::make_unique<PlantsLayer>(m_terrainLayer->tiles);
 
+    InitListeners();
+
     Log::SG_LOG_DEBUG("[Map::Init()] The map was successfully initialized.");
+}
+
+void sg::map::Map::InitListeners()
+{
+    Log::SG_LOG_DEBUG("[Map::InitListeners()] Append listeners.");
+
+    // left mouse button pressed
+    sg::event::EventManager::eventDispatcher.appendListener(
+        sg::event::SgEventType::MOUSE_BUTTON_PRESSED,
+        eventpp::argumentAdapter<void(const sg::event::MouseButtonPressedEvent&)>(
+            [this](const sg::event::MouseButtonPressedEvent& t_event)
+            {
+                if (t_event.button == GLFW_MOUSE_BUTTON_LEFT)
+                {
+                    UpdateCurrentTileIndex();
+                }
+            }
+        )
+    );
 }
 
 //-------------------------------------------------

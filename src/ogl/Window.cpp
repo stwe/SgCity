@@ -23,6 +23,7 @@
 #include "SgException.h"
 #include "imgui/imgui_impl_opengl3.h"
 #include "imgui/imgui_impl_glfw.h"
+#include "event/EventManager.h"
 
 //-------------------------------------------------
 // Ctors. / Dtor.
@@ -175,6 +176,7 @@ void sg::ogl::Window::Init()
     InitWindow();
     InitProjectionMatrix();
     InitImGui();
+    InitInputCallbacks();
 
     Log::SG_LOG_DEBUG("[Window::Init()] The window was successfully initialized.");
 }
@@ -253,6 +255,8 @@ void sg::ogl::Window::InitWindow()
 
 void sg::ogl::Window::InitProjectionMatrix()
 {
+    Log::SG_LOG_DEBUG("[Window::InitProjectionMatrix()] Initializing projection.");
+
     UpdateProjectionMatrix();
     UpdateOrthographicProjectionMatrix();
 }
@@ -273,6 +277,14 @@ void sg::ogl::Window::InitImGui() const
 
     // setup style
     ImGui::StyleColorsDark();
+}
+
+void sg::ogl::Window::InitInputCallbacks() const
+{
+    Log::SG_LOG_DEBUG("[Window::InitInputCallbacks()] Initializing input callbacks.");
+
+    sg::event::EventManager::SetKeyboardGlfwCallbacks(m_windowHandle);
+    sg::event::EventManager::SetMouseGlfwCallbacks(m_windowHandle);
 }
 
 //-------------------------------------------------
@@ -310,6 +322,8 @@ void sg::ogl::Window::UpdateOrthographicProjectionMatrix()
 
 void sg::ogl::Window::CleanUp() const
 {
+    Log::SG_LOG_DEBUG("[Window::CleanUp()] CleanUp window.");
+
     ImGui_ImplOpenGL3_Shutdown();
     ImGui_ImplGlfw_Shutdown();
     ImGui::DestroyContext();

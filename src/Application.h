@@ -136,11 +136,6 @@ namespace sg
          */
         std::unique_ptr<ogl::resource::Skybox> m_skybox;
 
-        /**
-         * So that events are only executed once.
-         */
-        bool m_handleMouseEvent{ true };
-
         //-------------------------------------------------
         // Logic
         //-------------------------------------------------

@@ -91,18 +91,6 @@ void sg::Application::Input()
 
     // WASD
     m_camera->Input();
-
-    // workaround: handle *not* left mouse button
-    if (!m_window->IsMouseButtonPressed(GLFW_MOUSE_BUTTON_LEFT))
-    {
-        m_handleMouseEvent = true;
-    }
-
-    if (m_window->IsMouseButtonPressed(GLFW_MOUSE_BUTTON_LEFT) && m_handleMouseEvent)
-    {
-        m_map->Input();
-        m_handleMouseEvent = false;
-    }
 }
 
 void sg::Application::Update()

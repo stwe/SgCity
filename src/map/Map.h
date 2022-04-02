@@ -121,7 +121,6 @@ namespace sg::map
         // Logic
         //-------------------------------------------------
 
-        void Input();
         void Update(gui::Action t_action);
         void RenderForMousePicking(const ogl::camera::Camera& t_camera) const;
         void RenderForWater(
@@ -186,6 +185,11 @@ namespace sg::map
          * Initializes the Map.
          */
         void Init();
+
+        /**
+         * Adds event handlers.
+         */
+        void InitListeners();
 
         //-------------------------------------------------
         // Mouse picking

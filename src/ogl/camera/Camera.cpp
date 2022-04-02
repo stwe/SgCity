@@ -20,6 +20,8 @@
 #include "Log.h"
 #include "ogl/OpenGL.h"
 #include "ogl/Window.h"
+#include "event/EventManager.h"
+#include "eventpp/utilities/argumentadapter.h"
 
 //-------------------------------------------------
 // Ctors. / Dtor.
@@ -38,6 +40,7 @@ sg::ogl::camera::Camera::Camera(
 {
     Log::SG_LOG_DEBUG("[Camera::Camera()] Create Camera.");
 
+    InitListeners();
     UpdateCameraVectors();
 }
 
@@ -97,35 +100,56 @@ void sg::ogl::camera::Camera::Input()
 
     // mouse
 
-    if (m_window->IsMouseButtonPressed(GLFW_MOUSE_BUTTON_RIGHT))
+    m_displVec.x = 0.0f;
+    m_displVec.y = 0.0f;
+
+    m_currentPosition = m_window->GetMousePosition();
+
+    if (m_previousPosition.x > 0 && m_previousPosition.y > 0 && m_inWindow)
     {
-        auto displVec{ glm::vec2(0.0f) };
-        const auto currentPosition{ m_window->GetMousePosition() };
+        const auto deltax{ m_currentPosition.x - m_previousPosition.x };
+        const auto deltay{ m_currentPosition.y - m_previousPosition.y };
 
-        if (m_lastMouse.x > 0 && m_lastMouse.y > 0)
+        const auto rotateX = deltax != 0;
+        const auto rotateY = deltay != 0;
+
+        if (rotateX)
         {
-            const auto deltax{ currentPosition.x - m_lastMouse.x };
-            const auto deltay{ currentPosition.y - m_lastMouse.y };
-
-            const auto rotateX{ deltax != 0 };
-            const auto rotateY{ deltay != 0 };
-
-            if (rotateX)
-            {
-                displVec.y = static_cast<float>(deltax);
-            }
-
-            if (rotateY)
-            {
-                displVec.x = static_cast<float>(deltay);
-            }
+            m_displVec.y = static_cast<float>(deltax);
         }
 
-        m_lastMouse.x = currentPosition.x;
-        m_lastMouse.y = currentPosition.y;
-
-        ProcessMouse(displVec);
+        if (rotateY)
+        {
+            m_displVec.x = static_cast<float>(deltay);
+        }
     }
+
+    m_previousPosition.x = m_currentPosition.x;
+    m_previousPosition.y = m_currentPosition.y;
+
+    if (m_window->IsMouseButtonPressed(GLFW_MOUSE_BUTTON_RIGHT))
+    {
+        ProcessMouse();
+    }
+}
+
+//-------------------------------------------------
+// Init
+//-------------------------------------------------
+
+void sg::ogl::camera::Camera::InitListeners()
+{
+    Log::SG_LOG_DEBUG("[Camera::InitListeners()] Append listeners.");
+
+    sg::event::EventManager::eventDispatcher.appendListener(
+        sg::event::SgEventType::MOUSE_ENTER,
+        eventpp::argumentAdapter<void(const sg::event::MouseEnterEvent&)>(
+            [this](const sg::event::MouseEnterEvent& t_event)
+            {
+                m_inWindow = t_event.enter;
+            }
+        )
+    );
 }
 
 //-------------------------------------------------
@@ -148,10 +172,10 @@ void sg::ogl::camera::Camera::ProcessKeyboard(const Direction t_direction)
         position -= m_up * m_movementSpeed;
 }
 
-void sg::ogl::camera::Camera::ProcessMouse(const glm::vec2& t_displVec)
+void sg::ogl::camera::Camera::ProcessMouse()
 {
-    yaw += t_displVec.y * m_mouseSensitivity;
-    pitch -= t_displVec.x * m_mouseSensitivity;
+    yaw += m_displVec.y * m_mouseSensitivity;
+    pitch -= m_displVec.x * m_mouseSensitivity;
 
     if (yaw > 359.0f)
     {

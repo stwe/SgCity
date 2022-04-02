@@ -20,7 +20,7 @@
 
 #include "Event.h"
 #include "eventpp/eventdispatcher.h"
-#include "ogl/Window.h"
+#include "ogl/OpenGL.h"
 
 namespace sg::event
 {
@@ -46,8 +46,8 @@ namespace sg::event
         // Init
         //-------------------------------------------------
 
-        static void SetKeyboardGlfwCallbacks(const ogl::Window& t_window);
-        static void SetMouseGlfwCallbacks(const ogl::Window& t_window);
+        static void SetKeyboardGlfwCallbacks(GLFWwindow* m_windowHandle);
+        static void SetMouseGlfwCallbacks(GLFWwindow* m_windowHandle);
 
     protected:
 

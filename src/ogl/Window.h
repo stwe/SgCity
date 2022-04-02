@@ -248,6 +248,11 @@ namespace sg::ogl
          */
         void InitImGui() const;
 
+        /**
+         * Initializing input callbacks.
+         */
+        void InitInputCallbacks() const;
+
         //-------------------------------------------------
         // Projection matrix
         //-------------------------------------------------

@@ -111,7 +111,7 @@ namespace sg::ogl::camera
         Camera() = delete;
 
         /**
-         * Constructs a new Window object.
+         * Constructs a new Camera object.
          *
          * @param t_window The Window object.
          * @param t_position The camera position.
@@ -119,7 +119,7 @@ namespace sg::ogl::camera
          * @param t_pitch Rotation around the side-to-side.
          */
         Camera(
-            std::shared_ptr<sg::ogl::Window> t_window,
+            std::shared_ptr<Window> t_window,
             const glm::vec3& t_position,
             float t_yaw = DEFAULT_YAW,
             float t_pitch = DEFAULT_PITCH
@@ -187,7 +187,7 @@ namespace sg::ogl::camera
         /**
          * A Window object.
          */
-        std::shared_ptr<ogl::Window> m_window;
+        std::shared_ptr<Window> m_window;
 
         /**
          * The camera velocity.

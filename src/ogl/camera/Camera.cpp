@@ -28,15 +28,15 @@
 //-------------------------------------------------
 
 sg::ogl::camera::Camera::Camera(
-    std::shared_ptr<sg::ogl::Window> t_window,
+    std::shared_ptr<Window> t_window,
     const glm::vec3& t_position,
     const float t_yaw,
     const float t_pitch
 )
-    : m_window{ std::move(t_window) }
-    , position{ t_position }
+    : position{ t_position }
     , yaw{ t_yaw }
     , pitch{ t_pitch }
+    , m_window{ std::move(t_window) }
 {
     Log::SG_LOG_DEBUG("[Camera::Camera()] Create Camera.");
 
@@ -59,32 +59,32 @@ void sg::ogl::camera::Camera::Input()
 
     if (m_window->IsKeyPressed(GLFW_KEY_W))
     {
-        ProcessKeyboard(ogl::camera::Camera::Direction::FORWARD);
+        ProcessKeyboard(Direction::FORWARD);
     }
 
     if (m_window->IsKeyPressed(GLFW_KEY_S))
     {
-        ProcessKeyboard(ogl::camera::Camera::Direction::BACKWARD);
+        ProcessKeyboard(Direction::BACKWARD);
     }
 
     if (m_window->IsKeyPressed(GLFW_KEY_A))
     {
-        ProcessKeyboard(ogl::camera::Camera::Direction::LEFT);
+        ProcessKeyboard(Direction::LEFT);
     }
 
     if (m_window->IsKeyPressed(GLFW_KEY_D))
     {
-        ProcessKeyboard(ogl::camera::Camera::Direction::RIGHT);
+        ProcessKeyboard(Direction::RIGHT);
     }
 
     if (m_window->IsKeyPressed(GLFW_KEY_O))
     {
-        ProcessKeyboard(ogl::camera::Camera::Direction::UP);
+        ProcessKeyboard(Direction::UP);
     }
 
     if (m_window->IsKeyPressed(GLFW_KEY_U))
     {
-        ProcessKeyboard(ogl::camera::Camera::Direction::DOWN);
+        ProcessKeyboard(Direction::DOWN);
     }
 
     if (m_window->IsKeyPressed(GLFW_KEY_I))
@@ -141,10 +141,10 @@ void sg::ogl::camera::Camera::InitListeners()
 {
     Log::SG_LOG_DEBUG("[Camera::InitListeners()] Append listeners.");
 
-    sg::event::EventManager::eventDispatcher.appendListener(
-        sg::event::SgEventType::MOUSE_ENTER,
-        eventpp::argumentAdapter<void(const sg::event::MouseEnterEvent&)>(
-            [this](const sg::event::MouseEnterEvent& t_event)
+    event::EventManager::eventDispatcher.appendListener(
+        event::SgEventType::MOUSE_ENTER,
+        eventpp::argumentAdapter<void(const event::MouseEnterEvent&)>(
+            [this](const event::MouseEnterEvent& t_event)
             {
                 m_inWindow = t_event.enter;
             }

@@ -158,30 +158,37 @@ void sg::map::Map::Init()
 {
     Log::SG_LOG_DEBUG("[Map::Init()] Initialize the map.");
 
+    InitEventDispatcher();
+
     m_waterLayer = std::make_unique<WaterLayer>(m_tileCount);
     m_terrainLayer = std::make_unique<TerrainLayer>(m_tileCount);
     m_roadsLayer = std::make_unique<RoadsLayer>(m_terrainLayer->tiles);
     m_buildingsLayer = std::make_unique<BuildingsLayer>(m_terrainLayer->tiles);
     m_plantsLayer = std::make_unique<PlantsLayer>(m_terrainLayer->tiles);
 
-    InitListeners();
-
     Log::SG_LOG_DEBUG("[Map::Init()] The map was successfully initialized.");
 }
 
-void sg::map::Map::InitListeners()
+void sg::map::Map::InitEventDispatcher()
 {
-    Log::SG_LOG_DEBUG("[Map::InitListeners()] Append listeners.");
+    Log::SG_LOG_DEBUG("[Map::InitEventDispatcher()] Append listeners.");
 
     // left mouse button pressed
-    sg::event::EventManager::eventDispatcher.appendListener(
-        sg::event::SgEventType::MOUSE_BUTTON_PRESSED,
-        eventpp::argumentAdapter<void(const sg::event::MouseButtonPressedEvent&)>(
-            [this](const sg::event::MouseButtonPressedEvent& t_event)
+    event::EventManager::eventDispatcher.appendListener(
+        event::SgEventType::MOUSE_BUTTON_PRESSED,
+        eventpp::argumentAdapter<void(const event::MouseButtonPressedEvent&)>(
+            [this](const event::MouseButtonPressedEvent& t_event)
             {
                 if (t_event.button == GLFW_MOUSE_BUTTON_LEFT)
                 {
-                    UpdateCurrentTileIndex();
+                    // todo: test
+                    if (ImGui::GetIO().WantCaptureMouse)
+                    {
+                        return;
+                    }
+
+                    OnLeftMouseButtonPressed();
+                    m_terrainLayer->OnLeftMouseButtonPressed();
                 }
             }
         )
@@ -189,15 +196,18 @@ void sg::map::Map::InitListeners()
 }
 
 //-------------------------------------------------
-// Mouse picking
+// Listeners
 //-------------------------------------------------
 
-void sg::map::Map::UpdateCurrentTileIndex()
+void sg::map::Map::OnLeftMouseButtonPressed()
 {
     if (!m_terrainLayer->pickingTexture)
     {
+        Log::SG_LOG_WARN("[Map::OnLeftMouseButtonPressed()] Missing texture.");
         return;
     }
+
+    Log::SG_LOG_INFO("[Map::OnLeftMouseButtonPressed()] Left mouse button pressed listener.");
 
     currentTileIndex = m_terrainLayer->pickingTexture->ReadMapIndex(
         static_cast<int>(m_window->GetMouseX()),

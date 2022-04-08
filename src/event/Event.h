@@ -42,6 +42,7 @@ namespace sg::event
 
     struct SgEvent
     {
+        SgEvent() = default;
         virtual ~SgEvent() = default;
 
         SgEventType type{ SgEventType::NONE };

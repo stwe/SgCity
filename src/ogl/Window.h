@@ -75,6 +75,8 @@ namespace sg::ogl
         // Ctors. / Dtor.
         //-------------------------------------------------
 
+        Window() = delete;
+
         /**
          * Constructs a new Window object.
          *
@@ -82,7 +84,7 @@ namespace sg::ogl
          * @param t_height The height of the window.
          * @param t_title The title of the window.
          */
-        Window(int t_width = MIN_WIDTH, int t_height = MIN_HEIGHT, std::string t_title = "SgCity");
+        explicit Window(int t_width = MIN_WIDTH, int t_height = MIN_HEIGHT, std::string t_title = "SgCity");
 
         Window(const Window& t_other) = delete;
         Window(Window&& t_other) noexcept = delete;
@@ -109,7 +111,7 @@ namespace sg::ogl
         /**
          * Window specific input logic.
          */
-        void Input();
+        void Input() const;
 
         //-------------------------------------------------
         // Rendering
@@ -165,11 +167,15 @@ namespace sg::ogl
 
         /**
          * Returns the mouse x position.
+         *
+         * @return The x position.
          */
         [[nodiscard]] float GetMouseX() const { return GetMousePosition().x; }
 
         /**
          * Returns the mouse y position.
+         *
+         * @return The y position.
          */
         [[nodiscard]] float GetMouseY() const { return GetMousePosition().y; }
 

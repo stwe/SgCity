@@ -94,7 +94,7 @@ GLFWwindow* sg::ogl::Window::GetWindowHandle() const
 // Logic
 //-------------------------------------------------
 
-void sg::ogl::Window::Input()
+void sg::ogl::Window::Input() const
 {
     CloseIfEscKeyPressed();
 }
@@ -283,8 +283,8 @@ void sg::ogl::Window::InitInputCallbacks() const
 {
     Log::SG_LOG_DEBUG("[Window::InitInputCallbacks()] Initializing input callbacks.");
 
-    sg::event::EventManager::SetKeyboardGlfwCallbacks(m_windowHandle);
-    sg::event::EventManager::SetMouseGlfwCallbacks(m_windowHandle);
+    event::EventManager::SetKeyboardGlfwCallbacks(m_windowHandle);
+    event::EventManager::SetMouseGlfwCallbacks(m_windowHandle);
 }
 
 //-------------------------------------------------

@@ -27,11 +27,6 @@
 // Ctors. / Dtor.
 //-------------------------------------------------
 
-sg::map::Layer::Layer()
-{
-    Log::SG_LOG_DEBUG("[Layer::Layer()] Create Layer.");
-}
-
 sg::map::Layer::Layer(const int t_tileCount)
     : tileCount{ t_tileCount }
 {

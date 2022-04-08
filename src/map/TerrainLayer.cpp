@@ -155,6 +155,15 @@ void sg::map::TerrainLayer::Render(
 }
 
 //-------------------------------------------------
+// Listeners
+//-------------------------------------------------
+
+void sg::map::TerrainLayer::OnLeftMouseButtonPressed()
+{
+    Log::SG_LOG_INFO("[TerrainLayer::OnLeftMouseButtonPressed()] Left mouse button pressed listener.");
+}
+
+//-------------------------------------------------
 // Init
 //-------------------------------------------------
 
@@ -176,10 +185,6 @@ void sg::map::TerrainLayer::Init()
 
     Log::SG_LOG_DEBUG("[TerrainLayer::Init()] The TerrainLayer was successfully initialized.");
 }
-
-//-------------------------------------------------
-// Override
-//-------------------------------------------------
 
 void sg::map::TerrainLayer::CreateTiles()
 {

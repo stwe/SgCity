@@ -187,14 +187,14 @@ namespace sg::map
         void Init();
 
         /**
-         * Adds event handlers.
+         * Initializes the event dispatcher.
          */
-        void InitListeners();
+        void InitEventDispatcher();
 
         //-------------------------------------------------
-        // Mouse picking
+        // Listeners
         //-------------------------------------------------
 
-        void UpdateCurrentTileIndex();
+        void OnLeftMouseButtonPressed();
     };
 }

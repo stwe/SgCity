@@ -87,10 +87,7 @@ namespace sg::map
         // Ctors. / Dtor.
         //-------------------------------------------------
 
-        /**
-         * Constructs a new Layer object.
-         */
-        Layer();
+        Layer() = delete;
 
         /**
          * Constructs a new Layer object.
@@ -148,10 +145,15 @@ namespace sg::map
             const glm::vec4& t_plane = glm::vec4(0.0f)
         ) const = 0;
 
+        //-------------------------------------------------
+        // Listeners
+        //-------------------------------------------------
+
+        virtual void OnLeftMouseButtonPressed() {}
+
     protected:
 
     private:
-
         /**
          * Creates Layer tiles.
          */

@@ -78,22 +78,22 @@ void sg::Application::Init()
     Log::SG_LOG_DEBUG("[Application::Init()] The application was successfully initialized.");
 }
 
-void sg::Application::Input()
+void sg::Application::Input() const
 {
     // Esc key closes the app
     m_window->Input();
 
-    // do nothing when the mouse is over the ImGui window
+    // do nothing (return) when the mouse is over the ImGui window
     if (ImGui::GetIO().WantCaptureMouse)
     {
         return;
     }
 
-    // WASD
+    // WASD keys + right mouse button rotation
     m_camera->Input();
 }
 
-void sg::Application::Update()
+void sg::Application::Update() const
 {
     m_map->Update(m_mapEditGui->action);
 }
@@ -138,7 +138,7 @@ void sg::Application::Render()
     EndFrame();
 }
 
-void sg::Application::RenderImGui()
+void sg::Application::RenderImGui() const
 {
     ImGui::Begin("Application");
 

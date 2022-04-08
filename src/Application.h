@@ -141,10 +141,10 @@ namespace sg
         //-------------------------------------------------
 
         void Init();
-        void Input();
-        void Update();
+        void Input() const;
+        void Update() const;
         void Render();
-        void RenderImGui();
+        void RenderImGui() const;
 
         //-------------------------------------------------
         // Game loop

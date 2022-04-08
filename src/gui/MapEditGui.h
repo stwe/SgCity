@@ -49,10 +49,7 @@ namespace sg::gui
         // Ctors. / Dtor.
         //-------------------------------------------------
 
-        MapEditGui()
-        {
-            m_buttonTextures = CreateButtonTextures();
-        }
+        MapEditGui();
 
         //-------------------------------------------------
         // Logic

@@ -22,12 +22,12 @@
 // Init
 //-------------------------------------------------
 
-void sg::event::EventManager::SetKeyboardGlfwCallbacks(GLFWwindow* m_windowHandle)
+void sg::event::EventManager::SetKeyboardGlfwCallbacks(GLFWwindow* t_windowHandle)
 {
     // Registers a callback that will be invoked when a key is pressed or released
     glfwSetKeyCallback
     (
-        m_windowHandle,
+        t_windowHandle,
         [](GLFWwindow* t_window, const int t_key, const int t_scanCode, const int t_action, const int t_mods)
         {
             switch (t_action)
@@ -47,12 +47,12 @@ void sg::event::EventManager::SetKeyboardGlfwCallbacks(GLFWwindow* m_windowHandl
     );
 }
 
-void sg::event::EventManager::SetMouseGlfwCallbacks(GLFWwindow* m_windowHandle)
+void sg::event::EventManager::SetMouseGlfwCallbacks(GLFWwindow* t_windowHandle)
 {
     // Registers a callback that will be invoked when the mouse is moved.
     glfwSetCursorPosCallback
     (
-        m_windowHandle,
+        t_windowHandle,
         [](GLFWwindow* t_window, const double t_x, const double t_y)
         {
             eventDispatcher.dispatch(
@@ -68,7 +68,7 @@ void sg::event::EventManager::SetMouseGlfwCallbacks(GLFWwindow* m_windowHandle)
     // Registers a callback that will be invoked when a scrolling device is used.
     glfwSetScrollCallback
     (
-        m_windowHandle,
+        t_windowHandle,
         [](GLFWwindow* t_window, const double t_xOffset, const double t_yOffset)
         {
             eventDispatcher.dispatch(
@@ -84,7 +84,7 @@ void sg::event::EventManager::SetMouseGlfwCallbacks(GLFWwindow* m_windowHandle)
     // Registers a callback that will be invoked when the mouse enters our window.
     glfwSetCursorEnterCallback
     (
-        m_windowHandle,
+        t_windowHandle,
         [](GLFWwindow* t_window, const int t_entered)
         {
             eventDispatcher.dispatch(SgEventType::MOUSE_ENTER, MouseEnterEvent(t_entered));
@@ -94,7 +94,7 @@ void sg::event::EventManager::SetMouseGlfwCallbacks(GLFWwindow* m_windowHandle)
     // Registers a callback that will be invoked when a mouse button is pressed or released.
     glfwSetMouseButtonCallback
     (
-        m_windowHandle,
+        t_windowHandle,
         [](GLFWwindow* t_window, const int t_button, const int t_action, const int t_mods)
         {
             switch (t_action)

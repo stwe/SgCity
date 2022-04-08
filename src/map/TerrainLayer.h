@@ -116,6 +116,12 @@ namespace sg::map
             const glm::vec4& t_plane = glm::vec4(0.0f)
         ) const override;
 
+        //-------------------------------------------------
+        // Listeners
+        //-------------------------------------------------
+
+        void OnLeftMouseButtonPressed() override;
+
     protected:
 
     private:

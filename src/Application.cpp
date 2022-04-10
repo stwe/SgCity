@@ -89,6 +89,11 @@ void sg::Application::Input() const
     m_camera->Input();
 }
 
+void sg::Application::Update()
+{
+    m_map->Update();
+}
+
 void sg::Application::Render()
 {
     // ---------------------------
@@ -159,7 +164,7 @@ void sg::Application::GameLoop()
 
         while (dt >= 1.0)
         {
-            //todo: Update();
+            Update();
             updates++;
             dt--;
         }

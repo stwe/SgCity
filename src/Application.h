@@ -132,6 +132,7 @@ namespace sg
 
         void Init();
         void Input() const;
+        void Update();
         void Render();
         void RenderImGui() const;
 

@@ -26,8 +26,8 @@
 // Ctors. / Dtor.
 //-------------------------------------------------
 
-sg::map::PlantsLayer::PlantsLayer(std::vector<std::shared_ptr<Tile>> t_tiles)
-    : Layer(std::move(t_tiles))
+sg::map::PlantsLayer::PlantsLayer(std::shared_ptr<ogl::Window> t_window, std::vector<std::shared_ptr<Tile>> t_tiles)
+    : Layer(std::move(t_window), std::move(t_tiles))
 {
     Log::SG_LOG_DEBUG("[PlantsLayer::PlantsLayer()] Create PlantsLayer.");
 
@@ -43,18 +43,14 @@ sg::map::PlantsLayer::~PlantsLayer() noexcept
 // Override
 //-------------------------------------------------
 
-void sg::map::PlantsLayer::Render(
-    const ogl::Window& t_window,
-    const ogl::camera::Camera& t_camera,
-    const glm::vec4& t_plane
-) const
+void sg::map::PlantsLayer::Render(const ogl::camera::Camera& t_camera, const glm::vec4& t_plane) const
 {
     for (const auto& tile : tiles)
     {
         if (tile->type == Tile::TileType::PLANTS)
         {
             m_model->Render(
-                t_window,
+                *window,
                 t_camera,
                 glm::vec3(tile->mapX + 0.5f, 2.0f, tile->mapZ + 0.5f),
                 glm::vec3(0.0f, 0.0f, 180.0f),

@@ -47,7 +47,8 @@ namespace sg::map
         //-------------------------------------------------
 
         WaterLayer() = delete;
-        explicit WaterLayer(int t_tileCount);
+
+        WaterLayer(std::shared_ptr<ogl::Window> t_window, int t_tileCount);
 
         WaterLayer(const WaterLayer& t_other) = delete;
         WaterLayer(WaterLayer&& t_other) noexcept = delete;
@@ -87,12 +88,10 @@ namespace sg::map
         /**
          * Render the Layer.
          *
-         * @param t_window The Window object.
          * @param t_camera The Camera object.
          * @param t_plane The clipping plane.
          */
         void Render(
-            const ogl::Window& t_window,
             const ogl::camera::Camera& t_camera,
             const glm::vec4& t_plane = glm::vec4(0.0f)
         ) const override;

@@ -38,8 +38,8 @@ void sg::gui::MapEditGui::RenderImGui(map::Map& t_map)
     ImGui::Begin("Map edit");
     ImGui::Text("Press the Escape key to exit.");
     ImGui::Separator();
-    ImGui::Text("Mouse x: %d", t_map.GetWindow().GetMouseX());
-    ImGui::Text("Mouse y: %d", t_map.GetWindow().GetMouseY());
+    ImGui::Text("Mouse x: %d", t_map.window->GetMouseX());
+    ImGui::Text("Mouse y: %d", t_map.window->GetMouseY());
 
     ImGui::Separator();
 

@@ -50,9 +50,10 @@ namespace sg::map
         /**
          * Constructs a new BuildingsLayer object.
          *
+         * @param t_window The Window object.
          * @param t_tiles The Tile objects.
          */
-        explicit BuildingsLayer(std::vector<std::shared_ptr<Tile>> t_tiles);
+        BuildingsLayer(std::shared_ptr<ogl::Window> t_window, std::vector<std::shared_ptr<Tile>> t_tiles);
 
         BuildingsLayer(const BuildingsLayer& t_other) = delete;
         BuildingsLayer(BuildingsLayer&& t_other) noexcept = delete;
@@ -86,15 +87,10 @@ namespace sg::map
         /**
          * Render the Layer.
          *
-         * @param t_window The Window object.
          * @param t_camera The Camera object.
          * @param t_plane The clipping plane.
          */
-        void Render(
-            const ogl::Window& t_window,
-            const ogl::camera::Camera& t_camera,
-            const glm::vec4& t_plane = glm::vec4(0.0f)
-        ) const override;
+        void Render(const ogl::camera::Camera& t_camera, const glm::vec4& t_plane = glm::vec4(0.0f)) const override;
 
     protected:
 

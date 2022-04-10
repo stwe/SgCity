@@ -47,7 +47,8 @@ namespace sg::map
         //-------------------------------------------------
 
         RoadsLayer() = delete;
-        explicit RoadsLayer(std::vector<std::shared_ptr<Tile>> t_tiles);
+
+        RoadsLayer(std::shared_ptr<ogl::Window> t_window, std::vector<std::shared_ptr<Tile>> t_tiles);
 
         RoadsLayer(const RoadsLayer& t_other) = delete;
         RoadsLayer(RoadsLayer&& t_other) noexcept = delete;
@@ -81,15 +82,10 @@ namespace sg::map
         /**
          * Render the Layer.
          *
-         * @param t_window The Window object.
          * @param t_camera The Camera object.
          * @param t_plane The clipping plane.
          */
-        void Render(
-            const ogl::Window& t_window,
-            const ogl::camera::Camera& t_camera,
-            const glm::vec4& t_plane = glm::vec4(0.0f)
-        ) const override;
+        void Render(const ogl::camera::Camera& t_camera, const glm::vec4& t_plane = glm::vec4(0.0f)) const override;
 
     protected:
 

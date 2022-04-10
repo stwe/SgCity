@@ -21,20 +21,21 @@
 #include "Log.h"
 #include "Tile.h"
 #include "gui/MapEditGui.h"
-#include "ogl/buffer/Vao.h"
 
 //-------------------------------------------------
 // Ctors. / Dtor.
 //-------------------------------------------------
 
-sg::map::Layer::Layer(const int t_tileCount)
-    : tileCount{ t_tileCount }
+sg::map::Layer::Layer(std::shared_ptr<ogl::Window> t_window, const int t_tileCount)
+    : window{ std::move(t_window) }
+    , tileCount{ t_tileCount }
 {
     Log::SG_LOG_DEBUG("[Layer::Layer()] Create Layer.");
 }
 
-sg::map::Layer::Layer(std::vector<std::shared_ptr<Tile>> t_tiles)
-    : tiles{ std::move(t_tiles) }
+sg::map::Layer::Layer(std::shared_ptr<ogl::Window> t_window, std::vector<std::shared_ptr<Tile>> t_tiles)
+    : window{ std::move(t_window) }
+    , tiles{ std::move(t_tiles) }
 {
     Log::SG_LOG_DEBUG("[Layer::Layer()] Create Layer.");
 }

@@ -47,8 +47,22 @@ namespace sg::map
     {
     public:
         //-------------------------------------------------
+        // Constants
+        //-------------------------------------------------
+
+        /**
+         * Value used for an invalid tile index.
+         */
+        static constexpr auto INVALID_TILE_INDEX{ -1 };
+
+        //-------------------------------------------------
         // Member
         //-------------------------------------------------
+
+        /**
+         * Index in Tile::std::vector<std::shared_ptr<Tile>> of the current picked Tile.
+         */
+        int currentTileIndex{ INVALID_TILE_INDEX };
 
         /**
          * An object holding the Fbo for mouse picking.
@@ -64,9 +78,10 @@ namespace sg::map
         /**
          * Constructs a new TerrainLayer object.
          *
+         * @param t_window The Window object.
          * @param t_tileCount The number of tiles in x and z direction.
          */
-        explicit TerrainLayer(int t_tileCount);
+        TerrainLayer(std::shared_ptr<ogl::Window> t_window, int t_tileCount);
 
         TerrainLayer(const TerrainLayer& t_other) = delete;
         TerrainLayer(TerrainLayer&& t_other) noexcept = delete;
@@ -106,15 +121,15 @@ namespace sg::map
         /**
          * Render the Layer.
          *
-         * @param t_window The Window object.
          * @param t_camera The Camera object.
          * @param t_plane The clipping plane.
          */
-        void Render(
-            const ogl::Window& t_window,
-            const ogl::camera::Camera& t_camera,
-            const glm::vec4& t_plane = glm::vec4(0.0f)
-        ) const override;
+        void Render(const ogl::camera::Camera& t_camera, const glm::vec4& t_plane = glm::vec4(0.0f)) const override;
+
+        /**
+         * Renders an ImGui window.
+         */
+        void RenderImGui() const override;
 
         //-------------------------------------------------
         // Listeners
@@ -125,6 +140,15 @@ namespace sg::map
     protected:
 
     private:
+        //-------------------------------------------------
+        // Member
+        //-------------------------------------------------
+
+        /**
+         * The current Tile object.
+         */
+        std::shared_ptr<Tile> m_currentTile;
+
         //-------------------------------------------------
         // Init
         //-------------------------------------------------

@@ -30,8 +30,8 @@
 // Ctors. / Dtor.
 //-------------------------------------------------
 
-sg::map::TerrainLayer::TerrainLayer(const int t_tileCount)
-    : Layer(t_tileCount)
+sg::map::TerrainLayer::TerrainLayer(std::shared_ptr<ogl::Window> t_window, const int t_tileCount)
+    : Layer(std::move(t_window), t_tileCount)
 {
     Log::SG_LOG_DEBUG("[TerrainLayer::TerrainLayer()] Create TerrainLayer.");
 
@@ -104,11 +104,7 @@ void sg::map::TerrainLayer::UpdateTile(const gui::Action t_action, Tile& t_tile)
     }
 }
 
-void sg::map::TerrainLayer::Render(
-    const ogl::Window& t_window,
-    const ogl::camera::Camera& t_camera,
-    const glm::vec4& t_plane
-) const
+void sg::map::TerrainLayer::Render(const ogl::camera::Camera& t_camera, const glm::vec4& t_plane) const
 {
     ogl::OpenGL::EnableFaceCulling();
 
@@ -119,7 +115,7 @@ void sg::map::TerrainLayer::Render(
 
     shaderProgram.SetUniform("model", modelMatrix);
     shaderProgram.SetUniform("view", t_camera.GetViewMatrix());
-    shaderProgram.SetUniform("projection", t_window.GetProjectionMatrix());
+    shaderProgram.SetUniform("projection", window->GetProjectionMatrix());
     shaderProgram.SetUniform("plane", t_plane);
 
     const auto mv{ t_camera.GetViewMatrix() * modelMatrix };
@@ -154,6 +150,18 @@ void sg::map::TerrainLayer::Render(
     ogl::OpenGL::DisableFaceCulling();
 }
 
+void sg::map::TerrainLayer::RenderImGui() const
+{
+    ImGui::Begin("Terrain Layer");
+
+    if (m_currentTile)
+    {
+        m_currentTile->RenderImGui();
+    }
+
+    ImGui::End();
+}
+
 //-------------------------------------------------
 // Listeners
 //-------------------------------------------------
@@ -161,6 +169,37 @@ void sg::map::TerrainLayer::Render(
 void sg::map::TerrainLayer::OnLeftMouseButtonPressed()
 {
     Log::SG_LOG_INFO("[TerrainLayer::OnLeftMouseButtonPressed()] Left mouse button pressed listener.");
+
+    /*
+    if (!pickingTexture)
+    {
+        Log::SG_LOG_WARN("[TerrainLayer::OnLeftMouseButtonPressed()] Missing texture.");
+        return;
+    }
+    */
+
+    // read tile index under mouse
+    currentTileIndex = pickingTexture->ReadMapIndex(
+        static_cast<int>(window->GetMouseX()),
+        static_cast<int>(window->GetMouseY())
+    );
+
+    // check tile index
+    if (currentTileIndex < 0 || currentTileIndex > static_cast<int>(tiles.size()) - 1)
+    {
+        currentTileIndex = INVALID_TILE_INDEX;
+    }
+
+    // update current tile if the tile index is valid
+    if (currentTileIndex != INVALID_TILE_INDEX)
+    {
+        m_currentTile = tiles[currentTileIndex];
+
+        UpdateTile(gui::Action::RAISE, *m_currentTile);
+        //UpdateTile(t_action, *m_currentTile);
+
+        currentTileIndex = INVALID_TILE_INDEX;
+    }
 }
 
 //-------------------------------------------------

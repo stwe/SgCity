@@ -26,8 +26,8 @@
 // Ctors. / Dtor.
 //-------------------------------------------------
 
-sg::map::BuildingsLayer::BuildingsLayer(std::vector<std::shared_ptr<Tile>> t_tiles)
-    : Layer(std::move(t_tiles))
+sg::map::BuildingsLayer::BuildingsLayer(std::shared_ptr<ogl::Window> t_window, std::vector<std::shared_ptr<Tile>> t_tiles)
+    : Layer(std::move(t_window), std::move(t_tiles))
 {
     Log::SG_LOG_DEBUG("[BuildingsLayer::BuildingsLayer()] Create BuildingsLayer.");
 
@@ -43,17 +43,13 @@ sg::map::BuildingsLayer::~BuildingsLayer() noexcept
 // Override
 //-------------------------------------------------
 
-void sg::map::BuildingsLayer::Render(
-    const ogl::Window& t_window,
-    const ogl::camera::Camera& t_camera,
-    const glm::vec4& t_plane
-) const
+void sg::map::BuildingsLayer::Render(const ogl::camera::Camera& t_camera, const glm::vec4& t_plane) const
 {
     for (const auto& tile : tiles)
     {
         if (tile->type == Tile::TileType::RESIDENTIAL)
         {
-            m_model->Render(t_window, t_camera, glm::vec3(tile->mapX + 0.5f, 0.001f, tile->mapZ + 0.5f));
+            m_model->Render(*window, t_camera, glm::vec3(tile->mapX + 0.5f, 0.001f, tile->mapZ + 0.5f));
         }
     }
 }

@@ -19,6 +19,7 @@
 #include "WaterLayer.h"
 #include "Application.h"
 #include "Log.h"
+#include "ogl/Window.h"
 #include "ogl/OpenGL.h"
 #include "ogl/math/Transform.h"
 #include "ogl/buffer/Vao.h"
@@ -28,8 +29,8 @@
 // Ctors. / Dtor.
 //-------------------------------------------------
 
-sg::map::WaterLayer::WaterLayer(const int t_tileCount)
-    : Layer(t_tileCount)
+sg::map::WaterLayer::WaterLayer(std::shared_ptr<ogl::Window> t_window, const int t_tileCount)
+    : Layer(std::move(t_window), t_tileCount)
 {
     Log::SG_LOG_DEBUG("[WaterLayer::WaterLayer()] Create WaterLayer.");
 
@@ -51,11 +52,7 @@ void sg::map::WaterLayer::Update()
     m_moveFactor = fmod(m_moveFactor, 1.0f);
 }
 
-void sg::map::WaterLayer::Render(
-    const ogl::Window& t_window,
-    const ogl::camera::Camera& t_camera,
-    const glm::vec4& t_plane
-) const
+void sg::map::WaterLayer::Render(const ogl::camera::Camera& t_camera, const glm::vec4& t_plane) const
 {
     ogl::OpenGL::EnableAlphaBlending();
     ogl::OpenGL::EnableFaceCulling();
@@ -67,7 +64,7 @@ void sg::map::WaterLayer::Render(
 
     shaderProgram.SetUniform("model", modelMatrix);
     shaderProgram.SetUniform("view", t_camera.GetViewMatrix());
-    shaderProgram.SetUniform("projection", t_window.GetProjectionMatrix());
+    shaderProgram.SetUniform("projection", window->GetProjectionMatrix());
 
     // todo: method in texture
     glActiveTexture(GL_TEXTURE0);

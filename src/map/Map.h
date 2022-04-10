@@ -62,33 +62,19 @@ namespace sg::map
     class PlantsLayer;
 
     /**
-     * Forward declaration class Tile.
-     */
-    class Tile;
-
-    /**
      * Represents the Map.
      */
     class Map
     {
     public:
         //-------------------------------------------------
-        // Constants
-        //-------------------------------------------------
-
-        /**
-         * Value used for an invalid tile index.
-         */
-        static constexpr auto INVALID_TILE_INDEX{ -1 };
-
-        //-------------------------------------------------
         // Member
         //-------------------------------------------------
 
         /**
-         * Index in std::vector<std::shared_ptr<Tile>> of the current picked Tile.
+         * The Window object.
          */
-        int currentTileIndex{ INVALID_TILE_INDEX };
+        std::shared_ptr<ogl::Window> window;
 
         //-------------------------------------------------
         // Ctors. / Dtor.
@@ -112,12 +98,6 @@ namespace sg::map
         ~Map() noexcept;
 
         //-------------------------------------------------
-        // Getter
-        //-------------------------------------------------
-
-        [[nodiscard]] ogl::Window& GetWindow() const { return *m_window; }
-
-        //-------------------------------------------------
         // Logic
         //-------------------------------------------------
 
@@ -136,11 +116,6 @@ namespace sg::map
         //-------------------------------------------------
         // Member
         //-------------------------------------------------
-
-        /**
-         * The Window object.
-         */
-        std::shared_ptr<ogl::Window> m_window;
 
         /*
          * The number of tiles in x and z direction.
@@ -172,11 +147,6 @@ namespace sg::map
          */
         std::unique_ptr<PlantsLayer> m_plantsLayer;
 
-        /**
-         * Current Tile object.
-         */
-        std::shared_ptr<Tile> m_currentTile;
-
         //-------------------------------------------------
         // Init
         //-------------------------------------------------
@@ -190,11 +160,5 @@ namespace sg::map
          * Initializes the event dispatcher.
          */
         void InitEventDispatcher();
-
-        //-------------------------------------------------
-        // Listeners
-        //-------------------------------------------------
-
-        void OnLeftMouseButtonPressed();
     };
 }

@@ -25,8 +25,6 @@
 #include "PlantsLayer.h"
 #include "gui/MapEditGui.h"
 #include "ogl/OpenGL.h"
-#include "ogl/buffer/WaterFbos.h"
-#include "ogl/input/PickingTexture.h"
 #include "event/EventManager.h"
 #include "eventpp/utilities/argumentadapter.h"
 
@@ -35,7 +33,7 @@
 //-------------------------------------------------
 
 sg::map::Map::Map(std::shared_ptr<ogl::Window> t_window, const int t_tileCount)
-    : m_window{ std::move(t_window) }
+    : window{ std::move(t_window) }
     , m_tileCount{ t_tileCount }
 {
     Log::SG_LOG_DEBUG("[Map::Map()] Create Map.");
@@ -54,26 +52,15 @@ sg::map::Map::~Map() noexcept
 
 void sg::map::Map::Update(const gui::Action t_action)
 {
-    if (currentTileIndex != INVALID_TILE_INDEX)
-    {
-        m_currentTile = m_terrainLayer->tiles[currentTileIndex];
-
-        m_terrainLayer->UpdateTile(t_action, *m_currentTile);
-        currentTileIndex = INVALID_TILE_INDEX;
-    }
-
     m_waterLayer->Update();
 }
 
 void sg::map::Map::RenderForMousePicking(const ogl::camera::Camera& t_camera) const
 {
-    m_terrainLayer->RenderForMousePicking(*m_window, t_camera);
+    m_terrainLayer->RenderForMousePicking(*window, t_camera);
 }
 
-void sg::map::Map::RenderForWater(
-    ogl::camera::Camera& t_camera,
-    const ogl::resource::Skybox& t_skybox
-) const
+void sg::map::Map::RenderForWater(ogl::camera::Camera& t_camera, const ogl::resource::Skybox& t_skybox) const
 {
     ogl::OpenGL::EnableClipping();
     ogl::OpenGL::SetClearColor(0.0f, 0.0f, 0.0f, 1.0f);
@@ -86,10 +73,10 @@ void sg::map::Map::RenderForWater(
     t_camera.position.y -= distance;
     t_camera.InvertPitch();
 
-    m_terrainLayer->Render(*m_window, t_camera, glm::vec4(0.0f, 1.0f, 0.0f, WaterLayer::WATER_HEIGHT));
-    m_roadsLayer->Render(*m_window, t_camera, glm::vec4(0.0f, 1.0f, 0.0f, WaterLayer::WATER_HEIGHT));
-    m_buildingsLayer->Render(*m_window, t_camera, glm::vec4(0.0f, 1.0f, 0.0f, WaterLayer::WATER_HEIGHT));
-    m_plantsLayer->Render(*m_window, t_camera, glm::vec4(0.0f, 1.0f, 0.0f, WaterLayer::WATER_HEIGHT));
+    m_terrainLayer->Render(t_camera, glm::vec4(0.0f, 1.0f, 0.0f, WaterLayer::WATER_HEIGHT));
+    m_roadsLayer->Render(t_camera, glm::vec4(0.0f, 1.0f, 0.0f, WaterLayer::WATER_HEIGHT));
+    m_buildingsLayer->Render(t_camera, glm::vec4(0.0f, 1.0f, 0.0f, WaterLayer::WATER_HEIGHT));
+    m_plantsLayer->Render(t_camera, glm::vec4(0.0f, 1.0f, 0.0f, WaterLayer::WATER_HEIGHT));
     //t_skybox.Render(t_window, t_camera);
 
     t_camera.position.y += distance;
@@ -100,7 +87,7 @@ void sg::map::Map::RenderForWater(
     // refraction - everything below the water
     m_waterLayer->GetWaterFbos().BindRefractionFboAsRenderTarget();
     ogl::OpenGL::Clear();
-    m_terrainLayer->Render(*m_window, t_camera, glm::vec4(0.0f, -1.0f, 0.0f, -WaterLayer::WATER_HEIGHT));
+    m_terrainLayer->Render(t_camera, glm::vec4(0.0f, -1.0f, 0.0f, -WaterLayer::WATER_HEIGHT));
     m_waterLayer->GetWaterFbos().UnbindRenderTarget();
 
     ogl::OpenGL::DisableClipping();
@@ -108,12 +95,12 @@ void sg::map::Map::RenderForWater(
 
 void sg::map::Map::Render(const ogl::camera::Camera& t_camera) const
 {
-    m_terrainLayer->Render(*m_window, t_camera, glm::vec4(0.0f, 1.0f, 0.0f, 100000.0f));
-    m_roadsLayer->Render(*m_window, t_camera, glm::vec4(0.0f, 1.0f, 0.0f, 100000.0f));
-    m_buildingsLayer->Render(*m_window, t_camera, glm::vec4(0.0f, 1.0f, 0.0f, 100000.0f));
-    m_plantsLayer->Render(*m_window, t_camera, glm::vec4(0.0f, 1.0f, 0.0f, 100000.0f));
+    m_terrainLayer->Render(t_camera, glm::vec4(0.0f, 1.0f, 0.0f, 100000.0f));
+    m_roadsLayer->Render(t_camera, glm::vec4(0.0f, 1.0f, 0.0f, 100000.0f));
+    m_buildingsLayer->Render(t_camera, glm::vec4(0.0f, 1.0f, 0.0f, 100000.0f));
+    m_plantsLayer->Render(t_camera, glm::vec4(0.0f, 1.0f, 0.0f, 100000.0f));
 
-    m_waterLayer->Render(*m_window, t_camera, glm::vec4(0.0f, 1.0f, 0.0f, 100000.0f));
+    m_waterLayer->Render(t_camera, glm::vec4(0.0f, 1.0f, 0.0f, 100000.0f));
 }
 
 void sg::map::Map::RenderImGui() const
@@ -143,11 +130,6 @@ void sg::map::Map::RenderImGui() const
     }
 
     ImGui::End();
-
-    if (m_currentTile)
-    {
-        m_currentTile->RenderImGui();
-    }
 }
 
 //-------------------------------------------------
@@ -160,11 +142,11 @@ void sg::map::Map::Init()
 
     InitEventDispatcher();
 
-    m_waterLayer = std::make_unique<WaterLayer>(m_tileCount);
-    m_terrainLayer = std::make_unique<TerrainLayer>(m_tileCount);
-    m_roadsLayer = std::make_unique<RoadsLayer>(m_terrainLayer->tiles);
-    m_buildingsLayer = std::make_unique<BuildingsLayer>(m_terrainLayer->tiles);
-    m_plantsLayer = std::make_unique<PlantsLayer>(m_terrainLayer->tiles);
+    m_waterLayer = std::make_unique<WaterLayer>(window, m_tileCount);
+    m_terrainLayer = std::make_unique<TerrainLayer>(window, m_tileCount);
+    m_roadsLayer = std::make_unique<RoadsLayer>(window, m_terrainLayer->tiles);
+    m_buildingsLayer = std::make_unique<BuildingsLayer>(window, m_terrainLayer->tiles);
+    m_plantsLayer = std::make_unique<PlantsLayer>(window, m_terrainLayer->tiles);
 
     Log::SG_LOG_DEBUG("[Map::Init()] The map was successfully initialized.");
 }
@@ -187,35 +169,13 @@ void sg::map::Map::InitEventDispatcher()
                         return;
                     }
 
-                    OnLeftMouseButtonPressed();
+                    //m_waterLayer->OnLeftMouseButtonPressed();
                     m_terrainLayer->OnLeftMouseButtonPressed();
+                    //m_roadsLayer->OnLeftMouseButtonPressed();
+                    //m_buildingsLayer->OnLeftMouseButtonPressed();
+                    //m_plantsLayer->OnLeftMouseButtonPressed();
                 }
             }
         )
     );
-}
-
-//-------------------------------------------------
-// Listeners
-//-------------------------------------------------
-
-void sg::map::Map::OnLeftMouseButtonPressed()
-{
-    if (!m_terrainLayer->pickingTexture)
-    {
-        Log::SG_LOG_WARN("[Map::OnLeftMouseButtonPressed()] Missing texture.");
-        return;
-    }
-
-    Log::SG_LOG_INFO("[Map::OnLeftMouseButtonPressed()] Left mouse button pressed listener.");
-
-    currentTileIndex = m_terrainLayer->pickingTexture->ReadMapIndex(
-        static_cast<int>(m_window->GetMouseX()),
-        static_cast<int>(m_window->GetMouseY())
-    );
-
-    if (currentTileIndex < 0 || currentTileIndex > static_cast<int>(m_terrainLayer->tiles.size()) - 1)
-    {
-        currentTileIndex = INVALID_TILE_INDEX;
-    }
 }

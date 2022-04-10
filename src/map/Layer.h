@@ -20,12 +20,16 @@
 
 #include <memory>
 #include <vector>
-#include "ogl/Window.h"
 #include "ogl/camera/Camera.h"
 
 //-------------------------------------------------
 // Forward declarations
 //-------------------------------------------------
+
+namespace sg::ogl
+{
+    class Window;
+}
 
 namespace sg::ogl::buffer
 {
@@ -57,6 +61,11 @@ namespace sg::map
         //-------------------------------------------------
         // Member
         //-------------------------------------------------
+
+        /**
+         * The Window object.
+         */
+        std::shared_ptr<ogl::Window> window;
 
         /*
          * The number of tiles in x and z direction.
@@ -92,16 +101,18 @@ namespace sg::map
         /**
          * Constructs a new Layer object.
          *
+         * @param t_window The Window object.
          * @param t_tileCount The number of tiles in x and z direction.
          */
-        explicit Layer(int t_tileCount);
+        Layer(std::shared_ptr<ogl::Window> t_window, int t_tileCount);
 
         /**
          * Constructs a new Layer object.
          *
+         * @param t_window The Window object.
          * @param t_tiles The Tile objects.
          */
-        explicit Layer(std::vector<std::shared_ptr<Tile>> t_tiles);
+        Layer(std::shared_ptr<ogl::Window> t_window, std::vector<std::shared_ptr<Tile>> t_tiles);
 
         Layer(const Layer& t_other) = delete;
         Layer(Layer&& t_other) noexcept = delete;
@@ -135,20 +146,23 @@ namespace sg::map
         /**
          * Render the Layer.
          *
-         * @param t_window The Window object.
          * @param t_camera The Camera object.
          * @param t_plane The clipping plane.
          */
-        virtual void Render(
-            const ogl::Window& t_window,
-            const ogl::camera::Camera& t_camera,
-            const glm::vec4& t_plane = glm::vec4(0.0f)
-        ) const = 0;
+        virtual void Render(const ogl::camera::Camera& t_camera, const glm::vec4& t_plane = glm::vec4(0.0f)) const = 0;
+
+        /**
+         * Renders an ImGui window.
+         */
+        virtual void RenderImGui() const {}
 
         //-------------------------------------------------
         // Listeners
         //-------------------------------------------------
 
+        /**
+         * On left mouse button click event handler.
+         */
         virtual void OnLeftMouseButtonPressed() {}
 
     protected:

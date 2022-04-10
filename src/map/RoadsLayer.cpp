@@ -20,6 +20,7 @@
 #include "RoadsLayer.h"
 #include "Tile.h"
 #include "Log.h"
+#include "ogl/Window.h"
 #include "ogl/OpenGL.h"
 #include "ogl/math/Transform.h"
 #include "ogl/resource/ResourceManager.h"
@@ -28,8 +29,8 @@
 // Ctors. / Dtor.
 //-------------------------------------------------
 
-sg::map::RoadsLayer::RoadsLayer(std::vector<std::shared_ptr<Tile>> t_tiles)
-    : Layer(std::move(t_tiles))
+sg::map::RoadsLayer::RoadsLayer(std::shared_ptr<ogl::Window> t_window, std::vector<std::shared_ptr<Tile>> t_tiles)
+    : Layer(std::move(t_window), std::move(t_tiles))
 {
     Log::SG_LOG_DEBUG("[RoadsLayer::RoadsLayer()] Create RoadsLayer.");
 
@@ -90,11 +91,7 @@ void sg::map::RoadsLayer::UpdateTile(gui::Action t_action, Tile& t_tile)
     }
 }
 
-void sg::map::RoadsLayer::Render(
-    const ogl::Window& t_window,
-    const ogl::camera::Camera& t_camera,
-    const glm::vec4& t_plane
-) const
+void sg::map::RoadsLayer::Render(const ogl::camera::Camera& t_camera, const glm::vec4& t_plane) const
 {
     if (!vao)
     {
@@ -110,7 +107,7 @@ void sg::map::RoadsLayer::Render(
 
     shaderProgram.SetUniform("model", modelMatrix);
     shaderProgram.SetUniform("view", t_camera.GetViewMatrix());
-    shaderProgram.SetUniform("projection", t_window.GetProjectionMatrix());
+    shaderProgram.SetUniform("projection", window->GetProjectionMatrix());
 
     const auto mv{ t_camera.GetViewMatrix() * modelMatrix };
     const auto n{ glm::inverseTranspose(glm::mat3(mv)) };

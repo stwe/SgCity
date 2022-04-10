@@ -154,7 +154,7 @@ namespace sg::map
         /**
          * Renders an ImGui window.
          */
-        virtual void RenderImGui() const {}
+        virtual void RenderImGui() {}
 
         //-------------------------------------------------
         // Listeners

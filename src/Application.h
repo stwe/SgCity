@@ -29,11 +29,6 @@ namespace sg::map
     class Map;
 }
 
-namespace sg::gui
-{
-    class MapEditGui;
-}
-
 namespace sg::ogl
 {
     class Window;
@@ -127,11 +122,6 @@ namespace sg
         std::unique_ptr<map::Map> m_map;
 
         /**
-         * Widgets to edit the map layers.
-         */
-        std::unique_ptr<gui::MapEditGui> m_mapEditGui;
-
-        /**
          * A Skybox object.
          */
         std::unique_ptr<ogl::resource::Skybox> m_skybox;
@@ -142,7 +132,6 @@ namespace sg
 
         void Init();
         void Input() const;
-        void Update() const;
         void Render();
         void RenderImGui() const;
 

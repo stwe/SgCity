@@ -16,6 +16,8 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
+#include <imgui.h>
+#include <glm/gtc/type_ptr.hpp>
 #include "Camera.h"
 #include "Log.h"
 #include "ogl/OpenGL.h"
@@ -131,6 +133,13 @@ void sg::ogl::camera::Camera::Input()
     {
         ProcessMouse();
     }
+}
+
+void sg::ogl::camera::Camera::RenderImGui()
+{
+    ImGui::Begin("Camera");
+    ImGui::SliderFloat3("Camera", value_ptr(position), -100.0f, 100.0f);
+    ImGui::End();
 }
 
 //-------------------------------------------------

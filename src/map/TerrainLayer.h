@@ -19,6 +19,7 @@
 #pragma once
 
 #include "Layer.h"
+#include "gui/MapEditGui.h"
 
 //-------------------------------------------------
 // Forward declarations
@@ -129,7 +130,7 @@ namespace sg::map
         /**
          * Renders an ImGui window.
          */
-        void RenderImGui() const override;
+        void RenderImGui() override;
 
         //-------------------------------------------------
         // Listeners
@@ -148,6 +149,11 @@ namespace sg::map
          * The current Tile object.
          */
         std::shared_ptr<Tile> m_currentTile;
+
+        /**
+         * Shows the terrain editing menu.
+         */
+        gui::MapEditGui m_mapEditGui;
 
         //-------------------------------------------------
         // Init

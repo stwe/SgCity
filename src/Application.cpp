@@ -18,11 +18,10 @@
 
 #include <sstream>
 #include <imgui.h>
-#include <glm/gtc/type_ptr.hpp>
 #include "Application.h"
 #include "Log.h"
+#include "map/Map.h"
 #include "ogl/OpenGL.h"
-#include "gui/MapEditGui.h"
 
 //-------------------------------------------------
 // Ctors. / Dtor.
@@ -69,9 +68,6 @@ void sg::Application::Init()
     // create && init map tiles
     m_map = std::make_unique<map::Map>(m_window, TILE_COUNT);
 
-    // create gui
-    m_mapEditGui = std::make_unique<gui::MapEditGui>();
-
     // create skybox
     m_skybox = std::make_unique<ogl::resource::Skybox>();
 
@@ -91,11 +87,6 @@ void sg::Application::Input() const
 
     // WASD keys + right mouse button rotation
     m_camera->Input();
-}
-
-void sg::Application::Update() const
-{
-    m_map->Update(m_mapEditGui->action);
 }
 
 void sg::Application::Render()
@@ -128,23 +119,19 @@ void sg::Application::Render()
     m_map->Render(*m_camera);
     m_skybox->Render(*m_window, *m_camera);
 
-    ogl::Window::ImGuiBegin();
-
     RenderImGui();
-    m_mapEditGui->RenderImGui(*m_map);
-    m_map->RenderImGui();
-    ogl::Window::ImGuiEnd();
 
     EndFrame();
 }
 
 void sg::Application::RenderImGui() const
 {
-    ImGui::Begin("Application");
+    ogl::Window::ImGuiBegin();
 
-    ImGui::SliderFloat3("Camera", value_ptr(m_camera->position), -100.0f, 100.0f);
+    m_camera->RenderImGui();
+    m_map->RenderImGui();
 
-    ImGui::End();
+    ogl::Window::ImGuiEnd();
 }
 
 //-------------------------------------------------
@@ -172,7 +159,7 @@ void sg::Application::GameLoop()
 
         while (dt >= 1.0)
         {
-            Update();
+            //todo: Update();
             updates++;
             dt--;
         }

@@ -50,7 +50,7 @@ sg::map::Map::~Map() noexcept
 // Logic
 //-------------------------------------------------
 
-void sg::map::Map::Update(const gui::Action t_action)
+void sg::map::Map::Update()
 {
     m_waterLayer->Update();
 }
@@ -99,37 +99,21 @@ void sg::map::Map::Render(const ogl::camera::Camera& t_camera) const
     m_roadsLayer->Render(t_camera, glm::vec4(0.0f, 1.0f, 0.0f, 100000.0f));
     m_buildingsLayer->Render(t_camera, glm::vec4(0.0f, 1.0f, 0.0f, 100000.0f));
     m_plantsLayer->Render(t_camera, glm::vec4(0.0f, 1.0f, 0.0f, 100000.0f));
-
     m_waterLayer->Render(t_camera, glm::vec4(0.0f, 1.0f, 0.0f, 100000.0f));
 }
 
 void sg::map::Map::RenderImGui() const
 {
     ImGui::Begin("Map");
-
-    ImGui::Text("reflection");
-    if (m_waterLayer->GetWaterFbos().reflectionColorTextureId)
-    {
-        ImGui::Image(
-            reinterpret_cast<ImTextureID>(static_cast<uintptr_t>(m_waterLayer->GetWaterFbos().reflectionColorTextureId)),
-            ImVec2(128.0f, 128.0f),
-            ImVec2(0.0f, 0.0f),
-            ImVec2(1.0f, -1.0f)
-        );
-    }
-
-    ImGui::Text("refraction");
-    if (m_waterLayer->GetWaterFbos().refractionColorTextureId)
-    {
-        ImGui::Image(
-            reinterpret_cast<ImTextureID>(static_cast<uintptr_t>(m_waterLayer->GetWaterFbos().refractionColorTextureId)),
-            ImVec2(128.0f, 128.0f),
-            ImVec2(0.0f, 0.0f),
-            ImVec2(1.0f, -1.0f)
-        );
-    }
-
+    ImGui::Text("Mouse x: %.*f", 0, window->GetMouseX());
+    ImGui::Text("Mouse y: %.*f", 0, window->GetMouseY());
     ImGui::End();
+
+    m_terrainLayer->RenderImGui();
+    m_roadsLayer->RenderImGui();
+    m_buildingsLayer->RenderImGui();
+    m_plantsLayer->RenderImGui();
+    m_waterLayer->RenderImGui();
 }
 
 //-------------------------------------------------
@@ -151,7 +135,7 @@ void sg::map::Map::Init()
     Log::SG_LOG_DEBUG("[Map::Init()] The map was successfully initialized.");
 }
 
-void sg::map::Map::InitEventDispatcher()
+void sg::map::Map::InitEventDispatcher() const
 {
     Log::SG_LOG_DEBUG("[Map::InitEventDispatcher()] Append listeners.");
 

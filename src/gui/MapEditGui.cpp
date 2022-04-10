@@ -26,6 +26,8 @@
 
 sg::gui::MapEditGui::MapEditGui()
 {
+    Log::SG_LOG_DEBUG("[MapEditGui::MapEditGui()] Create MapEditGui.");
+
     m_buttonTextures = CreateButtonTextures();
 }
 
@@ -33,15 +35,9 @@ sg::gui::MapEditGui::MapEditGui()
 // Logic
 //-------------------------------------------------
 
-void sg::gui::MapEditGui::RenderImGui(map::Map& t_map)
+void sg::gui::MapEditGui::RenderImGui()
 {
     ImGui::Begin("Map edit");
-    ImGui::Text("Press the Escape key to exit.");
-    ImGui::Separator();
-    ImGui::Text("Mouse x: %d", t_map.window->GetMouseX());
-    ImGui::Text("Mouse y: %d", t_map.window->GetMouseY());
-
-    ImGui::Separator();
 
     for (auto i{ 0u }; i < m_buttons.size(); ++i)
     {
@@ -87,7 +83,7 @@ void sg::gui::MapEditGui::RenderImGui(map::Map& t_map)
                 std::fill(m_buttons.begin(), m_buttons.end(), false);
                 m_buttons[i] = true;
                 action = static_cast<Action>(i);
-                Log::SG_LOG_DEBUG("[MapEditGui::Render()] Action: {}", BUTTON_NAMES[i]);
+                Log::SG_LOG_INFO("[MapEditGui::Render()] Action: {}", BUTTON_NAMES[i]);
             }
         }
     }
@@ -101,6 +97,8 @@ void sg::gui::MapEditGui::RenderImGui(map::Map& t_map)
 
 std::vector<ImTextureID> sg::gui::MapEditGui::CreateButtonTextures()
 {
+    Log::SG_LOG_DEBUG("[MapEditGui::CreateButtonTextures()] Load textures.");
+
     std::vector<ImTextureID> textures;
 
     const auto& raiseTexture{ ogl::resource::ResourceManager::LoadTexture("E:/Dev/SgCity/resources/texture/raise.png") };

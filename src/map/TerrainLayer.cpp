@@ -20,11 +20,11 @@
 #include "TerrainLayer.h"
 #include "Tile.h"
 #include "Log.h"
+#include "ogl/Window.h"
 #include "ogl/OpenGL.h"
 #include "ogl/math/Transform.h"
 #include "ogl/resource/ResourceManager.h"
 #include "ogl/input/PickingTexture.h"
-#include "gui/MapEditGui.h"
 
 //-------------------------------------------------
 // Ctors. / Dtor.
@@ -150,16 +150,14 @@ void sg::map::TerrainLayer::Render(const ogl::camera::Camera& t_camera, const gl
     ogl::OpenGL::DisableFaceCulling();
 }
 
-void sg::map::TerrainLayer::RenderImGui() const
+void sg::map::TerrainLayer::RenderImGui()
 {
-    ImGui::Begin("Terrain Layer");
+    m_mapEditGui.RenderImGui();
 
     if (m_currentTile)
     {
         m_currentTile->RenderImGui();
     }
-
-    ImGui::End();
 }
 
 //-------------------------------------------------
@@ -169,14 +167,6 @@ void sg::map::TerrainLayer::RenderImGui() const
 void sg::map::TerrainLayer::OnLeftMouseButtonPressed()
 {
     Log::SG_LOG_INFO("[TerrainLayer::OnLeftMouseButtonPressed()] Left mouse button pressed listener.");
-
-    /*
-    if (!pickingTexture)
-    {
-        Log::SG_LOG_WARN("[TerrainLayer::OnLeftMouseButtonPressed()] Missing texture.");
-        return;
-    }
-    */
 
     // read tile index under mouse
     currentTileIndex = pickingTexture->ReadMapIndex(
@@ -195,8 +185,7 @@ void sg::map::TerrainLayer::OnLeftMouseButtonPressed()
     {
         m_currentTile = tiles[currentTileIndex];
 
-        UpdateTile(gui::Action::RAISE, *m_currentTile);
-        //UpdateTile(t_action, *m_currentTile);
+        UpdateTile(m_mapEditGui.action, *m_currentTile);
 
         currentTileIndex = INVALID_TILE_INDEX;
     }

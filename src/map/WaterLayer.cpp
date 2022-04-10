@@ -16,6 +16,7 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
+#include <imgui.h>
 #include "WaterLayer.h"
 #include "Application.h"
 #include "Log.h"
@@ -102,6 +103,35 @@ void sg::map::WaterLayer::Render(const ogl::camera::Camera& t_camera, const glm:
 
     ogl::OpenGL::DisableFaceCulling();
     ogl::OpenGL::DisableBlending();
+}
+
+void sg::map::WaterLayer::RenderImGui()
+{
+    ImGui::Begin("Water Layer");
+
+    ImGui::Text("reflection");
+    if (m_waterFbos->reflectionColorTextureId)
+    {
+        ImGui::Image(
+            reinterpret_cast<ImTextureID>(static_cast<uintptr_t>(m_waterFbos->reflectionColorTextureId)),
+            ImVec2(128.0f, 128.0f),
+            ImVec2(0.0f, 0.0f),
+            ImVec2(1.0f, -1.0f)
+        );
+    }
+
+    ImGui::Text("refraction");
+    if (m_waterFbos->refractionColorTextureId)
+    {
+        ImGui::Image(
+            reinterpret_cast<ImTextureID>(static_cast<uintptr_t>(m_waterFbos->refractionColorTextureId)),
+            ImVec2(128.0f, 128.0f),
+            ImVec2(0.0f, 0.0f),
+            ImVec2(1.0f, -1.0f)
+        );
+    }
+
+    ImGui::End();
 }
 
 //-------------------------------------------------

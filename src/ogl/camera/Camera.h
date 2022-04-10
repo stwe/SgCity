@@ -136,10 +136,8 @@ namespace sg::ogl::camera
         // Logic
         //-------------------------------------------------
 
-        /**
-         * Camera specific input logic.
-         */
         void Input();
+        void RenderImGui();
 
         //-------------------------------------------------
         // View matrix

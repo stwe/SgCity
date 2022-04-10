@@ -20,7 +20,11 @@
 
 #include <imgui.h>
 #include <vector>
-#include "map/Map.h"
+#include <string>
+
+//-------------------------------------------------
+// MapEditGui
+//-------------------------------------------------
 
 namespace sg::gui
 {
@@ -55,7 +59,7 @@ namespace sg::gui
         // Logic
         //-------------------------------------------------
 
-        void RenderImGui(map::Map& t_map);
+        void RenderImGui();
 
     protected:
 

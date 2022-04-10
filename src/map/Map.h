@@ -22,15 +22,6 @@
 #include "ogl/resource/Skybox.h"
 
 //-------------------------------------------------
-// Forward declarations
-//-------------------------------------------------
-
-namespace sg::gui
-{
-    enum class Action;
-}
-
-//-------------------------------------------------
 // Map
 //-------------------------------------------------
 
@@ -101,12 +92,9 @@ namespace sg::map
         // Logic
         //-------------------------------------------------
 
-        void Update(gui::Action t_action);
+        void Update();
         void RenderForMousePicking(const ogl::camera::Camera& t_camera) const;
-        void RenderForWater(
-            ogl::camera::Camera& t_camera,
-            const ogl::resource::Skybox& t_skybox
-            ) const;
+        void RenderForWater(ogl::camera::Camera& t_camera, const ogl::resource::Skybox& t_skybox) const;
         void Render(const ogl::camera::Camera& t_camera) const;
         void RenderImGui() const;
 
@@ -159,6 +147,6 @@ namespace sg::map
         /**
          * Initializes the event dispatcher.
          */
-        void InitEventDispatcher();
+        void InitEventDispatcher() const;
     };
 }

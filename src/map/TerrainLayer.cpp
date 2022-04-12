@@ -166,8 +166,6 @@ void sg::map::TerrainLayer::RenderImGui()
 
 void sg::map::TerrainLayer::OnLeftMouseButtonPressed()
 {
-    Log::SG_LOG_INFO("[TerrainLayer::OnLeftMouseButtonPressed()] Left mouse button pressed listener.");
-
     // read tile index under mouse
     currentTileIndex = pickingTexture->ReadMapIndex(
         static_cast<int>(window->GetMouseX()),
@@ -183,11 +181,81 @@ void sg::map::TerrainLayer::OnLeftMouseButtonPressed()
     // update current tile if the tile index is valid
     if (currentTileIndex != INVALID_TILE_INDEX)
     {
+        // get current tile
         m_currentTile = tiles[currentTileIndex];
 
-        UpdateTile(m_mapEditGui.action, *m_currentTile);
+        // handle raise && lower
+        if (m_mapEditGui.action == gui::Action::RAISE || m_mapEditGui.action == gui::Action::LOWER)
+        {
+            UpdateTile(m_mapEditGui.action, *m_currentTile);
+        }
 
-        currentTileIndex = INVALID_TILE_INDEX;
+        // handle select
+        if (m_mapEditGui.action == gui::Action::SELECT)
+        {
+            //Log::SG_LOG_INFO("[TerrainLayer::OnLeftMouseButtonPressed()] Start select.");
+
+            // start select
+            m_selectFlag = true;
+
+            // set start tile index
+            m_startIndex = currentTileIndex;
+        }
+    }
+}
+
+void sg::map::TerrainLayer::OnLeftMouseButtonReleased()
+{
+    // handle select
+    if (m_mapEditGui.action == gui::Action::SELECT)
+    {
+        //Log::SG_LOG_INFO("[TerrainLayer::OnLeftMouseButtonReleased()] End select.");
+
+        // end select
+        m_selectFlag = false;
+    }
+}
+
+void sg::map::TerrainLayer::OnMouseMoved()
+{
+    // handle select
+    if (m_mapEditGui.action == gui::Action::SELECT && m_selectFlag)
+    {
+        //Log::SG_LOG_INFO("[TerrainLayer::OnLeftMouseButtonReleased()] Moved on select status.");
+
+        m_endIndex = pickingTexture->ReadMapIndex(
+            static_cast<int>(window->GetMouseX()),
+            static_cast<int>(window->GetMouseY())
+        );
+
+        auto sx{ static_cast<int>(tiles[m_startIndex]->mapX) };
+        auto sz{ static_cast<int>(tiles[m_startIndex]->mapZ) };
+
+        auto ex{ static_cast<int>(tiles[m_endIndex]->mapX) };
+        auto ez{ static_cast<int>(tiles[m_endIndex]->mapZ) };
+
+        Log::SG_LOG_INFO("Start tile x: {}, y: {}", sx, sz);
+        Log::SG_LOG_INFO("End tile x: {}, y: {}", ex, ez);
+
+        if (ez < sz)
+        {
+            std::swap(sz, ez);
+        }
+
+        if (ex < sx)
+        {
+            std::swap(sx, ex);
+        }
+
+        for (auto z{ sz }; z <= ez; ++z)
+        {
+            for (auto x{ sx }; x <= ex; ++x)
+            {
+                // todo
+                const auto i{ z * tileCount + x };
+                UpdateTile(gui::Action::MAKE_INDUSTRIAL_ZONE, *tiles[i]);
+            }
+        }
     }
 }
 

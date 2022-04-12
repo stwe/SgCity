@@ -37,7 +37,7 @@ sg::gui::MapEditGui::MapEditGui()
 
 void sg::gui::MapEditGui::RenderImGui()
 {
-    ImGui::Begin("Map edit");
+    ImGui::Begin("Terrain Layer - Map edit");
 
     for (auto i{ 0u }; i < m_buttons.size(); ++i)
     {
@@ -83,7 +83,7 @@ void sg::gui::MapEditGui::RenderImGui()
                 std::fill(m_buttons.begin(), m_buttons.end(), false);
                 m_buttons[i] = true;
                 action = static_cast<Action>(i);
-                Log::SG_LOG_INFO("[MapEditGui::Render()] Action: {}", BUTTON_NAMES[i]);
+                Log::SG_LOG_DEBUG("[MapEditGui::RenderImGui()] Set current action to: {}", BUTTON_NAMES[i]);
             }
         }
     }
@@ -109,6 +109,7 @@ std::vector<ImTextureID> sg::gui::MapEditGui::CreateButtonTextures()
     const auto& tTexture{ ogl::resource::ResourceManager::LoadTexture("E:/Dev/SgCity/resources/texture/t.png") };
     const auto& plantTexture{ ogl::resource::ResourceManager::LoadTexture("E:/Dev/SgCity/resources/texture/plants.png") };
     const auto& infoTexture{ ogl::resource::ResourceManager::LoadTexture("E:/Dev/SgCity/resources/texture/info.png") };
+    const auto& selectTexture{ ogl::resource::ResourceManager::LoadTexture("E:/Dev/SgCity/resources/texture/select.png") };
 
     textures.push_back(reinterpret_cast<ImTextureID>(static_cast<uintptr_t>(raiseTexture.id)));
     textures.push_back(reinterpret_cast<ImTextureID>(static_cast<uintptr_t>(lowerTexture.id)));
@@ -118,6 +119,7 @@ std::vector<ImTextureID> sg::gui::MapEditGui::CreateButtonTextures()
     textures.push_back(reinterpret_cast<ImTextureID>(static_cast<uintptr_t>(tTexture.id)));
     textures.push_back(reinterpret_cast<ImTextureID>(static_cast<uintptr_t>(plantTexture.id)));
     textures.push_back(reinterpret_cast<ImTextureID>(static_cast<uintptr_t>(infoTexture.id)));
+    textures.push_back(reinterpret_cast<ImTextureID>(static_cast<uintptr_t>(selectTexture.id)));
 
     return textures;
 }

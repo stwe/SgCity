@@ -137,6 +137,8 @@ namespace sg::map
         //-------------------------------------------------
 
         void OnLeftMouseButtonPressed() override;
+        void OnLeftMouseButtonReleased() override;
+        void OnMouseMoved() override;
 
     protected:
 
@@ -154,6 +156,21 @@ namespace sg::map
          * Shows the terrain editing menu.
          */
         gui::MapEditGui m_mapEditGui;
+
+        /**
+         * Helper flag for selecting tiles.
+         */
+        bool m_selectFlag{ false };
+
+        /**
+         * The index of the first selected tile.
+         */
+        int m_startIndex{ INVALID_TILE_INDEX };
+
+        /**
+         * The index of the last selected tile.
+         */
+        int m_endIndex{ INVALID_TILE_INDEX };
 
         //-------------------------------------------------
         // Init

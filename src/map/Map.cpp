@@ -142,12 +142,12 @@ void sg::map::Map::InitEventDispatcher() const
     // left mouse button pressed
     event::EventManager::eventDispatcher.appendListener(
         event::SgEventType::MOUSE_BUTTON_PRESSED,
-        eventpp::argumentAdapter<void(const event::MouseButtonPressedEvent&)>(
+        eventpp::argumentAdapter<void(const event::MouseButtonPressedEvent&)>
+        (
             [this](const event::MouseButtonPressedEvent& t_event)
             {
                 if (t_event.button == GLFW_MOUSE_BUTTON_LEFT)
                 {
-                    // todo: test
                     if (ImGui::GetIO().WantCaptureMouse)
                     {
                         return;
@@ -159,6 +159,55 @@ void sg::map::Map::InitEventDispatcher() const
                     //m_buildingsLayer->OnLeftMouseButtonPressed();
                     //m_plantsLayer->OnLeftMouseButtonPressed();
                 }
+            }
+        )
+    );
+
+    // left mouse button released
+    event::EventManager::eventDispatcher.appendListener(
+        event::SgEventType::MOUSE_BUTTON_RELEASED,
+        eventpp::argumentAdapter<void(const event::MouseButtonReleasedEvent&)>
+        (
+            [this](const event::MouseButtonReleasedEvent& t_event)
+            {
+                if (t_event.button == GLFW_MOUSE_BUTTON_LEFT)
+                {
+                    /*
+                    if (ImGui::GetIO().WantCaptureMouse)
+                    {
+                        return;
+                    }
+                    */
+
+                    //m_waterLayer->OnLeftMouseButtonReleased();
+                    m_terrainLayer->OnLeftMouseButtonReleased();
+                    //m_roadsLayer->OnLeftMouseButtonReleased();
+                    //m_buildingsLayer->OnLeftMouseButtonReleased();
+                    //m_plantsLayer->OnLeftMouseButtonReleased();
+                }
+            }
+        )
+    );
+
+    // mouse moved
+    event::EventManager::eventDispatcher.appendListener(
+        event::SgEventType::MOUSE_MOVED,
+        eventpp::argumentAdapter<void(const event::MouseMovedEvent&)>
+        (
+            [this](const event::MouseMovedEvent& t_event)
+            {
+                /*
+                if (ImGui::GetIO().WantCaptureMouse)
+                {
+                    return;
+                }
+                */
+
+                //m_waterLayer->OnMouseMoved();
+                m_terrainLayer->OnMouseMoved();
+                //m_roadsLayer->OnMouseMoved();
+                //m_buildingsLayer->OnMouseMoved();
+                //m_plantsLayer->OnMouseMoved();
             }
         )
     );

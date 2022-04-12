@@ -161,9 +161,19 @@ namespace sg::map
         //-------------------------------------------------
 
         /**
-         * On left mouse button click event handler.
+         * On left mouse button pressed event handler.
          */
         virtual void OnLeftMouseButtonPressed() {}
+
+        /**
+         * On left mouse button released event handler.
+         */
+        virtual void OnLeftMouseButtonReleased() {}
+
+        /**
+         * On mouse moved event handler.
+         */
+        virtual void OnMouseMoved() {}
 
     protected:
 

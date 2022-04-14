@@ -193,8 +193,6 @@ void sg::map::TerrainLayer::OnLeftMouseButtonPressed()
         // handle select
         if (m_mapEditGui.action == gui::Action::SELECT)
         {
-            //Log::SG_LOG_INFO("[TerrainLayer::OnLeftMouseButtonPressed()] Start select.");
-
             // start select
             m_selectFlag = true;
 
@@ -209,8 +207,6 @@ void sg::map::TerrainLayer::OnLeftMouseButtonReleased()
     // handle select
     if (m_mapEditGui.action == gui::Action::SELECT)
     {
-        //Log::SG_LOG_INFO("[TerrainLayer::OnLeftMouseButtonReleased()] End select.");
-
         // end select
         m_selectFlag = false;
     }
@@ -221,18 +217,33 @@ void sg::map::TerrainLayer::OnMouseMoved()
     // handle select
     if (m_mapEditGui.action == gui::Action::SELECT && m_selectFlag)
     {
-        //Log::SG_LOG_INFO("[TerrainLayer::OnLeftMouseButtonReleased()] Moved on select status.");
-
-        m_endIndex = pickingTexture->ReadMapIndex(
+        m_currentLastIndex = pickingTexture->ReadMapIndex(
             static_cast<int>(window->GetMouseX()),
             static_cast<int>(window->GetMouseY())
         );
 
+        if (m_lastIndex == m_currentLastIndex)
+        {
+            // selection already done
+            return;
+        }
+
+        if (!m_selectedIndices.empty())
+        {
+            for (const auto i : m_selectedIndices)
+            {
+                tiles[i]->UpdateTileType(Tile::TileType::NONE);
+                tiles[i]->VerticesToGpu(*vao);
+            }
+        }
+
+        m_selectedIndices.clear();
+
         auto sx{ static_cast<int>(tiles[m_startIndex]->mapX) };
         auto sz{ static_cast<int>(tiles[m_startIndex]->mapZ) };
 
-        auto ex{ static_cast<int>(tiles[m_endIndex]->mapX) };
-        auto ez{ static_cast<int>(tiles[m_endIndex]->mapZ) };
+        auto ex{ static_cast<int>(tiles[m_currentLastIndex]->mapX) };
+        auto ez{ static_cast<int>(tiles[m_currentLastIndex]->mapZ) };
 
         Log::SG_LOG_INFO("Start tile x: {}, y: {}", sx, sz);
         Log::SG_LOG_INFO("End tile x: {}, y: {}", ex, ez);
@@ -253,7 +264,9 @@ void sg::map::TerrainLayer::OnMouseMoved()
             {
                 // todo
                 const auto i{ z * tileCount + x };
+                m_selectedIndices.push_back(i);
                 UpdateTile(gui::Action::MAKE_INDUSTRIAL_ZONE, *tiles[i]);
+                m_lastIndex = m_currentLastIndex;
             }
         }
     }

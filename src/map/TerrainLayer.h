@@ -163,14 +163,24 @@ namespace sg::map
         bool m_selectFlag{ false };
 
         /**
-         * The index of the first selected tile.
+         * The map index of the first selected tile.
          */
         int m_startIndex{ INVALID_TILE_INDEX };
 
         /**
-         * The index of the last selected tile.
+         * The map index of the last selected tile.
          */
-        int m_endIndex{ INVALID_TILE_INDEX };
+        int m_currentLastIndex{ INVALID_TILE_INDEX };
+
+        /**
+         * Stores m_currentLastIndex to determine if this index has changed.
+         */
+        int m_lastIndex{ INVALID_TILE_INDEX };
+
+        /**
+         * An array with all indices of the selected tiles.
+         */
+        std::vector<int> m_selectedIndices;
 
         //-------------------------------------------------
         // Init

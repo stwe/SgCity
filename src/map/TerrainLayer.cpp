@@ -167,18 +167,9 @@ void sg::map::TerrainLayer::RenderImGui()
 void sg::map::TerrainLayer::OnLeftMouseButtonPressed()
 {
     // read tile index under mouse
-    currentTileIndex = pickingTexture->ReadMapIndex(
-        static_cast<int>(window->GetMouseX()),
-        static_cast<int>(window->GetMouseY())
-    );
+    currentTileIndex = ReadTileIndexUnderMouse();
 
-    // check tile index
-    if (currentTileIndex < 0 || currentTileIndex > static_cast<int>(tiles.size()) - 1)
-    {
-        currentTileIndex = INVALID_TILE_INDEX;
-    }
-
-    // update current tile if the tile index is valid
+    // handle actions only if the tile index is valid
     if (currentTileIndex != INVALID_TILE_INDEX)
     {
         // get current tile
@@ -195,9 +186,6 @@ void sg::map::TerrainLayer::OnLeftMouseButtonPressed()
         {
             // start select
             m_selectFlag = true;
-
-            // set start tile index
-            m_startIndex = currentTileIndex;
         }
     }
 }
@@ -217,56 +205,53 @@ void sg::map::TerrainLayer::OnMouseMoved()
     // handle select
     if (m_mapEditGui.action == gui::Action::SELECT && m_selectFlag)
     {
-        m_currentLastIndex = pickingTexture->ReadMapIndex(
-            static_cast<int>(window->GetMouseX()),
-            static_cast<int>(window->GetMouseY())
-        );
+        // read tile index under mouse
+        m_currentLastIndex = ReadTileIndexUnderMouse();
 
-        if (m_lastIndex == m_currentLastIndex)
+        // handle select only if the tile indices are valid
+        if (currentTileIndex != INVALID_TILE_INDEX &&
+            m_currentLastIndex != INVALID_TILE_INDEX &&
+            m_lastIndex != m_currentLastIndex)
         {
-            // selection already done
-            return;
-        }
-
-        if (!m_selectedIndices.empty())
-        {
-            for (const auto i : m_selectedIndices)
+            // unselect previously selected tiles
+            if (!m_selectedIndices.empty())
             {
-                tiles[i]->UpdateTileType(Tile::TileType::NONE);
-                tiles[i]->VerticesToGpu(*vao);
+                for (const auto i : m_selectedIndices)
+                {
+                    tiles[i]->UpdateTileType(Tile::TileType::NONE);
+                    tiles[i]->VerticesToGpu(*vao);
+                }
+
+                m_selectedIndices.clear();
             }
-        }
 
-        m_selectedIndices.clear();
+            auto sx{ static_cast<int>(tiles[currentTileIndex]->mapX) };
+            auto sz{ static_cast<int>(tiles[currentTileIndex]->mapZ) };
 
-        auto sx{ static_cast<int>(tiles[m_startIndex]->mapX) };
-        auto sz{ static_cast<int>(tiles[m_startIndex]->mapZ) };
+            auto ex{ static_cast<int>(tiles[m_currentLastIndex]->mapX) };
+            auto ez{ static_cast<int>(tiles[m_currentLastIndex]->mapZ) };
 
-        auto ex{ static_cast<int>(tiles[m_currentLastIndex]->mapX) };
-        auto ez{ static_cast<int>(tiles[m_currentLastIndex]->mapZ) };
-
-        Log::SG_LOG_INFO("Start tile x: {}, y: {}", sx, sz);
-        Log::SG_LOG_INFO("End tile x: {}, y: {}", ex, ez);
-
-        if (ez < sz)
-        {
-            std::swap(sz, ez);
-        }
-
-        if (ex < sx)
-        {
-            std::swap(sx, ex);
-        }
-
-        for (auto z{ sz }; z <= ez; ++z)
-        {
-            for (auto x{ sx }; x <= ex; ++x)
+            if (ez < sz)
             {
-                // todo
-                const auto i{ z * tileCount + x };
-                m_selectedIndices.push_back(i);
-                UpdateTile(gui::Action::MAKE_INDUSTRIAL_ZONE, *tiles[i]);
-                m_lastIndex = m_currentLastIndex;
+                std::swap(sz, ez);
+            }
+
+            if (ex < sx)
+            {
+                std::swap(sx, ex);
+            }
+
+            // select
+            for (auto z{ sz }; z <= ez; ++z)
+            {
+                for (auto x{ sx }; x <= ex; ++x)
+                {
+                    // todo
+                    const auto i{ z * tileCount + x };
+                    m_selectedIndices.push_back(i);
+                    UpdateTile(gui::Action::MAKE_INDUSTRIAL_ZONE, *tiles[i]);
+                    m_lastIndex = m_currentLastIndex;
+                }
             }
         }
     }
@@ -516,4 +501,21 @@ void sg::map::TerrainLayer::UpdateSouthEastNeighbor(const Tile& t_tile) const
         tile->UpdateNormal();
         tile->VerticesToGpu(*vao);
     }
+}
+
+int sg::map::TerrainLayer::ReadTileIndexUnderMouse() const
+{
+    // read tile index under mouse
+    auto index{ pickingTexture->ReadMapIndex(
+        static_cast<int>(window->GetMouseX()),
+        static_cast<int>(window->GetMouseY())
+    ) };
+
+    // check tile index
+    if (index < 0 || index > static_cast<int>(tiles.size()) - 1)
+    {
+        index = INVALID_TILE_INDEX;
+    }
+
+    return index;
 }

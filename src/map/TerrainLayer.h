@@ -163,11 +163,6 @@ namespace sg::map
         bool m_selectFlag{ false };
 
         /**
-         * The map index of the first selected tile.
-         */
-        int m_startIndex{ INVALID_TILE_INDEX };
-
-        /**
          * The map index of the last selected tile.
          */
         int m_currentLastIndex{ INVALID_TILE_INDEX };
@@ -225,5 +220,12 @@ namespace sg::map
         void UpdateNorthEastNeighbor(const Tile& t_tile) const;
         void UpdateSouthWestNeighbor(const Tile& t_tile) const;
         void UpdateSouthEastNeighbor(const Tile& t_tile) const;
+
+        /**
+         * Reads the map index of tile under current mouse position.
+         *
+         * @return The tile map index or -1 for an invalid index.
+         */
+        [[nodiscard]] int ReadTileIndexUnderMouse() const;
     };
 }

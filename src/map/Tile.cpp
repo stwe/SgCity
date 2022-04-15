@@ -124,13 +124,33 @@ void sg::map::Tile::UpdateTileType(const TileType t_tileType)
 }
 
 //-------------------------------------------------
+// Selected
+//-------------------------------------------------
+
+void sg::map::Tile::UpdateSelected(const bool t_selected)
+{
+    // set selected
+    selected = t_selected;
+
+    // update vertices
+    const auto s{ static_cast<float>(t_selected) };
+    vertices[TL_1_SELECTED_INDEX] = s;
+    vertices[BL_1_SELECTED_INDEX] = s;
+    vertices[BR_1_SELECTED_INDEX] = s;
+
+    vertices[TL_2_SELECTED_INDEX] = s;
+    vertices[BR_2_SELECTED_INDEX] = s;
+    vertices[TR_2_SELECTED_INDEX] = s;
+}
+
+//-------------------------------------------------
 // Gpu
 //-------------------------------------------------
 
 void sg::map::Tile::VerticesToGpu(const ogl::buffer::Vao& t_vao) const
 {
     t_vao.vbo->Bind();
-    glBufferSubData(GL_ARRAY_BUFFER, mapIndex * static_cast<int64_t>(Tile::BYTES_PER_TILE), Tile::BYTES_PER_TILE, vertices.data());
+    glBufferSubData(GL_ARRAY_BUFFER, mapIndex * static_cast<int64_t>(BYTES_PER_TILE), BYTES_PER_TILE, vertices.data());
     ogl::buffer::Vbo::Unbind();
 }
 
@@ -176,17 +196,18 @@ void sg::map::Tile::Init()
 
     vertices =
     {
-        // pos            // uv       // id color                      // normal         // texture nr
-        tl.x, tl.y, tl.z, 0.0f, 1.0f, idColor.x, idColor.y, idColor.z, 0.0f, 1.0f, 0.0f, 0,
-        bl.x, bl.y, bl.z, 0.0f, 0.0f, idColor.x, idColor.y, idColor.z, 0.0f, 1.0f, 0.0f, 0,
-        br.x, br.y, br.z, 1.0f, 0.0f, idColor.x, idColor.y, idColor.z, 0.0f, 1.0f, 0.0f, 0,
+        // pos            // uv       // id color                      // normal         // texture nr  selected
+        tl.x, tl.y, tl.z, 0.0f, 1.0f, idColor.x, idColor.y, idColor.z, 0.0f, 1.0f, 0.0f, 0,             0,
+        bl.x, bl.y, bl.z, 0.0f, 0.0f, idColor.x, idColor.y, idColor.z, 0.0f, 1.0f, 0.0f, 0,             0,
+        br.x, br.y, br.z, 1.0f, 0.0f, idColor.x, idColor.y, idColor.z, 0.0f, 1.0f, 0.0f, 0,             0,
 
-        tl.x, tl.y, tl.z, 0.0f, 1.0f, idColor.x, idColor.y, idColor.z, 0.0f, 1.0f, 0.0f, 0,
-        br.x, br.y, br.z, 1.0f, 0.0f, idColor.x, idColor.y, idColor.z, 0.0f, 1.0f, 0.0f, 0,
-        tr.x, tr.y, tr.z, 1.0f, 1.0f, idColor.x, idColor.y, idColor.z, 0.0f, 1.0f, 0.0f, 0
+        tl.x, tl.y, tl.z, 0.0f, 1.0f, idColor.x, idColor.y, idColor.z, 0.0f, 1.0f, 0.0f, 0,             0,
+        br.x, br.y, br.z, 1.0f, 0.0f, idColor.x, idColor.y, idColor.z, 0.0f, 1.0f, 0.0f, 0,             0,
+        tr.x, tr.y, tr.z, 1.0f, 1.0f, idColor.x, idColor.y, idColor.z, 0.0f, 1.0f, 0.0f, 0,             0
     };
 
-    UpdateTileType(TileType::NONE);
+    UpdateTileType(TileType::NONE); // todo currently not necessary
+    UpdateSelected(false);          // todo currently not necessary
 }
 
 //-------------------------------------------------

@@ -35,11 +35,12 @@ namespace sg::map
         //-------------------------------------------------
 
         /**
-         * Position (3 Floats), Uv (2 Floats), Id color (3 Floats), Normal (3 Floats), TextureNr (1 Float)
-         * -> 12 Floats x 4 Bytes per Float -> 48 Bytes per Vertex
-         * -> 6 Vertices per Tile = 288 Bytes
+         * Position (3 Floats), Uv (2 Floats), Id color (3 Floats), Normal (3 Floats),
+         * TextureNr (1 Float), Selected (1 Float)
+         * -> 13 Floats x 4 Bytes per Float -> 52 Bytes per Vertex
+         * -> 6 Vertices per Tile = 312 Bytes
          */
-        static constexpr auto BYTES_PER_TILE{ 288 };
+        static constexpr auto BYTES_PER_TILE{ 312 };
 
         /**
          * Vertices per Tile.
@@ -72,12 +73,12 @@ namespace sg::map
         // Height value index of each vertex
 
         static constexpr auto TL_1_Y{ 1 };
-        static constexpr auto BL_1_Y{ 13 };
-        static constexpr auto BR_1_Y{ 25 };
+        static constexpr auto BL_1_Y{ 14 };
+        static constexpr auto BR_1_Y{ 27 };
 
-        static constexpr auto TL_2_Y{ 37 };
-        static constexpr auto BR_2_Y{ 49 };
-        static constexpr auto TR_2_Y{ 61 };
+        static constexpr auto TL_2_Y{ 40 };
+        static constexpr auto BR_2_Y{ 53 };
+        static constexpr auto TR_2_Y{ 66 };
 
         static constexpr std::array<int, 6> Y_INDEX =
         {
@@ -88,22 +89,32 @@ namespace sg::map
         // Start index of normals
 
         static constexpr auto TL_1_N_START_INDEX{ 8 };
-        static constexpr auto BL_1_N_START_INDEX{ 20 };
-        static constexpr auto BR_1_N_START_INDEX{ 32 };
+        static constexpr auto BL_1_N_START_INDEX{ 21 };
+        static constexpr auto BR_1_N_START_INDEX{ 34 };
 
-        static constexpr auto TL_2_N_START_INDEX{ 44 };
-        static constexpr auto BR_2_N_START_INDEX{ 56 };
-        static constexpr auto TR_2_N_START_INDEX{ 68 };
+        static constexpr auto TL_2_N_START_INDEX{ 47 };
+        static constexpr auto BR_2_N_START_INDEX{ 60 };
+        static constexpr auto TR_2_N_START_INDEX{ 73 };
 
-        // Index of texture numbers
+        // For setting texture numbers
 
         static constexpr auto TL_1_TEXTURE_INDEX{ 11 };
-        static constexpr auto BL_1_TEXTURE_INDEX{ 23 };
-        static constexpr auto BR_1_TEXTURE_INDEX{ 35 };
+        static constexpr auto BL_1_TEXTURE_INDEX{ 24 };
+        static constexpr auto BR_1_TEXTURE_INDEX{ 37 };
 
-        static constexpr auto TL_2_TEXTURE_INDEX{ 47 };
-        static constexpr auto BR_2_TEXTURE_INDEX{ 59 };
-        static constexpr auto TR_2_TEXTURE_INDEX{ 71 };
+        static constexpr auto TL_2_TEXTURE_INDEX{ 50 };
+        static constexpr auto BR_2_TEXTURE_INDEX{ 63 };
+        static constexpr auto TR_2_TEXTURE_INDEX{ 76 };
+
+        // For setting selected states
+
+        static constexpr auto TL_1_SELECTED_INDEX{ 12 };
+        static constexpr auto BL_1_SELECTED_INDEX{ 25 };
+        static constexpr auto BR_1_SELECTED_INDEX{ 38 };
+
+        static constexpr auto TL_2_SELECTED_INDEX{ 51 };
+        static constexpr auto BR_2_SELECTED_INDEX{ 64 };
+        static constexpr auto TR_2_SELECTED_INDEX{ 77 };
 
         //-------------------------------------------------
         // Types
@@ -153,6 +164,11 @@ namespace sg::map
          */
         TileType type{ TileType::NONE };
 
+        /**
+         * True or false depending on whether this tile is selected or not.
+         */
+        bool selected{ false };
+
         // Neighbors
 
         std::shared_ptr<Tile> n;
@@ -188,7 +204,7 @@ namespace sg::map
         virtual ~Tile() noexcept;
 
         //-------------------------------------------------
-        // Raise / lower tile
+        // Raise / lower tile vertices
         //-------------------------------------------------
 
         /**
@@ -215,9 +231,18 @@ namespace sg::map
         //-------------------------------------------------
 
         /**
-         * Sets tile type and updates the vertices.
+         * Sets tile type and updates the vertices using the new type.
          */
         void UpdateTileType(TileType t_tileType);
+
+        //-------------------------------------------------
+        // Selected
+        //-------------------------------------------------
+
+        /**
+         * Sets the selected state of this Tile.
+         */
+        void UpdateSelected(bool t_selected);
 
         //-------------------------------------------------
         // Gpu

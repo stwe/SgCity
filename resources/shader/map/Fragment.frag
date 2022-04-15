@@ -6,6 +6,7 @@ in vec2 vUv;
 flat in vec3 vColor;
 in vec3 vNormalColor;
 flat in float vTextureNr;
+flat in float vSelected;
 flat in float vIntensity;
 
 uniform sampler2D diffuseMap;
@@ -33,6 +34,11 @@ void main()
 
     float ambientIntensity = 0.4;
     fragColor = max(vIntensity * col, ambientIntensity * col);
+
+    if (vSelected)
+    {
+        fragColor = fragColor / 2.0;
+    }
 
     //fragColor = texture(diffuseMap, vUv);
     //fragColor = vec4(vColor, 1.0);

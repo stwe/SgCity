@@ -197,6 +197,26 @@ void sg::map::TerrainLayer::OnLeftMouseButtonReleased()
     {
         // end select
         m_selectFlag = false;
+
+        // todo
+        if (!m_selectedIndices.empty())
+        {
+            for (const auto i : m_selectedIndices)
+            {
+                // mark as unselected
+                tiles[i]->UpdateSelected(false);
+
+                // todo: set a new type
+                tiles[i]->UpdateTileType(Tile::TileType::INDUSTRIAL);
+
+                // store new values in the GPU
+                tiles[i]->VerticesToGpu(*vao);
+            }
+
+            m_selectedIndices.clear();
+        }
+
+        // todo: handle empty array
     }
 }
 
@@ -213,12 +233,15 @@ void sg::map::TerrainLayer::OnMouseMoved()
             m_currentLastIndex != INVALID_TILE_INDEX &&
             m_lastIndex != m_currentLastIndex)
         {
-            // unselect previously selected tiles
+            // mark the previously selected tiles as unselected
             if (!m_selectedIndices.empty())
             {
                 for (const auto i : m_selectedIndices)
                 {
-                    tiles[i]->UpdateTileType(Tile::TileType::NONE);
+                    // mark as unselected
+                    tiles[i]->UpdateSelected(false);
+
+                    // store new values in the GPU
                     tiles[i]->VerticesToGpu(*vao);
                 }
 
@@ -241,16 +264,31 @@ void sg::map::TerrainLayer::OnMouseMoved()
                 std::swap(sx, ex);
             }
 
-            // select
+            // mark as selected
             for (auto z{ sz }; z <= ez; ++z)
             {
                 for (auto x{ sx }; x <= ex; ++x)
                 {
-                    // todo
+                    // calc tile map index
                     const auto i{ z * tileCount + x };
-                    m_selectedIndices.push_back(i);
-                    UpdateTile(gui::Action::MAKE_INDUSTRIAL_ZONE, *tiles[i]);
-                    m_lastIndex = m_currentLastIndex;
+
+                    // get tile
+                    auto& tile{ *tiles[i] };
+
+                    // only tiles of type NONE can be selected
+                    if (tile.type == Tile::TileType::NONE)
+                    {
+                        // store tile map index
+                        m_selectedIndices.push_back(i);
+
+                        // mark as selected
+                        tile.UpdateSelected(true);
+
+                        // store new values in the GPU
+                        tile.VerticesToGpu(*vao);
+
+                        m_lastIndex = m_currentLastIndex;
+                    }
                 }
             }
         }

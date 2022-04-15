@@ -38,7 +38,6 @@ namespace sg::gui
         MAKE_TRAFFIC_ZONE,      // make a traffic zone
         CREATE_PLANT,           // create a tree
         INFO,                   // get tile info
-        SELECT                  // select tiles
     };
 
     class MapEditGui
@@ -83,7 +82,6 @@ namespace sg::gui
             "Make traffic zone",
             "Create a plant",
             "Info",
-            "Select tiles"
         };
 
         static constexpr int FRAME_PADDING{ 1 };                                     // -1 == uses default padding (style.FramePadding)
@@ -104,7 +102,7 @@ namespace sg::gui
         /**
          * Indicates whether a menu item is active.
          */
-        inline static std::vector<bool> m_buttons{ true, false, false, false, false, false, false, false, false };
+        inline static std::vector<bool> m_buttons{ true, false, false, false, false, false, false, false };
 
         //-------------------------------------------------
         // Init

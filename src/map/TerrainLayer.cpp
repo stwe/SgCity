@@ -82,12 +82,12 @@ void sg::map::TerrainLayer::RenderForMousePicking(const ogl::Window& t_window, c
 
 void sg::map::TerrainLayer::UpdateTile(const gui::Action t_action, Tile& t_tile)
 {
+    // todo: remove method
+
     // handle base class actions
     Layer::UpdateTile(t_action, t_tile);
 
     Log::SG_LOG_DEBUG("[TerrainLayer::UpdateTile()] Update terrain tile.");
-
-    // handle raise and lower terrain
 
     // raise terrain
     if (t_action == gui::Action::RAISE)
@@ -172,17 +172,25 @@ void sg::map::TerrainLayer::OnLeftMouseButtonPressed()
     // handle actions only if the tile index is valid
     if (currentTileIndex != INVALID_TILE_INDEX)
     {
-        // get current tile
-        m_currentTile = tiles[currentTileIndex];
-
-        // handle raise && lower
-        if (m_mapEditGui.action == gui::Action::RAISE || m_mapEditGui.action == gui::Action::LOWER)
+        // handle raise and lower terrain
+        if (m_mapEditGui.action == gui::Action::RAISE ||
+            m_mapEditGui.action == gui::Action::LOWER)
         {
-            UpdateTile(m_mapEditGui.action, *m_currentTile);
+            UpdateTile(m_mapEditGui.action, *tiles[currentTileIndex]);
         }
 
-        // handle select
-        if (m_mapEditGui.action == gui::Action::SELECT)
+        // handle info
+        if (m_mapEditGui.action == gui::Action::INFO)
+        {
+            m_currentTile = tiles[currentTileIndex];
+        }
+
+        // handle make zones, traffic and plants
+        if (m_mapEditGui.action == gui::Action::MAKE_RESIDENTIAL_ZONE ||
+            m_mapEditGui.action == gui::Action::MAKE_COMMERCIAL_ZONE ||
+            m_mapEditGui.action == gui::Action::MAKE_INDUSTRIAL_ZONE ||
+            m_mapEditGui.action == gui::Action::MAKE_TRAFFIC_ZONE ||
+            m_mapEditGui.action == gui::Action::CREATE_PLANT)
         {
             // start select
             m_selectFlag = true;
@@ -193,23 +201,23 @@ void sg::map::TerrainLayer::OnLeftMouseButtonPressed()
 void sg::map::TerrainLayer::OnLeftMouseButtonReleased()
 {
     // handle select
-    if (m_mapEditGui.action == gui::Action::SELECT)
+    if (m_selectFlag)
     {
         // end select
         m_selectFlag = false;
 
-        // todo
+        // the selected tiles get a new type
         if (!m_selectedIndices.empty())
         {
             for (const auto i : m_selectedIndices)
             {
-                // mark as unselected
+                // mark tile as unselected
                 tiles[i]->UpdateSelected(false);
 
-                // todo: set a new type
-                tiles[i]->UpdateTileType(Tile::TileType::INDUSTRIAL);
+                // set a new type by given action
+                UpdateTile(m_mapEditGui.action, *tiles[i]);
 
-                // store new values in the GPU
+                // store new type values in the GPU
                 tiles[i]->VerticesToGpu(*vao);
             }
 
@@ -223,7 +231,7 @@ void sg::map::TerrainLayer::OnLeftMouseButtonReleased()
 void sg::map::TerrainLayer::OnMouseMoved()
 {
     // handle select
-    if (m_mapEditGui.action == gui::Action::SELECT && m_selectFlag)
+    if (m_selectFlag)
     {
         // read tile index under mouse
         m_currentLastIndex = ReadTileIndexUnderMouse();
@@ -241,7 +249,7 @@ void sg::map::TerrainLayer::OnMouseMoved()
                     // mark as unselected
                     tiles[i]->UpdateSelected(false);
 
-                    // store new values in the GPU
+                    // store new type values in the GPU
                     tiles[i]->VerticesToGpu(*vao);
                 }
 

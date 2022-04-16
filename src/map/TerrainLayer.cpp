@@ -204,8 +204,11 @@ void sg::map::TerrainLayer::OnLeftMouseButtonReleased()
             // reset array
             m_selectedIndices.clear();
         }
-
-        // todo: handle empty array
+        else
+        {
+            // set a new type by given action
+            SetTileTypeByAction(m_mapEditGui.action, *tiles[currentTileIndex]);
+        }
     }
 }
 

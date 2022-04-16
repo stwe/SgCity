@@ -148,33 +148,11 @@ void sg::map::TerrainLayer::OnLeftMouseButtonPressed()
     // handle actions only if the tile index is valid
     if (currentTileIndex != INVALID_TILE_INDEX)
     {
-        // handle raise terrain
-        if (m_mapEditGui.action == gui::Action::RAISE)
+        if (m_mapEditGui.action != gui::Action::INFO)
         {
-            tiles[currentTileIndex]->Raise();
-            UpdateTileVertices(*tiles[currentTileIndex]);
-        }
-
-        // handle lower terrain
-        if (m_mapEditGui.action == gui::Action::LOWER)
-        {
-            tiles[currentTileIndex]->Lower();
-            UpdateTileVertices(*tiles[currentTileIndex]);
-        }
-
-        // handle make zones, traffic and plants
-        if (m_mapEditGui.action == gui::Action::MAKE_RESIDENTIAL_ZONE ||
-            m_mapEditGui.action == gui::Action::MAKE_COMMERCIAL_ZONE ||
-            m_mapEditGui.action == gui::Action::MAKE_INDUSTRIAL_ZONE ||
-            m_mapEditGui.action == gui::Action::MAKE_TRAFFIC_ZONE ||
-            m_mapEditGui.action == gui::Action::CREATE_PLANT)
-        {
-            // start select
             m_selectFlag = true;
         }
-
-        // handle info
-        if (m_mapEditGui.action == gui::Action::INFO)
+        else
         {
             m_currentTile = tiles[currentTileIndex];
         }
@@ -186,19 +164,39 @@ void sg::map::TerrainLayer::OnLeftMouseButtonReleased()
     // handle select
     if (m_selectFlag)
     {
-        // end select
+        // reset select state
         m_selectFlag = false;
 
-        // the selected tiles get a new type
+        // are several tiles selected?
         if (!m_selectedIndices.empty())
         {
+            // for each selected tile ...
             for (const auto i : m_selectedIndices)
             {
                 // mark tile as unselected
                 SetTileSelectedState(false, *tiles[i]);
 
+                // ------------------------------------------
+                // todo: create method ChangeTileByAction
+
+                // handle raise terrain
+                if (m_mapEditGui.action == gui::Action::RAISE)
+                {
+                    tiles[i]->Raise();
+                    UpdateTileVertices(*tiles[i]);
+                }
+
+                // handle lower terrain
+                if (m_mapEditGui.action == gui::Action::LOWER)
+                {
+                    tiles[i]->Lower();
+                    UpdateTileVertices(*tiles[i]);
+                }
+
                 // set a new type by given action
                 SetTileTypeByAction(m_mapEditGui.action, *tiles[i]);
+
+                // ------------------------------------------
             }
 
             // reset array
@@ -206,6 +204,22 @@ void sg::map::TerrainLayer::OnLeftMouseButtonReleased()
         }
         else
         {
+            // handle single click on a tile
+
+            // handle raise terrain
+            if (m_mapEditGui.action == gui::Action::RAISE)
+            {
+                tiles[currentTileIndex]->Raise();
+                UpdateTileVertices(*tiles[currentTileIndex]);
+            }
+
+            // handle lower terrain
+            if (m_mapEditGui.action == gui::Action::LOWER)
+            {
+                tiles[currentTileIndex]->Lower();
+                UpdateTileVertices(*tiles[currentTileIndex]);
+            }
+
             // set a new type by given action
             SetTileTypeByAction(m_mapEditGui.action, *tiles[currentTileIndex]);
         }

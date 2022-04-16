@@ -1,35 +1,55 @@
 # SgCity
 
-Tile based 3D terrain maked with OpenGL.
-
-The individual tiles can be raised and lowered with the mouse, creating a
-look and feel of old city building simulations from the 90s.
-
+Tile based 3D city builder maked from scratch with OpenGL.
 
 [![Codacy Badge](https://app.codacy.com/project/badge/Grade/51367f1966914a838f48dc864ddfdd79)](https://www.codacy.com/gh/stwe/SgCity/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=stwe/SgCity&amp;utm_campaign=Badge_Grade)
 
 
 <img src="https://github.com/stwe/SgCity/blob/main/resources/devlog/2022-03-19.png" width="500" height="400" />
 
+## Current Features
 
-## Requirements
+* Runs on Windows and Linux
+* A fixed time step game loop which process input events, update and render game objects
+* Logging, Exceptions, Assertions
+* OpenGL renderer
+* Event system
+* ImGui based menus
+* A skybox for a nice background
+* A camera that allows us to move freely
+* Terrain manipulation (raise and lower)
+* Different tiles for residential, commercial, industrial and traffic zones
+* Tile selection
+* Animated water surfaces
+* Loads 3D models made in Blender (so we can load plants, trees, buildings etc.)
 
-- [GLFW](https://www.glfw.org/)
-- [GLEW](http://glew.sourceforge.net/)
-- [GLM](https://github.com/g-truc/glm)
-- [spdlog](https://github.com/gabime/spdlog)
-- [Dear ImGui](https://github.com/ocornut/imgui)
-- [Assimp](https://github.com/assimp/assimp)
-- C++ 17 Compiler
+## Next
 
-## Platforms
+* Traffic system
+* Find connected regions
+* Heightmap based terrain creation
+* Load and save the city
 
-- Win
-- Linux
+## Build
 
-## Build instructions
+### Requirements
 
-### Win
+* [GLFW](https://www.glfw.org/)
+* [GLEW](http://glew.sourceforge.net/)
+* [GLM](https://github.com/g-truc/glm)
+* [spdlog](https://github.com/gabime/spdlog)
+* [Dear ImGui](https://github.com/ocornut/imgui)
+* [Assimp](https://github.com/assimp/assimp)
+* C++ 17 Compiler
+
+### Platforms
+
+* Win
+* Linux
+
+### Build instructions
+
+#### Win
 
 First, [install](https://docs.conan.io/en/latest/installation.html) the Conan package manager locally.
 
@@ -70,7 +90,7 @@ $ premake5 vs2019
 ```
 
 
-### Linux
+#### Linux
 
 First, [install](https://docs.conan.io/en/latest/installation.html) the Conan package manager locally.
 

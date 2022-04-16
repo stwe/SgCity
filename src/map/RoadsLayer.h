@@ -72,14 +72,6 @@ namespace sg::map
         void Update() override {}
 
         /**
-         * Updates a Layer tile.
-         *
-         * @param t_action Indicates what should be done with the given tile.
-         * @param t_tile The tile.
-         */
-        void UpdateTile(gui::Action t_action, Tile& t_tile) override;
-
-        /**
          * Render the Layer.
          *
          * @param t_camera The Camera object.

@@ -112,14 +112,6 @@ namespace sg::map
         void Update() override {}
 
         /**
-         * Updates a Layer tile.
-         *
-         * @param t_action Indicates what should be done with the given tile.
-         * @param t_tile The tile.
-         */
-        void UpdateTile(gui::Action t_action, Tile& t_tile) override;
-
-        /**
          * Render the Layer.
          *
          * @param t_camera The Camera object.
@@ -136,8 +128,19 @@ namespace sg::map
         // Listeners
         //-------------------------------------------------
 
+        /**
+         * On left mouse button pressed event handler.
+         */
         void OnLeftMouseButtonPressed() override;
+
+        /**
+         * On left mouse button released event handler.
+         */
         void OnLeftMouseButtonReleased() override;
+
+        /**
+         * On mouse moved event handler.
+         */
         void OnMouseMoved() override;
 
     protected:
@@ -227,5 +230,21 @@ namespace sg::map
          * @return The tile map index or -1 for an invalid index.
          */
         [[nodiscard]] int ReadTileIndexUnderMouse() const;
+
+        /**
+         * Sets a new tile type by a given menu action.
+         *
+         * @param t_action The menu action.
+         * @param t_tile The Tile object to change.
+         */
+        void SetTileTypeByAction(gui::Action t_action, Tile& t_tile) const;
+
+        /**
+         * Sets the selected state.
+         *
+         * @param t_selected The selected state.
+         * @param t_tile The Tile object to change.
+         */
+        void SetTileSelectedState(bool t_selected, Tile& t_tile) const;
     };
 }

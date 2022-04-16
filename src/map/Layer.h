@@ -36,11 +36,6 @@ namespace sg::ogl::buffer
     class Vao;
 }
 
-namespace sg::gui
-{
-    enum class Action;
-}
-
 //-------------------------------------------------
 // Layer
 //-------------------------------------------------
@@ -134,14 +129,6 @@ namespace sg::map
          * Updates the Layer.
          */
         virtual void Update() {}
-
-        /**
-         * Updates a Layer tile.
-         *
-         * @param t_action Indicates what should be done with the given tile.
-         * @param t_tile The tile.
-         */
-        virtual void UpdateTile(gui::Action t_action, Tile& t_tile);
 
         /**
          * Render the Layer.

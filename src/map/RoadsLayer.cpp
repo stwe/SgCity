@@ -46,6 +46,7 @@ sg::map::RoadsLayer::~RoadsLayer() noexcept
 // Override
 //-------------------------------------------------
 
+/*
 void sg::map::RoadsLayer::UpdateTile(gui::Action t_action, Tile& t_tile)
 {
     // return if TileType is already TRAFFIC
@@ -90,6 +91,7 @@ void sg::map::RoadsLayer::UpdateTile(gui::Action t_action, Tile& t_tile)
         vao->drawCount = static_cast<int>(m_roadTiles.size()) * Tile::VERTICES_PER_TILE;
     }
 }
+*/
 
 void sg::map::RoadsLayer::Render(const ogl::camera::Camera& t_camera, const glm::vec4& t_plane) const
 {

@@ -176,27 +176,8 @@ void sg::map::TerrainLayer::OnLeftMouseButtonReleased()
                 // mark tile as unselected
                 SetTileSelectedState(false, *tiles[i]);
 
-                // ------------------------------------------
-                // todo: create method ChangeTileByAction
-
-                // handle raise terrain
-                if (m_mapEditGui.action == gui::Action::RAISE)
-                {
-                    tiles[i]->Raise();
-                    UpdateTileVertices(*tiles[i]);
-                }
-
-                // handle lower terrain
-                if (m_mapEditGui.action == gui::Action::LOWER)
-                {
-                    tiles[i]->Lower();
-                    UpdateTileVertices(*tiles[i]);
-                }
-
-                // set a new type by given action
-                SetTileTypeByAction(m_mapEditGui.action, *tiles[i]);
-
-                // ------------------------------------------
+                // change tile by current menu action
+                ChangeTileByAction(m_mapEditGui.action, *tiles[i]);
             }
 
             // reset array
@@ -205,23 +186,7 @@ void sg::map::TerrainLayer::OnLeftMouseButtonReleased()
         else
         {
             // handle single click on a tile
-
-            // handle raise terrain
-            if (m_mapEditGui.action == gui::Action::RAISE)
-            {
-                tiles[currentTileIndex]->Raise();
-                UpdateTileVertices(*tiles[currentTileIndex]);
-            }
-
-            // handle lower terrain
-            if (m_mapEditGui.action == gui::Action::LOWER)
-            {
-                tiles[currentTileIndex]->Lower();
-                UpdateTileVertices(*tiles[currentTileIndex]);
-            }
-
-            // set a new type by given action
-            SetTileTypeByAction(m_mapEditGui.action, *tiles[currentTileIndex]);
+            ChangeTileByAction(m_mapEditGui.action, *tiles[currentTileIndex]);
         }
     }
 }
@@ -556,8 +521,15 @@ int sg::map::TerrainLayer::ReadTileIndexUnderMouse() const
     return index;
 }
 
-void sg::map::TerrainLayer::SetTileTypeByAction(const gui::Action t_action, Tile& t_tile) const
+void sg::map::TerrainLayer::SetTileSelectedState(const bool t_selected, Tile& t_tile) const
 {
+    t_tile.UpdateSelected(t_selected);
+    t_tile.VerticesToGpu(*vao);
+}
+
+void sg::map::TerrainLayer::ChangeTileByAction(const gui::Action t_action, Tile& t_tile) const
+{
+    // helper
     auto setTileType = [&](const Tile::TileType t_tileType) -> void
     {
         if (t_tile.type != t_tileType)
@@ -569,6 +541,14 @@ void sg::map::TerrainLayer::SetTileTypeByAction(const gui::Action t_action, Tile
 
     switch (t_action)
     {
+    case gui::Action::RAISE:
+        t_tile.Raise();
+        UpdateTileVertices(t_tile);
+        break;
+    case gui::Action::LOWER:
+        t_tile.Lower();
+        UpdateTileVertices(t_tile);
+        break;
     case gui::Action::MAKE_RESIDENTIAL_ZONE:
         setTileType(Tile::TileType::RESIDENTIAL);
         break;
@@ -587,10 +567,4 @@ void sg::map::TerrainLayer::SetTileTypeByAction(const gui::Action t_action, Tile
     default:
         break;
     }
-}
-
-void sg::map::TerrainLayer::SetTileSelectedState(const bool t_selected, Tile& t_tile) const
-{
-    t_tile.UpdateSelected(t_selected);
-    t_tile.VerticesToGpu(*vao);
 }

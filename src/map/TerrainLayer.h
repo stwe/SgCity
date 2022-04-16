@@ -232,19 +232,19 @@ namespace sg::map
         [[nodiscard]] int ReadTileIndexUnderMouse() const;
 
         /**
-         * Sets a new tile type by a given menu action.
-         *
-         * @param t_action The menu action.
-         * @param t_tile The Tile object to change.
-         */
-        void SetTileTypeByAction(gui::Action t_action, Tile& t_tile) const;
-
-        /**
          * Sets the selected state.
          *
          * @param t_selected The selected state.
          * @param t_tile The Tile object to change.
          */
         void SetTileSelectedState(bool t_selected, Tile& t_tile) const;
+
+        /**
+         * Changes a tile by a given menu action.
+         *
+         * @param t_action The menu action.
+         * @param t_tile The Tile object to change.
+         */
+        void ChangeTileByAction(gui::Action t_action, Tile& t_tile) const;
     };
 }

@@ -59,17 +59,24 @@ void sg::ogl::resource::Model::Render(
     const glm::vec3& t_scale
 ) const
 {
-    OpenGL::EnableAlphaBlending();
-
-    const auto& shaderProgram{ ResourceManager::LoadShaderProgram("E:/Dev/SgCity/resources/shader/model") };
-    shaderProgram.Bind();
-
-    shaderProgram.SetUniform("model", math::Transform::CreateModelMatrix(t_position, t_rotation, t_scale));
-    shaderProgram.SetUniform("view", t_camera.GetViewMatrix());
-    shaderProgram.SetUniform("projection", t_window.GetProjectionMatrix());
+    const auto frustum{ t_camera.GetCurrentFrustum() };
 
     for (const auto& mesh : meshes)
     {
+        if (!mesh->sphere.IsOnFrustum(frustum, t_position))
+        {
+            return;
+        }
+
+        OpenGL::EnableAlphaBlending();
+
+        const auto& shaderProgram{ ResourceManager::LoadShaderProgram("E:/Dev/SgCity/resources/shader/model") };
+        shaderProgram.Bind();
+
+        shaderProgram.SetUniform("model", math::Transform::CreateModelMatrix(t_position, t_rotation, t_scale));
+        shaderProgram.SetUniform("view", t_camera.GetViewMatrix());
+        shaderProgram.SetUniform("projection", t_window.GetProjectionMatrix());
+
         mesh->vao->Bind();
 
         shaderProgram.SetUniform("diffuseColor", mesh->defaultMaterial->kd);
@@ -86,11 +93,11 @@ void sg::ogl::resource::Model::Render(
 
         mesh->vao->DrawPrimitives();
         mesh->vao->Unbind();
+
+        ShaderProgram::Unbind();
+
+        OpenGL::DisableBlending();
     }
-
-    ShaderProgram::Unbind();
-
-    OpenGL::DisableBlending();
 }
 
 void sg::ogl::resource::Model::Render(
@@ -141,6 +148,9 @@ void sg::ogl::resource::Model::ProcessNode(const aiNode* t_node, const aiScene* 
 
 std::unique_ptr<sg::ogl::resource::Mesh> sg::ogl::resource::Model::ProcessMesh(const aiMesh* t_mesh, const aiScene* t_scene) const
 {
+    auto minAabb{ glm::vec3(std::numeric_limits<float>::max()) };
+    auto maxAabb{ glm::vec3(std::numeric_limits<float>::min()) };
+
     // Data to fill.
     std::vector<float> vertices;
     std::vector<uint32_t> indices;
@@ -157,6 +167,15 @@ std::unique_ptr<sg::ogl::resource::Mesh> sg::ogl::resource::Model::ProcessMesh(c
         vertices.push_back(t_mesh->mVertices[i].x);
         vertices.push_back(t_mesh->mVertices[i].y);
         vertices.push_back(t_mesh->mVertices[i].z);
+
+        // for bounding sphere creation
+        minAabb.x = std::min(minAabb.x, t_mesh->mVertices[i].x);
+        minAabb.y = std::min(minAabb.y, t_mesh->mVertices[i].y);
+        minAabb.z = std::min(minAabb.z, t_mesh->mVertices[i].z);
+
+        maxAabb.x = std::max(maxAabb.x, t_mesh->mVertices[i].x);
+        maxAabb.y = std::max(maxAabb.y, t_mesh->mVertices[i].y);
+        maxAabb.z = std::max(maxAabb.z, t_mesh->mVertices[i].z);
 
         // push normal (3 floats)
         //vertices.push_back(t_mesh->mNormals[i].x);
@@ -310,6 +329,9 @@ std::unique_ptr<sg::ogl::resource::Mesh> sg::ogl::resource::Model::ProcessMesh(c
 
     // Each mesh has a default material. Set the material properties as default.
     meshUniquePtr->defaultMaterial = std::move(materialUniquePtr);
+
+    // Store the bounding sphere.
+    meshUniquePtr->sphere = camera::Sphere((maxAabb + minAabb) * 0.5f, glm::length(minAabb - maxAabb));
 
     // Return a mesh object created from the extracted mesh data.
     return meshUniquePtr;

@@ -45,6 +45,7 @@ sg::map::BuildingsLayer::~BuildingsLayer() noexcept
 
 void sg::map::BuildingsLayer::Render(const ogl::camera::Camera& t_camera, const glm::vec4& t_plane) const
 {
+    // todo: cache models
     for (const auto& tile : tiles)
     {
         if (tile->type == Tile::TileType::RESIDENTIAL)

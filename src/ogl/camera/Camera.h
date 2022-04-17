@@ -20,6 +20,7 @@
 
 #include <memory>
 #include <glm/gtc/matrix_transform.hpp>
+#include "FrustumCulling.h"
 
 //-------------------------------------------------
 // Forward declarations
@@ -174,6 +175,12 @@ namespace sg::ogl::camera
             pitch = -pitch;
             UpdateCameraVectors();
         }
+
+        //-------------------------------------------------
+        // Frustum
+        //-------------------------------------------------
+
+        [[nodiscard]] Frustum GetCurrentFrustum() const;
 
     protected:
 

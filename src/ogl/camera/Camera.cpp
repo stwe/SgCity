@@ -137,9 +137,42 @@ void sg::ogl::camera::Camera::Input()
 
 void sg::ogl::camera::Camera::RenderImGui()
 {
+    const auto [topFace, bottomFace,
+        rightFace, leftFace,
+        farFace, nearFace]{ GetCurrentFrustum() };
+
     ImGui::Begin("Camera");
-    ImGui::SliderFloat3("Camera", value_ptr(position), -100.0f, 100.0f);
+
+    ImGui::Separator();
+    ImGui::SliderFloat3("Position", value_ptr(position), -100.0f, 100.0f);
+
+    ImGui::Separator();
+    ImGui::Text("Frustum, normal xyz, distance");
+    ImGui::Text("Top %.2f, %.2f, %.2f, %.2f", topFace.normal.x, topFace.normal.y, topFace.normal.z, topFace.distance);
+    ImGui::Text("Bottom %.2f, %.2f, %.2f, %.2f", bottomFace.normal.x, bottomFace.normal.y, bottomFace.normal.z, bottomFace.distance);
+    ImGui::Text("Right %.2f, %.2f, %.2f, %.2f", rightFace.normal.x, rightFace.normal.y, rightFace.normal.z, rightFace.distance);
+    ImGui::Text("Left %.2f, %.2f, %.2f, %.2f", leftFace.normal.x, leftFace.normal.y, leftFace.normal.z, leftFace.distance);
+    ImGui::Text("Near %.2f, %.2f, %.2f, %.2f", nearFace.normal.x, nearFace.normal.y, nearFace.normal.z, nearFace.distance);
+    ImGui::Text("Far %.2f, %.2f, %.2f, %.2f", farFace.normal.x, farFace.normal.y, farFace.normal.z, farFace.distance);
+
     ImGui::End();
+}
+
+sg::ogl::camera::Frustum sg::ogl::camera::Camera::GetCurrentFrustum() const
+{
+    Frustum frustum;
+    const float halfVSide{ Window::FAR_PLANE * tanf(glm::radians(Window::FOV_DEG) * 0.5f) };
+    const float halfHSide{ halfVSide * static_cast<float>(m_window->GetWidth()) / static_cast<float>(m_window->GetHeight()) };
+    const glm::vec3 frontMultFar{ Window::FAR_PLANE * m_front };
+
+    frustum.nearFace = { position + Window::NEAR_PLANE * m_front, m_front };
+    frustum.farFace = { position + frontMultFar, -m_front };
+    frustum.rightFace = { position, glm::cross(m_up, frontMultFar + m_right * halfHSide) };
+    frustum.leftFace = { position, glm::cross(frontMultFar - m_right * halfHSide, m_up) };
+    frustum.topFace = { position, glm::cross(m_right, frontMultFar - m_up * halfVSide) };
+    frustum.bottomFace = { position, glm::cross(frontMultFar + m_up * halfVSide, m_right) };
+
+    return frustum;
 }
 
 //-------------------------------------------------

@@ -50,10 +50,17 @@ void sg::map::PlantsLayer::Render(const ogl::camera::Camera& t_camera, const glm
     {
         if (tile->type == Tile::TileType::PLANTS)
         {
+            auto position{ glm::vec3(tile->mapX + 0.5f, 2.0f, tile->mapZ + 0.5f) };
+
+            if (!m_model->sphere.IsOnFrustum(t_camera.GetCurrentFrustum(), position))
+            {
+                continue;
+            }
+
             m_model->Render(
                 *window,
                 t_camera,
-                glm::vec3(tile->mapX + 0.5f, 2.0f, tile->mapZ + 0.5f),
+                position,
                 glm::vec3(0.0f, 0.0f, 180.0f),
                 glm::vec3(2.0f)
             );

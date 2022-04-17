@@ -61,6 +61,11 @@ namespace sg::ogl::resource
          */
         std::vector<std::shared_ptr<Mesh>> meshes;
 
+        /**
+         * The bounding sphere.
+         */
+        camera::Sphere sphere;
+
         //-------------------------------------------------
         // Ctors. / Dtor.
         //-------------------------------------------------
@@ -129,13 +134,16 @@ namespace sg::ogl::resource
         std::string m_fullFilePath;
         std::string m_directory;
 
+        glm::vec3 m_minAabb{ glm::vec3(std::numeric_limits<float>::max()) };
+        glm::vec3 m_maxAabb{ glm::vec3(std::numeric_limits<float>::min()) };
+
         //-------------------------------------------------
         // Load
         //-------------------------------------------------
 
         void LoadFromFile(unsigned int t_pFlags);
         void ProcessNode(const aiNode* t_node, const aiScene* t_scene);
-        std::unique_ptr<Mesh> ProcessMesh(const aiMesh* t_mesh, const aiScene* t_scene) const;
+        std::unique_ptr<Mesh> ProcessMesh(const aiMesh* t_mesh, const aiScene* t_scene);
         std::vector<uint32_t> LoadMaterialTextures(const aiMaterial* t_mat, aiTextureType t_type) const;
 
         //-------------------------------------------------

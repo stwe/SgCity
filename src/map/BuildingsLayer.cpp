@@ -50,7 +50,14 @@ void sg::map::BuildingsLayer::Render(const ogl::camera::Camera& t_camera, const 
     {
         if (tile->type == Tile::TileType::RESIDENTIAL)
         {
-            m_model->Render(*window, t_camera, glm::vec3(tile->mapX + 0.5f, 0.001f, tile->mapZ + 0.5f));
+            auto position{ glm::vec3(tile->mapX + 0.5f, 0.001f, tile->mapZ + 0.5f) };
+
+            if (!m_model->sphere.IsOnFrustum(t_camera.GetCurrentFrustum(), position))
+            {
+                continue;
+            }
+
+            m_model->Render(*window, t_camera, position);
         }
     }
 }

@@ -21,7 +21,6 @@
 #include <memory>
 #include <string>
 #include "ogl/OpenGL.h"
-#include "ogl/camera/FrustumCulling.h"
 
 //-------------------------------------------------
 // Forward declarations
@@ -67,11 +66,6 @@ namespace sg::ogl::resource
          * The default Material of the Mesh.
          */
         std::shared_ptr<Material> defaultMaterial;
-
-        /**
-         * The bounding sphere.
-         */
-        camera::Sphere sphere;
 
         //-------------------------------------------------
         // Ctors. / Dtor.

@@ -73,7 +73,13 @@ namespace sg::ogl::camera
     {
         virtual ~BoundingVolume() noexcept = default;
 
-        [[nodiscard]] virtual bool IsOnFrustum(const Frustum& t_cameraFrustum, const glm::vec3& t_position) const = 0;
+        [[nodiscard]] virtual bool IsOnFrustum(
+            const Frustum& t_cameraFrustum,
+            const glm::vec3& t_position,
+            const glm::vec3& t_rotation = glm::vec3(0.0f),
+            const glm::vec3& t_scale = glm::vec3(1.0f)
+        ) const = 0;
+
         [[nodiscard]] virtual bool IsOnOrForwardPlan(const Plan& t_plan) const = 0;
 
         [[nodiscard]] bool IsOnFrustum(const Frustum& t_cameraFrustum) const
@@ -104,32 +110,25 @@ namespace sg::ogl::camera
             return t_plan.GetSignedDistanceToPlan(center) > -radius;
         }
 
-        [[nodiscard]] bool IsOnFrustum(const Frustum& t_cameraFrustum, const glm::vec3& t_position) const override
+        [[nodiscard]] bool IsOnFrustum(
+            const Frustum& t_cameraFrustum,
+            const glm::vec3& t_position,
+            const glm::vec3& t_rotation = glm::vec3(0.0f),
+            const glm::vec3& t_scale = glm::vec3(1.0f)
+        ) const override
         {
-            // Get global scale thanks to our transform
-            // const glm::vec3 globalScale = t_transform.getGlobalScale();
-            const auto globalScale{ glm::vec3(1.0f) };
-
-            // Get our global center with process it with the global model matrix of our transform
-            const glm::vec3 globalCenter{ math::Transform::CreateModelMatrix(
-                t_position,
-                glm::vec3(0.0f),
-                glm::vec3(1.0f)) * glm::vec4(center, 1.0f)
+            const glm::vec3 transformMatrix{ math::Transform::CreateModelMatrix(
+                t_position, t_rotation, t_scale) * glm::vec4(center, 1.0f)
             };
 
-            // To wrap correctly our shape, we need the maximum scale scalar.
-            const float maxScale = std::max(std::max(globalScale.x, globalScale.y), globalScale.z);
+            const SphereVolume volume(transformMatrix, radius * 0.5f);
 
-            // Max scale is assuming for the diameter. So, we need the half to apply it to our radius
-            const SphereVolume globalSphere(globalCenter, radius * (maxScale * 0.5f));
-
-            // Check Firstly the result that have the most chance to faillure to avoid to call all functions.
-            return (globalSphere.IsOnOrForwardPlan(t_cameraFrustum.leftFace) &&
-                globalSphere.IsOnOrForwardPlan(t_cameraFrustum.rightFace) &&
-                globalSphere.IsOnOrForwardPlan(t_cameraFrustum.farFace) &&
-                globalSphere.IsOnOrForwardPlan(t_cameraFrustum.nearFace) &&
-                globalSphere.IsOnOrForwardPlan(t_cameraFrustum.topFace) &&
-                globalSphere.IsOnOrForwardPlan(t_cameraFrustum.bottomFace));
+            return (volume.IsOnOrForwardPlan(t_cameraFrustum.leftFace) &&
+                volume.IsOnOrForwardPlan(t_cameraFrustum.rightFace) &&
+                volume.IsOnOrForwardPlan(t_cameraFrustum.farFace) &&
+                volume.IsOnOrForwardPlan(t_cameraFrustum.nearFace) &&
+                volume.IsOnOrForwardPlan(t_cameraFrustum.topFace) &&
+                volume.IsOnOrForwardPlan(t_cameraFrustum.bottomFace));
         }
     };
 }

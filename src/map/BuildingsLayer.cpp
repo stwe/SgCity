@@ -20,6 +20,7 @@
 #include "BuildingsLayer.h"
 #include "Tile.h"
 #include "Log.h"
+#include "ogl/primitives/Sphere.h"
 #include "ogl/resource/ResourceManager.h"
 #include "ogl/resource/Model.h"
 
@@ -63,6 +64,13 @@ void sg::map::BuildingsLayer::Render(const ogl::camera::Camera& t_camera, const 
             }
 
             m_model->Render(t_camera, position);
+
+            const glm::vec3 transformMatrix{
+                ogl::math::Transform::CreateModelMatrix(
+                position, glm::vec3(0.0f), glm::vec3(1.0f)) * glm::vec4(m_model->sphereVolume.center, 1.0f)
+            };
+
+            m_model->sphere->Render(t_camera, transformMatrix);
 
             m_render++;
         }

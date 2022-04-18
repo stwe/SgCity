@@ -113,8 +113,11 @@ void sg::ogl::resource::Model::LoadFromFile(const unsigned int t_pFlags)
 
     ProcessNode(scene->mRootNode, scene);
 
+    // create bounding sphere
     sphereVolume = camera::SphereVolume((m_maxAabb + m_minAabb) * 0.5f, glm::length(m_minAabb - m_maxAabb));
-    //sphere = std::make_unique<primitives::Sphere>(m_window, sphereVolume.radius / 2.0f, 8, 8);
+
+    // todo: to visualizing the bounding sphere (the radius is divided by two)
+    sphere = std::make_unique<primitives::Sphere>(m_window, sphereVolume.radius * 0.5f, 8, 8);
 
     Log::SG_LOG_DEBUG("[Model::LoadFromFile()] Model file at {} successfully loaded.", m_fullFilePath);
 }

@@ -20,6 +20,7 @@
 #include "PlantsLayer.h"
 #include "Tile.h"
 #include "Log.h"
+#include "ogl/primitives/Sphere.h"
 #include "ogl/resource/ResourceManager.h"
 #include "ogl/resource/Model.h"
 
@@ -55,6 +56,8 @@ void sg::map::PlantsLayer::Render(const ogl::camera::Camera& t_camera, const glm
         if (tile->type == Tile::TileType::PLANTS)
         {
             auto position{ glm::vec3(tile->mapX + 0.5f, 2.0f, tile->mapZ + 0.5f) };
+            auto rotation{ glm::vec3(0.0f, 0.0f, 180.0f) };
+            auto scale{ glm::vec3(2.0f) };
 
             if (!m_model->sphereVolume.IsOnFrustum(t_camera.GetCurrentFrustum(), position))
             {
@@ -62,12 +65,14 @@ void sg::map::PlantsLayer::Render(const ogl::camera::Camera& t_camera, const glm
                 continue;
             }
 
-            m_model->Render(
-                t_camera,
-                position,
-                glm::vec3(0.0f, 0.0f, 180.0f),
-                glm::vec3(2.0f)
-            );
+            m_model->Render(t_camera, position, rotation, scale);
+
+            const glm::vec3 transformMatrix{
+                ogl::math::Transform::CreateModelMatrix(
+                position, rotation, scale) * glm::vec4(m_model->sphereVolume.center, 1.0f)
+            };
+
+            m_model->sphere->Render(t_camera, transformMatrix);
 
             m_render++;
         }

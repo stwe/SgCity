@@ -33,12 +33,10 @@ namespace sg::ogl::buffer
     class Vao;
 }
 
-/*
 namespace sg::ogl::primitives
 {
     class Sphere;
 }
-*/
 
 //-------------------------------------------------
 // Model
@@ -74,7 +72,7 @@ namespace sg::ogl::resource
         /**
          * A Sphere object created by the sphereVolume.
          */
-        //std::unique_ptr<primitives::Sphere> sphere;
+        std::unique_ptr<primitives::Sphere> sphere;
 
         //-------------------------------------------------
         // Ctors. / Dtor.

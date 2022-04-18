@@ -120,7 +120,7 @@ void sg::ogl::resource::Model::LoadFromFile(const unsigned int t_pFlags)
 
     ProcessNode(scene->mRootNode, scene);
 
-    sphere = camera::Sphere((m_maxAabb + m_minAabb) * 0.5f, glm::length(m_minAabb - m_maxAabb));
+    sphereVolume = camera::SphereVolume((m_maxAabb + m_minAabb) * 0.5f, glm::length(m_minAabb - m_maxAabb));
 
     Log::SG_LOG_DEBUG("[Model::LoadFromFile()] Model file at {} successfully loaded.", m_fullFilePath);
 }
@@ -314,7 +314,7 @@ std::unique_ptr<sg::ogl::resource::Mesh> sg::ogl::resource::Model::ProcessMesh(c
     SG_ASSERT(meshUniquePtr, "[Model::ProcessMesh()] Null pointer.")
 
     // Add Vbo.
-    meshUniquePtr->vao->CreateModelVertexDataVbo(vertices, static_cast<int32_t>(t_mesh->mNumVertices));
+    meshUniquePtr->vao->CreateStaticModelVertexDataVbo(vertices, static_cast<int32_t>(t_mesh->mNumVertices));
 
     // Add Ebo.
     meshUniquePtr->vao->CreateModelIndexBuffer(indices);

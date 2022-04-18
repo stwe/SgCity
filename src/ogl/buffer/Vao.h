@@ -60,6 +60,8 @@ namespace sg::ogl::buffer
 
         /**
          * A Vbo object.
+         * This is a member in case the buffer is dynamic.
+         * In this case, direct access is required.
          */
         std::unique_ptr<Vbo> vbo;
 
@@ -96,6 +98,8 @@ namespace sg::ogl::buffer
          * Binds this Vao and creates an empty dynamic Vbo.
          * Allocate memory and *not* fill it.
          *
+         * Used by the TerrainLayer and the RoadsLayer.
+         *
          * Bufferlayout:
          * -------------
          * location 0 (position)  3 floats
@@ -111,21 +115,10 @@ namespace sg::ogl::buffer
         void CreateEmptyDynamicVbo(uint32_t t_size, int32_t t_drawCount = 0);
 
         /**
-         * Binds this Vao and creates a static Vbo. The given vertices data are copied into the Vbo.
-         *
-         * Bufferlayout
-         * ------------
-         * location 0 (position) 3 floats
-         * location 1 (uv)       2 floats
-         *
-         * @param t_vertices The vertices to copy.
-         * @param t_drawCount Sets the number of vertices to be render if the value is greater than zero.
-         */
-        void CreateStaticVbo(const std::vector<float>& t_vertices, int32_t t_drawCount = 0);
-
-        /**
          * Creates a simple square.
          * Binds this Vao and creates a static Vbo.
+         *
+         * Used by the WaterLayer.
          *
          * Bufferlayout
          * ------------
@@ -136,25 +129,61 @@ namespace sg::ogl::buffer
         /**
          * Binds this Vao and creates a static Vbo for a Skybox.
          *
+         * Used by the Skybox.
+         *
          * Bufferlayout
          * ------------
          * location 0 (position) 3 floats
          */
-        void CreateSkyboxVbo();
+        void CreateStaticSkyboxVbo();
 
         /**
          * Creates a simple square for a Gui.
          * Binds this Vao and creates a static Vbo.
          *
+         * Used by the Gui.
+         *
          * Bufferlayout
          * ------------
          * location 0 (position) 2 floats
          */
-        void CreateGuiVbo();
+        void CreateStaticGuiVbo();
 
-        // todo:
+        /**
+         * Binds this Vao and creates a static Vbo. The given vertices data are copied into the Vbo.
+         *
+         * Used by the Model.
+         *
+         * Bufferlayout:
+         * -------------
+         * location 0 (position) 3 floats
+         * location 1 (uv)       2 floats
+         *
+         * @param t_vertices The vertices to copy.
+         * @param t_drawCount Sets the number of vertices to be render.
+         */
+        void CreateStaticModelVertexDataVbo(const std::vector<float>& t_vertices, int32_t t_drawCount);
 
-        void CreateModelVertexDataVbo(const std::vector<float>& t_vertices, int32_t t_drawCount);
+        /**
+         * Creates a sphere.
+         *
+         * @param t_radius The radius of the sphere.
+         * @param t_slices The number of horizontal slices.
+         * @param t_stacks The number of vertical stacks.
+         */
+        void CreateStaticSphereVbos(float t_radius, int t_slices, int t_stacks);
+
+        //-------------------------------------------------
+        // Create Ebo
+        //-------------------------------------------------
+
+        /**
+         * Creates an Indexbuffer.
+         *
+         * Used by the Model.
+         *
+         * @param t_indices The indices to copy.
+         */
         void CreateModelIndexBuffer(const std::vector<uint32_t>& t_indices);
 
         //-------------------------------------------------

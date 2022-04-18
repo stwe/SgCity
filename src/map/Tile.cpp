@@ -133,14 +133,14 @@ void sg::map::Tile::UpdateSelected(const bool t_selected)
     selected = t_selected;
 
     // update vertices
-    const auto s{ static_cast<float>(t_selected) };
-    vertices[TL_1_SELECTED_INDEX] = s;
-    vertices[BL_1_SELECTED_INDEX] = s;
-    vertices[BR_1_SELECTED_INDEX] = s;
+    const auto sf{ static_cast<float>(t_selected) };
+    vertices[TL_1_SELECTED_INDEX] = sf;
+    vertices[BL_1_SELECTED_INDEX] = sf;
+    vertices[BR_1_SELECTED_INDEX] = sf;
 
-    vertices[TL_2_SELECTED_INDEX] = s;
-    vertices[BR_2_SELECTED_INDEX] = s;
-    vertices[TR_2_SELECTED_INDEX] = s;
+    vertices[TL_2_SELECTED_INDEX] = sf;
+    vertices[BR_2_SELECTED_INDEX] = sf;
+    vertices[TR_2_SELECTED_INDEX] = sf;
 }
 
 //-------------------------------------------------

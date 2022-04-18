@@ -87,14 +87,14 @@ namespace sg::ogl::camera
         }
     };
 
-    struct Sphere : BoundingVolume
+    struct SphereVolume : BoundingVolume
     {
         glm::vec3 center{ 0.0f, 0.0f, 0.0f };
         float radius{ 0.0f };
 
-        Sphere() = default;
+        SphereVolume() = default;
 
-        Sphere(const glm::vec3& t_inCenter, const float t_inRadius)
+        SphereVolume(const glm::vec3& t_inCenter, const float t_inRadius)
             : BoundingVolume{}, center{ t_inCenter }
             , radius{ t_inRadius }
         {}
@@ -117,7 +117,7 @@ namespace sg::ogl::camera
             const float maxScale = std::max(std::max(globalScale.x, globalScale.y), globalScale.z);
 
             // Max scale is assuming for the diameter. So, we need the half to apply it to our radius
-            const Sphere globalSphere(globalCenter, radius * (maxScale * 0.5f));
+            const SphereVolume globalSphere(globalCenter, radius * (maxScale * 0.5f));
 
             // Check Firstly the result that have the most chance to faillure to avoid to call all functions.
             return (globalSphere.IsOnOrForwardPlan(t_cameraFrustum.leftFace) &&

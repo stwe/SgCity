@@ -52,7 +52,7 @@ void sg::map::BuildingsLayer::Render(const ogl::camera::Camera& t_camera, const 
         {
             auto position{ glm::vec3(tile->mapX + 0.5f, 0.001f, tile->mapZ + 0.5f) };
 
-            if (!m_model->sphere.IsOnFrustum(t_camera.GetCurrentFrustum(), position))
+            if (!m_model->sphereVolume.IsOnFrustum(t_camera.GetCurrentFrustum(), position))
             {
                 continue;
             }

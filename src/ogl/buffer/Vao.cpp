@@ -16,6 +16,8 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
+#include <glm/vec3.hpp>
+#include <glm/vec2.hpp>
 #include "Vao.h"
 #include "Vbo.h"
 #include "Ebo.h"
@@ -61,6 +63,7 @@ void sg::ogl::buffer::Vao::Unbind()
 void sg::ogl::buffer::Vao::CreateEmptyDynamicVbo(const uint32_t t_size, const int32_t t_drawCount)
 {
     SG_ASSERT(!vbo, "[Vao::CreateEmptyDynamicVbo()] Vbo already exists.")
+    SG_ASSERT(t_size, "[Vao::CreateEmptyDynamicVbo()] Invalid size given.")
 
     Bind();
 
@@ -87,34 +90,6 @@ void sg::ogl::buffer::Vao::CreateEmptyDynamicVbo(const uint32_t t_size, const in
 
     // enable location 5 (selected)
     vbo->AddFloatAttribute(5, 1, 13, 12);
-
-    Unbind();
-
-    if (t_drawCount > 0)
-    {
-        drawCount = t_drawCount;
-    }
-}
-
-void sg::ogl::buffer::Vao::CreateStaticVbo(const std::vector<float>& t_vertices, const int32_t t_drawCount)
-{
-    SG_ASSERT(!vbo, "[Vao::CreateStaticVbo()] Vbo already exists.")
-
-    Bind();
-
-    vbo = std::make_unique<Vbo>();
-    vbo->Bind();
-
-    constexpr int64_t floatsPerVertex{ 5 };
-
-    glBufferData(GL_ARRAY_BUFFER, t_drawCount * floatsPerVertex * static_cast<int64_t>(sizeof(float)), t_vertices.data(), GL_STATIC_DRAW);
-    Vbo::Unbind();
-
-    // enable location 0 (position)
-    vbo->AddFloatAttribute(0, 3, 5, 0);
-
-    // enable location 1 (uv)
-    vbo->AddFloatAttribute(1, 2, 5, 3);
 
     Unbind();
 
@@ -156,9 +131,9 @@ void sg::ogl::buffer::Vao::CreateStaticWaterVbo()
     Unbind();
 }
 
-void sg::ogl::buffer::Vao::CreateSkyboxVbo()
+void sg::ogl::buffer::Vao::CreateStaticSkyboxVbo()
 {
-    SG_ASSERT(!vbo, "[Vao::CreateSkyboxVbo()] Vbo already exists.")
+    SG_ASSERT(!vbo, "[Vao::CreateStaticSkyboxVbo()] Vbo already exists.")
 
     Bind();
 
@@ -222,9 +197,9 @@ void sg::ogl::buffer::Vao::CreateSkyboxVbo()
     Unbind();
 }
 
-void sg::ogl::buffer::Vao::CreateGuiVbo()
+void sg::ogl::buffer::Vao::CreateStaticGuiVbo()
 {
-    SG_ASSERT(!vbo, "[Vao::CreateGuiVbo()] Vbo already exists.")
+    SG_ASSERT(!vbo, "[Vao::CreateStaticGuiVbo()] Vbo already exists.")
 
     Bind();
 
@@ -252,9 +227,11 @@ void sg::ogl::buffer::Vao::CreateGuiVbo()
     Unbind();
 }
 
-void sg::ogl::buffer::Vao::CreateModelVertexDataVbo(const std::vector<float>& t_vertices, const int32_t t_drawCount)
+void sg::ogl::buffer::Vao::CreateStaticModelVertexDataVbo(const std::vector<float>& t_vertices, const int32_t t_drawCount)
 {
-    SG_ASSERT(!vbo, "[Vao::CreateModelVertexDataVbo()] Vbo already exists.")
+    SG_ASSERT(!vbo, "[Vao::CreateStaticModelVertexDataVbo()] Vbo already exists.")
+    SG_ASSERT(!t_vertices.empty(), "[Vao::CreateStaticModelVertexDataVbo()] No vertices given.")
+    SG_ASSERT(t_drawCount, "[Vao::CreateStaticModelVertexDataVbo()] Invalid draw count given.")
 
     Bind();
 
@@ -273,18 +250,103 @@ void sg::ogl::buffer::Vao::CreateModelVertexDataVbo(const std::vector<float>& t_
     drawCount = t_drawCount;
 }
 
+void sg::ogl::buffer::Vao::CreateStaticSphereVbos(const float t_radius, const int t_slices, const int t_stacks)
+{
+    SG_ASSERT(!ebo, "[Vao::CreateStaticSphereVbos()] Ebo already exists.")
+
+    // the vbo member is not used here, but shouldn't exist anyway
+    SG_ASSERT(!vbo, "[Vao::CreateStaticSphereVbos()] Vbo already exists.")
+
+    constexpr auto pi{ 3.1415926535897932384626433832795f };
+    constexpr auto _2pi{ 2.0f * pi };
+
+    std::vector<glm::vec3> positions;
+    std::vector<glm::vec3> normals;
+    std::vector<glm::vec2> textureCoords;
+
+    // vertices
+    for (auto i{ 0 }; i <= t_stacks; ++i)
+    {
+        auto v{ static_cast<float>(i) / static_cast<float>(t_stacks) };
+        const auto phi{ v * pi };
+
+        for (auto j{ 0 }; j <= t_slices; ++j)
+        {
+            auto u{ static_cast<float>(j) / static_cast<float>(t_slices) };
+            const auto theta{ u * _2pi };
+
+            const auto x{ cos(theta) * sin(phi) };
+            const auto y{ cos(phi) };
+            const auto z{ sin(theta) * sin(phi) };
+
+            positions.push_back(glm::vec3(x, y, z) * t_radius);
+            normals.emplace_back(x, y, z);
+            textureCoords.emplace_back(u, v);
+        }
+    }
+
+    // indices
+    std::vector<uint32_t> indices;
+    for (auto i{ 0 }; i < t_slices * t_stacks + t_slices; ++i)
+    {
+        indices.push_back(i);
+        indices.push_back(i + t_slices + 1);
+        indices.push_back(i + t_slices);
+
+        indices.push_back(i + t_slices + 1);
+        indices.push_back(i);
+        indices.push_back(i + 1);
+    }
+
+    Bind();
+
+    // create Vbos
+    // todo
+    uint32_t vbos[3];
+    glGenBuffers(3, vbos);
+
+    glBindBuffer(GL_ARRAY_BUFFER, vbos[0]);
+    glBufferData(GL_ARRAY_BUFFER, static_cast<int64_t>(positions.size()) * static_cast<int64_t>(sizeof(glm::vec3)), positions.data(), GL_STATIC_DRAW);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, static_cast<void*>(nullptr));
+    glEnableVertexAttribArray(0);
+
+    glBindBuffer(GL_ARRAY_BUFFER, vbos[1]);
+    glBufferData(GL_ARRAY_BUFFER, static_cast<int64_t>(normals.size()) * static_cast<int64_t>(sizeof(glm::vec3)), normals.data(), GL_STATIC_DRAW);
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_TRUE, 0, static_cast<void*>(nullptr));
+    glEnableVertexAttribArray(1);
+
+    glBindBuffer(GL_ARRAY_BUFFER, vbos[2]);
+    glBufferData(GL_ARRAY_BUFFER, static_cast<int64_t>(textureCoords.size()) * static_cast<int64_t>(sizeof(glm::vec2)), textureCoords.data(), GL_STATIC_DRAW);
+    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 0, static_cast<void*>(nullptr));
+    glEnableVertexAttribArray(2);
+
+    // create Ebo
+    ebo = std::make_unique<Ebo>();
+    ebo->Bind();
+    constexpr auto elementSizeInBytes{ static_cast<int64_t>(sizeof(uint32_t)) };
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, static_cast<int64_t>(indices.size()) * elementSizeInBytes, indices.data(), GL_STATIC_DRAW);
+
+    Unbind();
+    drawCount = static_cast<int32_t>(indices.size());
+}
+
+//-------------------------------------------------
+// Create Ebo
+//-------------------------------------------------
+
 void sg::ogl::buffer::Vao::CreateModelIndexBuffer(const std::vector<uint32_t>& t_indices)
 {
     SG_ASSERT(!ebo, "[Vao::CreateModelIndexBuffer()] Ebo already exists.")
     SG_ASSERT(vbo, "[Vao::CreateModelIndexBuffer()] The Ebo should be created after the Vbo.")
+    SG_ASSERT(!t_indices.empty(), "[Vao::CreateModelIndexBuffer()] No indices given.")
 
-    static constexpr auto ELEMENT_SIZE_IN_BYTES{ static_cast<int64_t>(sizeof(uint32_t)) };
+    constexpr auto elementSizeInBytes{ static_cast<int64_t>(sizeof(uint32_t)) };
 
     Bind();
 
     ebo = std::make_unique<Ebo>();
     ebo->Bind();
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, static_cast<int64_t>(t_indices.size()) * ELEMENT_SIZE_IN_BYTES, t_indices.data(), GL_STATIC_DRAW);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, static_cast<int64_t>(t_indices.size()) * elementSizeInBytes, t_indices.data(), GL_STATIC_DRAW);
 
     Unbind();
     drawCount = static_cast<int32_t>(t_indices.size());

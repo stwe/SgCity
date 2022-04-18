@@ -64,7 +64,7 @@ namespace sg::ogl::resource
         /**
          * The bounding sphere.
          */
-        camera::Sphere sphere;
+        camera::SphereVolume sphereVolume;
 
         //-------------------------------------------------
         // Ctors. / Dtor.

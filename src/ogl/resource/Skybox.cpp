@@ -98,7 +98,7 @@ void sg::ogl::resource::Skybox::CreateId()
 void sg::ogl::resource::Skybox::CreateBuffer()
 {
     m_vao = std::make_unique<buffer::Vao>();
-    m_vao->CreateSkyboxVbo();
+    m_vao->CreateStaticSkyboxVbo();
 }
 
 //-------------------------------------------------

@@ -160,7 +160,7 @@ void sg::map::RoadsLayer::CreateTiles()
     {
         if (tile->type == Tile::TileType::TRAFFIC)
         {
-            m_roadTiles.push_back(std::move(CreateRoadTile(*tile, i)));
+            m_roadTiles.emplace_back(CreateRoadTile(*tile, i));
             i++;
         }
     }
@@ -186,7 +186,7 @@ void sg::map::RoadsLayer::RoadTilesToGpu()
     }
 }
 
-std::unique_ptr<sg::map::RoadTile> sg::map::RoadsLayer::CreateRoadTile(const sg::map::Tile& t_tile, const int t_index)
+std::unique_ptr<sg::map::RoadTile> sg::map::RoadsLayer::CreateRoadTile(const Tile& t_tile, const int t_index)
 {
     auto roadTile{ std::make_unique<RoadTile>() };
     roadTile->vertices = t_tile.vertices;
@@ -214,6 +214,7 @@ std::unique_ptr<sg::map::RoadTile> sg::map::RoadsLayer::CreateRoadTile(const sg:
 
     roadTile->type = Tile::TileType::TRAFFIC;
 
+    // todo: invalid offsets
     UpdateTexture(*roadTile);
 
     return roadTile;
@@ -258,7 +259,7 @@ void sg::map::RoadsLayer::UpdateTexture(RoadTile& t_roadTile)
 
 bool sg::map::RoadsLayer::CheckTerrainForRoad(const sg::map::Tile& t_tile)
 {
-    for (auto idx : Tile::Y_INDEX)
+    for (const auto idx : Tile::Y_INDEX)
     {
         if (t_tile.vertices[idx] < 0.0f)
         {

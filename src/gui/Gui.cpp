@@ -32,7 +32,7 @@ sg::gui::Gui::Gui()
     Log::SG_LOG_DEBUG("[Gui::Gui()] Create Gui.");
 
     m_vao = std::make_unique<ogl::buffer::Vao>();
-    m_vao->CreateGuiVbo();
+    m_vao->CreateStaticGuiVbo();
 }
 
 sg::gui::Gui::~Gui() noexcept

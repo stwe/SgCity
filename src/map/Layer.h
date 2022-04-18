@@ -18,18 +18,12 @@
 
 #pragma once
 
-#include <memory>
 #include <vector>
 #include "ogl/camera/Camera.h"
 
 //-------------------------------------------------
 // Forward declarations
 //-------------------------------------------------
-
-namespace sg::ogl
-{
-    class Window;
-}
 
 namespace sg::ogl::buffer
 {

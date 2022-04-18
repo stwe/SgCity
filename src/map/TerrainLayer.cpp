@@ -80,7 +80,7 @@ void sg::map::TerrainLayer::RenderForMousePicking(const ogl::Window& t_window, c
 // Override
 //-------------------------------------------------
 
-void sg::map::TerrainLayer::Render(const ogl::camera::Camera& t_camera, const glm::vec4& t_plane) const
+void sg::map::TerrainLayer::Render(const ogl::camera::Camera& t_camera, const glm::vec4& t_plane)
 {
     ogl::OpenGL::EnableFaceCulling();
 

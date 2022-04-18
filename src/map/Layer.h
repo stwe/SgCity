@@ -136,7 +136,7 @@ namespace sg::map
          * @param t_camera The Camera object.
          * @param t_plane The clipping plane.
          */
-        virtual void Render(const ogl::camera::Camera& t_camera, const glm::vec4& t_plane = glm::vec4(0.0f)) const = 0;
+        virtual void Render(const ogl::camera::Camera& t_camera, const glm::vec4& t_plane = glm::vec4(0.0f)) = 0;
 
         /**
          * Renders an ImGui window.

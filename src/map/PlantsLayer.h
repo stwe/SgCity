@@ -82,7 +82,12 @@ namespace sg::map
          * @param t_camera The Camera object.
          * @param t_plane The clipping plane.
          */
-        void Render(const ogl::camera::Camera& t_camera, const glm::vec4& t_plane = glm::vec4(0.0f)) const override;
+        void Render(const ogl::camera::Camera& t_camera, const glm::vec4& t_plane = glm::vec4(0.0f)) override;
+
+        /**
+         * Renders an ImGui window.
+         */
+        void RenderImGui() override;
 
     protected:
 
@@ -95,6 +100,16 @@ namespace sg::map
          * A Model object.
          */
         std::shared_ptr<ogl::resource::Model> m_model;
+
+        /**
+         * The number of rendered plants.
+         */
+        int m_render{ 0 };
+
+        /**
+         * The number of skipped plants by frustum culling.
+         */
+        int m_skip{ 0 };
 
         //-------------------------------------------------
         // Init

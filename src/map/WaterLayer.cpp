@@ -53,7 +53,7 @@ void sg::map::WaterLayer::Update()
     m_moveFactor = fmod(m_moveFactor, 1.0f);
 }
 
-void sg::map::WaterLayer::Render(const ogl::camera::Camera& t_camera, const glm::vec4& t_plane) const
+void sg::map::WaterLayer::Render(const ogl::camera::Camera& t_camera, const glm::vec4& t_plane)
 {
     ogl::OpenGL::EnableAlphaBlending();
     ogl::OpenGL::EnableFaceCulling();

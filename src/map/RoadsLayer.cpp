@@ -93,7 +93,7 @@ void sg::map::RoadsLayer::UpdateTile(gui::Action t_action, Tile& t_tile)
 }
 */
 
-void sg::map::RoadsLayer::Render(const ogl::camera::Camera& t_camera, const glm::vec4& t_plane) const
+void sg::map::RoadsLayer::Render(const ogl::camera::Camera& t_camera, const glm::vec4& t_plane)
 {
     if (!vao)
     {

@@ -43,7 +43,7 @@ sg::map::BuildingsLayer::~BuildingsLayer() noexcept
 // Override
 //-------------------------------------------------
 
-void sg::map::BuildingsLayer::Render(const ogl::camera::Camera& t_camera, const glm::vec4& t_plane) const
+void sg::map::BuildingsLayer::Render(const ogl::camera::Camera& t_camera, const glm::vec4& t_plane)
 {
     // todo: cache models
     for (const auto& tile : tiles)

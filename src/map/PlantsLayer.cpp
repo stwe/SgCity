@@ -16,6 +16,7 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
+#include <imgui.h>
 #include "PlantsLayer.h"
 #include "Tile.h"
 #include "Log.h"
@@ -43,8 +44,11 @@ sg::map::PlantsLayer::~PlantsLayer() noexcept
 // Override
 //-------------------------------------------------
 
-void sg::map::PlantsLayer::Render(const ogl::camera::Camera& t_camera, const glm::vec4& t_plane) const
+void sg::map::PlantsLayer::Render(const ogl::camera::Camera& t_camera, const glm::vec4& t_plane)
 {
+    m_render = 0;
+    m_skip = 0;
+
     // todo: cache models
     for (const auto& tile : tiles)
     {
@@ -54,6 +58,7 @@ void sg::map::PlantsLayer::Render(const ogl::camera::Camera& t_camera, const glm
 
             if (!m_model->sphere.IsOnFrustum(t_camera.GetCurrentFrustum(), position))
             {
+                m_skip++;
                 continue;
             }
 
@@ -64,8 +69,18 @@ void sg::map::PlantsLayer::Render(const ogl::camera::Camera& t_camera, const glm
                 glm::vec3(0.0f, 0.0f, 180.0f),
                 glm::vec3(2.0f)
             );
+
+            m_render++;
         }
     }
+}
+
+void sg::map::PlantsLayer::RenderImGui()
+{
+    ImGui::Begin("Plants Layer");
+    ImGui::Text("Rendered plants: %d", m_render);
+    ImGui::Text("Skipped plants: %d", m_skip);
+    ImGui::End();
 }
 
 //-------------------------------------------------

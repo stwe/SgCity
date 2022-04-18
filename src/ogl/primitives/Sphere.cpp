@@ -46,17 +46,18 @@ sg::ogl::primitives::Sphere::~Sphere() noexcept
 // Logic
 //-------------------------------------------------
 
-void sg::ogl::primitives::Sphere::Render(const camera::Camera& t_camera, const glm::vec3& t_position) const
+void sg::ogl::primitives::Sphere::Render(
+    const camera::Camera& t_camera,
+    const glm::vec3& t_position,
+    const glm::vec3& t_rotation,
+    const glm::vec3& t_scale
+) const
 {
     m_sphereVao->Bind();
 
     const auto& shaderProgram{ resource::ResourceManager::LoadShaderProgram("E:/Dev/SgCity/resources/shader/sphere") };
     shaderProgram.Bind();
-    shaderProgram.SetUniform("model", math::Transform::CreateModelMatrix(
-        t_position,
-        { 0.0f, 0.0f, 0.0f },
-        { 1.0f, 1.0f, 1.0f }
-    ));
+    shaderProgram.SetUniform("model", math::Transform::CreateModelMatrix(t_position, t_rotation, t_scale));
     shaderProgram.SetUniform("view", t_camera.GetViewMatrix());
     shaderProgram.SetUniform("projection", m_window->GetProjectionMatrix());
 

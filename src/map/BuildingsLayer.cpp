@@ -16,6 +16,7 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
+#include <imgui.h>
 #include "BuildingsLayer.h"
 #include "Tile.h"
 #include "Log.h"
@@ -45,6 +46,9 @@ sg::map::BuildingsLayer::~BuildingsLayer() noexcept
 
 void sg::map::BuildingsLayer::Render(const ogl::camera::Camera& t_camera, const glm::vec4& t_plane)
 {
+    m_render = 0;
+    m_skip = 0;
+
     // todo: cache models
     for (const auto& tile : tiles)
     {
@@ -54,12 +58,23 @@ void sg::map::BuildingsLayer::Render(const ogl::camera::Camera& t_camera, const 
 
             if (!m_model->sphereVolume.IsOnFrustum(t_camera.GetCurrentFrustum(), position))
             {
+                m_skip++;
                 continue;
             }
 
-            m_model->Render(*window, t_camera, position);
+            m_model->Render(t_camera, position);
+
+            m_render++;
         }
     }
+}
+
+void sg::map::BuildingsLayer::RenderImGui()
+{
+    ImGui::Begin("Buildings Layer");
+    ImGui::Text("Rendered buildings: %d", m_render);
+    ImGui::Text("Skipped buildings: %d", m_skip);
+    ImGui::End();
 }
 
 //-------------------------------------------------
@@ -70,7 +85,7 @@ void sg::map::BuildingsLayer::Init()
 {
     Log::SG_LOG_DEBUG("[BuildingsLayer::Init()] Initialize the BuildingsLayer.");
 
-    m_model = ogl::resource::ResourceManager::LoadModel("E:/Dev/SgCity/resources/model/node_115.obj");
+    m_model = ogl::resource::ResourceManager::LoadModel(window, "E:/Dev/SgCity/resources/model/node_115.obj");
 
     Log::SG_LOG_DEBUG("[BuildingsLayer::Init()] The BuildingsLayer was successfully initialized.");
 }

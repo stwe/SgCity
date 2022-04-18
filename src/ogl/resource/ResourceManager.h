@@ -26,6 +26,15 @@
 #include "ShaderProgram.h"
 
 //-------------------------------------------------
+// Forward declarations
+//-------------------------------------------------
+
+namespace sg::ogl
+{
+    class Window;
+}
+
+//-------------------------------------------------
 // ResourceManager
 //-------------------------------------------------
 
@@ -85,7 +94,11 @@ namespace sg::ogl::resource
         // Models
         //-------------------------------------------------
 
-        static std::shared_ptr<Model> LoadModel(const std::string& t_path, unsigned int t_pFlags = aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_CalcTangentSpace | aiProcess_GenSmoothNormals);
+        static std::shared_ptr<Model> LoadModel(
+            std::shared_ptr<Window> t_window,
+            const std::string& t_path,
+            unsigned int t_pFlags = aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_CalcTangentSpace | aiProcess_GenSmoothNormals
+        );
 
     protected:
 

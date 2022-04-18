@@ -23,15 +23,18 @@
 #include "Material.h"
 #include "SgAssert.h"
 #include "SgException.h"
-#include "ogl/buffer/Vao.h"
 #include "ResourceManager.h"
+#include "ogl/Window.h"
+#include "ogl/buffer/Vao.h"
+#include "ogl/primitives/Sphere.h"
 
 //-------------------------------------------------
 // Ctors. / Dtor.
 //-------------------------------------------------
 
-sg::ogl::resource::Model::Model(std::string t_fullFilePath, const unsigned int t_pFlags)
-    : m_fullFilePath{ std::move(t_fullFilePath) }
+sg::ogl::resource::Model::Model(std::shared_ptr<Window> t_window, std::string t_fullFilePath, const unsigned int t_pFlags)
+    : m_window{ std::move(t_window) }
+    , m_fullFilePath{ std::move(t_fullFilePath) }
 {
     Log::SG_LOG_DEBUG("[Model::Model()] Create Model.");
 
@@ -52,7 +55,6 @@ sg::ogl::resource::Model::~Model() noexcept
 //-------------------------------------------------
 
 void sg::ogl::resource::Model::Render(
-    const Window& t_window,
     const camera::Camera& t_camera,
     const glm::vec3& t_position,
     const glm::vec3& t_rotation,
@@ -68,7 +70,7 @@ void sg::ogl::resource::Model::Render(
     {
         shaderProgram.SetUniform("model", math::Transform::CreateModelMatrix(t_position, t_rotation, t_scale));
         shaderProgram.SetUniform("view", t_camera.GetViewMatrix());
-        shaderProgram.SetUniform("projection", t_window.GetProjectionMatrix());
+        shaderProgram.SetUniform("projection", m_window->GetProjectionMatrix());
 
         mesh->vao->Bind();
 
@@ -93,15 +95,6 @@ void sg::ogl::resource::Model::Render(
     OpenGL::DisableBlending();
 }
 
-void sg::ogl::resource::Model::Render(
-    const Window& t_window,
-    const camera::Camera& t_camera,
-    const glm::vec3& t_position
-) const
-{
-    Render(t_window, t_camera, t_position, glm::vec3(0.0f), glm::vec3(1.0f));
-}
-
 //-------------------------------------------------
 // Load
 //-------------------------------------------------
@@ -121,6 +114,7 @@ void sg::ogl::resource::Model::LoadFromFile(const unsigned int t_pFlags)
     ProcessNode(scene->mRootNode, scene);
 
     sphereVolume = camera::SphereVolume((m_maxAabb + m_minAabb) * 0.5f, glm::length(m_minAabb - m_maxAabb));
+    //sphere = std::make_unique<primitives::Sphere>(m_window, sphereVolume.radius / 2.0f, 8, 8);
 
     Log::SG_LOG_DEBUG("[Model::LoadFromFile()] Model file at {} successfully loaded.", m_fullFilePath);
 }

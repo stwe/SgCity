@@ -73,8 +73,15 @@ namespace sg::ogl::primitives
          *
          * @param t_camera The Camera object.
          * @param t_position The position of this sphere.
+         * @param t_rotation The rotation of this sphere.
+         * @param t_scale The scale of this sphere.
          */
-        void Render(const camera::Camera& t_camera, const glm::vec3& t_position) const;
+        void Render(
+            const camera::Camera& t_camera,
+            const glm::vec3& t_position,
+            const glm::vec3& t_rotation = glm::vec3(0.0f),
+            const glm::vec3& t_scale = glm::vec3(1.0f)
+        ) const;
 
     protected:
 

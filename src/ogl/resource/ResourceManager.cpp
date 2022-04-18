@@ -18,6 +18,7 @@
 
 #include "ResourceManager.h"
 #include "Model.h"
+#include "ogl/Window.h"
 
 //-------------------------------------------------
 // Shaders
@@ -37,11 +38,15 @@ sg::ogl::resource::ShaderProgram& sg::ogl::resource::ResourceManager::LoadShader
 // Models
 //-------------------------------------------------
 
-std::shared_ptr<sg::ogl::resource::Model> sg::ogl::resource::ResourceManager::LoadModel(const std::string& t_path, unsigned int t_pFlags)
+std::shared_ptr<sg::ogl::resource::Model> sg::ogl::resource::ResourceManager::LoadModel(
+    std::shared_ptr<Window> t_window,
+    const std::string& t_path,
+    unsigned int t_pFlags
+)
 {
     if (models.count(t_path) == 0)
     {
-        models.emplace(t_path, std::make_unique<Model>(t_path, t_pFlags));
+        models.emplace(t_path, std::make_unique<Model>(t_window, t_path, t_pFlags));
     }
 
     return models.at(t_path);

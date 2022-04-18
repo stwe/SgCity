@@ -84,6 +84,11 @@ namespace sg::map
          */
         void Render(const ogl::camera::Camera& t_camera, const glm::vec4& t_plane = glm::vec4(0.0f)) override;
 
+        /**
+         * Renders an ImGui window.
+         */
+        void RenderImGui() override;
+
     protected:
 
     private:
@@ -95,6 +100,16 @@ namespace sg::map
          * A Model object.
          */
         std::shared_ptr<ogl::resource::Model> m_model;
+
+        /**
+         * The number of rendered buildings.
+         */
+        int m_render{ 0 };
+
+        /**
+         * The number of skipped buildings by frustum culling.
+         */
+        int m_skip{ 0 };
 
         //-------------------------------------------------
         // Init

@@ -111,7 +111,11 @@ namespace sg::ogl::camera
             const auto globalScale{ glm::vec3(1.0f) };
 
             // Get our global center with process it with the global model matrix of our transform
-            const glm::vec3 globalCenter{ math::Transform::CreateModelMatrix(t_position, glm::vec3(0.0f), glm::vec3(1.0f)) * glm::vec4(center, 1.0f) };
+            const glm::vec3 globalCenter{ math::Transform::CreateModelMatrix(
+                t_position,
+                glm::vec3(0.0f),
+                glm::vec3(1.0f)) * glm::vec4(center, 1.0f)
+            };
 
             // To wrap correctly our shape, we need the maximum scale scalar.
             const float maxScale = std::max(std::max(globalScale.x, globalScale.y), globalScale.z);

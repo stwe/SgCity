@@ -21,9 +21,7 @@
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
 #include <cstdint>
-#include <memory>
 #include <vector>
-#include "ogl/Window.h"
 #include "ogl/camera/Camera.h"
 
 //-------------------------------------------------
@@ -34,6 +32,13 @@ namespace sg::ogl::buffer
 {
     class Vao;
 }
+
+/*
+namespace sg::ogl::primitives
+{
+    class Sphere;
+}
+*/
 
 //-------------------------------------------------
 // Model
@@ -66,6 +71,11 @@ namespace sg::ogl::resource
          */
         camera::SphereVolume sphereVolume;
 
+        /**
+         * A Sphere object created by the sphereVolume.
+         */
+        //std::unique_ptr<primitives::Sphere> sphere;
+
         //-------------------------------------------------
         // Ctors. / Dtor.
         //-------------------------------------------------
@@ -75,10 +85,12 @@ namespace sg::ogl::resource
         /**
          * Constructs a new Model object.
          *
+         * @param t_window The Window object.
          * @param t_fullFilePath The full file path to the model file.
          * @param t_pFlags Post processing flags.
          */
         explicit Model(
+            std::shared_ptr<Window> t_window,
             std::string t_fullFilePath,
             unsigned int t_pFlags = aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_CalcTangentSpace | aiProcess_GenSmoothNormals
             );
@@ -97,32 +109,17 @@ namespace sg::ogl::resource
         /**
          * Renders the model.
          *
-         * @param t_window The current window to get the projection matrix.
          * @param t_camera The camera to get the view matrix.
          * @param t_position The position of the model.
          * @param t_rotation The rotation of the model.
          * @param t_scale The scale of the model.
          */
         void Render(
-            const Window& t_window,
             const camera::Camera& t_camera,
             const glm::vec3& t_position,
-            const glm::vec3& t_rotation,
-            const glm::vec3& t_scale
+            const glm::vec3& t_rotation = glm::vec3(0.0f),
+            const glm::vec3& t_scale = glm::vec3(1.0f)
         ) const;
-
-        /**
-         * Renders the model.
-         *
-         * @param t_window The current window to get the projection matrix.
-         * @param t_camera The camera to get the view matrix.
-         * @param t_position The position of the model.
-         */
-        void Render(
-            const Window& t_window,
-            const camera::Camera& t_camera,
-            const glm::vec3& t_position
-            ) const;
 
     protected:
 
@@ -130,6 +127,8 @@ namespace sg::ogl::resource
         //-------------------------------------------------
         // Member
         //-------------------------------------------------
+
+        std::shared_ptr<Window> m_window;
 
         std::string m_fullFilePath;
         std::string m_directory;

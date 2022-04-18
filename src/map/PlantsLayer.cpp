@@ -63,7 +63,6 @@ void sg::map::PlantsLayer::Render(const ogl::camera::Camera& t_camera, const glm
             }
 
             m_model->Render(
-                *window,
                 t_camera,
                 position,
                 glm::vec3(0.0f, 0.0f, 180.0f),
@@ -91,7 +90,7 @@ void sg::map::PlantsLayer::Init()
 {
     Log::SG_LOG_DEBUG("[PlantsLayer::Init()] Initialize the PlantsLayer.");
 
-    m_model = ogl::resource::ResourceManager::LoadModel("E:/Dev/SgCity/resources/model/Tree_02/billboardmodel.obj");
+    m_model = ogl::resource::ResourceManager::LoadModel(window, "E:/Dev/SgCity/resources/model/Tree_02/billboardmodel.obj");
 
     Log::SG_LOG_DEBUG("[PlantsLayer::Init()] The PlantsLayer was successfully initialized.");
 }

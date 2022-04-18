@@ -59,7 +59,7 @@ void sg::map::PlantsLayer::Render(const ogl::camera::Camera& t_camera, const glm
             auto rotation{ glm::vec3(0.0f, 0.0f, 180.0f) };
             auto scale{ glm::vec3(2.0f) };
 
-            if (!m_model->sphereVolume.IsOnFrustum(t_camera.GetCurrentFrustum(), position))
+            if (!m_model->sphereVolume.IsOnFrustum(t_camera.GetCurrentFrustum(), position, rotation, scale))
             {
                 m_skip++;
                 continue;

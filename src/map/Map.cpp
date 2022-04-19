@@ -104,16 +104,21 @@ void sg::map::Map::Render(const ogl::camera::Camera& t_camera) const
 
 void sg::map::Map::RenderImGui() const
 {
-    ImGui::Begin("Map");
+    ImGui::Begin("Map - Map edit - Layers");
+
+    ImGui::PushStyleColor(ImGuiCol_Text, IM_COL32(0, 255, 0, 255));
+    ImGui::Text("Map");
+    ImGui::PopStyleColor();
     ImGui::Text("Mouse x: %.*f", 0, window->GetMouseX());
     ImGui::Text("Mouse y: %.*f", 0, window->GetMouseY());
-    ImGui::End();
 
     m_terrainLayer->RenderImGui();
-    m_roadsLayer->RenderImGui();
+    //m_roadsLayer->RenderImGui();
     m_buildingsLayer->RenderImGui();
     m_plantsLayer->RenderImGui();
     m_waterLayer->RenderImGui();
+
+    ImGui::End();
 }
 
 //-------------------------------------------------

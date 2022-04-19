@@ -79,10 +79,12 @@ void sg::map::BuildingsLayer::Render(const ogl::camera::Camera& t_camera, const 
 
 void sg::map::BuildingsLayer::RenderImGui()
 {
-    ImGui::Begin("Buildings Layer");
+    ImGui::PushStyleColor(ImGuiCol_Text, IM_COL32(0, 255, 0, 255));
+    ImGui::Text("Buildings Layer");
+    ImGui::PopStyleColor();
+
     ImGui::Text("Rendered buildings: %d", m_render);
     ImGui::Text("Skipped buildings: %d", m_skip);
-    ImGui::End();
 }
 
 //-------------------------------------------------

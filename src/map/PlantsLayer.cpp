@@ -81,10 +81,12 @@ void sg::map::PlantsLayer::Render(const ogl::camera::Camera& t_camera, const glm
 
 void sg::map::PlantsLayer::RenderImGui()
 {
-    ImGui::Begin("Plants Layer");
+    ImGui::PushStyleColor(ImGuiCol_Text, IM_COL32(0, 255, 0, 255));
+    ImGui::Text("Plants Layer");
+    ImGui::PopStyleColor();
+
     ImGui::Text("Rendered plants: %d", m_render);
     ImGui::Text("Skipped plants: %d", m_skip);
-    ImGui::End();
 }
 
 //-------------------------------------------------

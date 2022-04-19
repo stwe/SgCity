@@ -107,7 +107,9 @@ void sg::map::WaterLayer::Render(const ogl::camera::Camera& t_camera, const glm:
 
 void sg::map::WaterLayer::RenderImGui()
 {
-    ImGui::Begin("Water Layer");
+    ImGui::PushStyleColor(ImGuiCol_Text, IM_COL32(0, 255, 0, 255));
+    ImGui::Text("Water Layer");
+    ImGui::PopStyleColor();
 
     ImGui::Text("reflection");
     if (m_waterFbos->reflectionColorTextureId)
@@ -130,8 +132,6 @@ void sg::map::WaterLayer::RenderImGui()
             ImVec2(1.0f, -1.0f)
         );
     }
-
-    ImGui::End();
 }
 
 //-------------------------------------------------

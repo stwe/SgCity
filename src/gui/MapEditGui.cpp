@@ -37,7 +37,9 @@ sg::gui::MapEditGui::MapEditGui()
 
 void sg::gui::MapEditGui::RenderImGui()
 {
-    ImGui::Begin("Terrain Layer - Map edit");
+    ImGui::PushStyleColor(ImGuiCol_Text, IM_COL32(0, 255, 0, 255));
+    ImGui::Text("Map Edit");
+    ImGui::PopStyleColor();
 
     for (auto i{ 0u }; i < m_buttons.size(); ++i)
     {
@@ -86,9 +88,11 @@ void sg::gui::MapEditGui::RenderImGui()
                 Log::SG_LOG_DEBUG("[MapEditGui::RenderImGui()] Set current action to: {}", BUTTON_NAMES[i]);
             }
         }
+
+        ImGui::SameLine();
     }
 
-    ImGui::End();
+    ImGui::NewLine();
 }
 
 //-------------------------------------------------

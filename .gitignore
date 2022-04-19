@@ -44,3 +44,6 @@ conanbuildinfo.cmake
 !/resources/texture/select.png
 !/resources/texture/t.png
 !/resources/texture/traffic.png
+
+!/resources/water/dudv.png
+!/resources/water/normal.png

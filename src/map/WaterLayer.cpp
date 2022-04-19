@@ -76,7 +76,7 @@ void sg::map::WaterLayer::Render(const ogl::camera::Camera& t_camera, const glm:
     glBindTexture(GL_TEXTURE_2D, m_waterFbos->refractionColorTextureId);
     shaderProgram.SetUniform("refractionTexture", 1);
 
-    const auto& dudvTexture{ ogl::resource::ResourceManager::LoadTexture("E:/Dev/SgCity/resources/water/waterDUDV.png") };
+    const auto& dudvTexture{ ogl::resource::ResourceManager::LoadTexture("E:/Dev/SgCity/resources/water/dudv.png") };
     glActiveTexture(GL_TEXTURE2);
     glBindTexture(GL_TEXTURE_2D, dudvTexture.id);
     shaderProgram.SetUniform("dudvTexture", 2);

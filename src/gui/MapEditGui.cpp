@@ -106,7 +106,7 @@ std::vector<ImTextureID> sg::gui::MapEditGui::CreateButtonTextures()
     const auto& rTexture{ ogl::resource::ResourceManager::LoadTexture("E:/Dev/SgCity/resources/texture/r.png", true) };
     const auto& cTexture{ ogl::resource::ResourceManager::LoadTexture("E:/Dev/SgCity/resources/texture/c.png") };
     const auto& iTexture{ ogl::resource::ResourceManager::LoadTexture("E:/Dev/SgCity/resources/texture/i.png") };
-    const auto& tTexture{ ogl::resource::ResourceManager::LoadTexture("E:/Dev/SgCity/resources/texture/t.png") };
+    const auto& tTexture{ ogl::resource::ResourceManager::LoadTexture("E:/Dev/SgCity/resources/texture/traffic.png") };
     const auto& plantTexture{ ogl::resource::ResourceManager::LoadTexture("E:/Dev/SgCity/resources/texture/plants.png") };
     const auto& infoTexture{ ogl::resource::ResourceManager::LoadTexture("E:/Dev/SgCity/resources/texture/info.png") };
 

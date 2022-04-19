@@ -114,7 +114,7 @@ void sg::map::TerrainLayer::Render(const ogl::camera::Camera& t_camera, const gl
     iTexture.BindForReading(GL_TEXTURE3);
     shaderProgram.SetUniform("iMap", 3);
 
-    const auto& trafficTexture{ ogl::resource::ResourceManager::LoadTexture("E:/Dev/SgCity/resources/texture/traffic.jpg") };
+    const auto& trafficTexture{ ogl::resource::ResourceManager::LoadTexture("E:/Dev/SgCity/resources/texture/t.png") };
     trafficTexture.BindForReading(GL_TEXTURE4);
     shaderProgram.SetUniform("trafficMap", 4);
 

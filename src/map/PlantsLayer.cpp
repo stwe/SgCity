@@ -55,9 +55,9 @@ void sg::map::PlantsLayer::Render(const ogl::camera::Camera& t_camera, const glm
     {
         if (tile->type == Tile::TileType::PLANTS)
         {
-            auto position{ glm::vec3(tile->mapX + 0.5f, 2.0f, tile->mapZ + 0.5f) };
-            auto rotation{ glm::vec3(0.0f, 0.0f, 180.0f) };
-            auto scale{ glm::vec3(2.0f) };
+            auto position{ glm::vec3(tile->mapX + 0.5f, 0.0f, tile->mapZ + 0.5f) };
+            auto rotation{ glm::vec3(0.0f, 0.0f, 0.0f) };
+            auto scale{ glm::vec3(1.0f) };
 
             if (!m_model->sphereVolume.IsOnFrustum(t_camera.GetCurrentFrustum(), position, rotation, scale))
             {
@@ -97,7 +97,7 @@ void sg::map::PlantsLayer::Init()
 {
     Log::SG_LOG_DEBUG("[PlantsLayer::Init()] Initialize the PlantsLayer.");
 
-    m_model = ogl::resource::ResourceManager::LoadModel(window, "E:/Dev/SgCity/resources/model/Tree_02/billboardmodel.obj");
+    m_model = ogl::resource::ResourceManager::LoadModel(window, "E:/Dev/SgCity/resources/model/tree/prop_001_pine.obj");
 
     Log::SG_LOG_DEBUG("[PlantsLayer::Init()] The PlantsLayer was successfully initialized.");
 }

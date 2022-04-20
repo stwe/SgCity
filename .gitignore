@@ -47,3 +47,5 @@ conanbuildinfo.cmake
 
 !/resources/water/dudv.png
 !/resources/water/normal.png
+
+!/resources/skybox/NissiBeach2/*

@@ -385,10 +385,10 @@ void sg::map::TerrainLayer::UpdateNorthNeighbor(const Tile& t_tile) const
         const auto& tile{ t_tile.n };
         auto& vertices{ tile->vertices };
 
-        vertices[Tile::BL_1_Y] += t_tile.vertices[Tile::TL_1_Y] - vertices[Tile::BL_1_Y];
-        vertices[Tile::BR_1_Y] += t_tile.vertices[Tile::TR_2_Y] - vertices[Tile::BR_1_Y];
+        vertices[Tile::BL_1_POSITION_Y] += t_tile.vertices[Tile::TL_1_POSITION_Y] - vertices[Tile::BL_1_POSITION_Y];
+        vertices[Tile::BR_1_POSITION_Y] += t_tile.vertices[Tile::TR_2_POSITION_Y] - vertices[Tile::BR_1_POSITION_Y];
 
-        vertices[Tile::BR_2_Y] += t_tile.vertices[Tile::TR_2_Y] - vertices[Tile::BR_2_Y];
+        vertices[Tile::BR_2_POSITION_Y] += t_tile.vertices[Tile::TR_2_POSITION_Y] - vertices[Tile::BR_2_POSITION_Y];
 
         tile->UpdateNormal();
         tile->VerticesToGpu(*vao);
@@ -402,10 +402,10 @@ void sg::map::TerrainLayer::UpdateSouthNeighbor(const Tile& t_tile) const
         const auto& tile{ t_tile.s };
         auto& vertices{ tile->vertices };
 
-        vertices[Tile::TL_1_Y] += t_tile.vertices[Tile::BL_1_Y] - vertices[Tile::TL_1_Y];
+        vertices[Tile::TL_1_POSITION_Y] += t_tile.vertices[Tile::BL_1_POSITION_Y] - vertices[Tile::TL_1_POSITION_Y];
 
-        vertices[Tile::TL_2_Y] += t_tile.vertices[Tile::BL_1_Y] - vertices[Tile::TL_2_Y];
-        vertices[Tile::TR_2_Y] += t_tile.vertices[Tile::BR_2_Y] - vertices[Tile::TR_2_Y];
+        vertices[Tile::TL_2_POSITION_Y] += t_tile.vertices[Tile::BL_1_POSITION_Y] - vertices[Tile::TL_2_POSITION_Y];
+        vertices[Tile::TR_2_POSITION_Y] += t_tile.vertices[Tile::BR_2_POSITION_Y] - vertices[Tile::TR_2_POSITION_Y];
 
         tile->UpdateNormal();
         tile->VerticesToGpu(*vao);
@@ -419,10 +419,10 @@ void sg::map::TerrainLayer::UpdateWestNeighbor(const Tile& t_tile) const
         const auto& tile{ t_tile.w };
         auto& vertices{ tile->vertices };
 
-        vertices[Tile::BR_1_Y] += t_tile.vertices[Tile::BL_1_Y] - vertices[Tile::BR_1_Y];
+        vertices[Tile::BR_1_POSITION_Y] += t_tile.vertices[Tile::BL_1_POSITION_Y] - vertices[Tile::BR_1_POSITION_Y];
 
-        vertices[Tile::BR_2_Y] += t_tile.vertices[Tile::BL_1_Y] - vertices[Tile::BR_2_Y];
-        vertices[Tile::TR_2_Y] += t_tile.vertices[Tile::TL_2_Y] - vertices[Tile::TR_2_Y];
+        vertices[Tile::BR_2_POSITION_Y] += t_tile.vertices[Tile::BL_1_POSITION_Y] - vertices[Tile::BR_2_POSITION_Y];
+        vertices[Tile::TR_2_POSITION_Y] += t_tile.vertices[Tile::TL_2_POSITION_Y] - vertices[Tile::TR_2_POSITION_Y];
 
         tile->UpdateNormal();
         tile->VerticesToGpu(*vao);
@@ -436,10 +436,10 @@ void sg::map::TerrainLayer::UpdateEastNeighbor(const Tile& t_tile) const
         const auto& tile{ t_tile.e };
         auto& vertices{ tile->vertices };
 
-        vertices[Tile::TL_1_Y] += t_tile.vertices[Tile::TR_2_Y] - vertices[Tile::TL_1_Y];
-        vertices[Tile::BL_1_Y] += t_tile.vertices[Tile::BR_1_Y] - vertices[Tile::BL_1_Y];
+        vertices[Tile::TL_1_POSITION_Y] += t_tile.vertices[Tile::TR_2_POSITION_Y] - vertices[Tile::TL_1_POSITION_Y];
+        vertices[Tile::BL_1_POSITION_Y] += t_tile.vertices[Tile::BR_1_POSITION_Y] - vertices[Tile::BL_1_POSITION_Y];
 
-        vertices[Tile::TL_2_Y] += t_tile.vertices[Tile::TR_2_Y] - vertices[Tile::TL_2_Y];
+        vertices[Tile::TL_2_POSITION_Y] += t_tile.vertices[Tile::TR_2_POSITION_Y] - vertices[Tile::TL_2_POSITION_Y];
 
         tile->UpdateNormal();
         tile->VerticesToGpu(*vao);
@@ -453,8 +453,8 @@ void sg::map::TerrainLayer::UpdateNorthWestNeighbor(const Tile& t_tile) const
         const auto& tile{ t_tile.nw };
         auto& vertices{ tile->vertices };
 
-        vertices[Tile::BR_1_Y] += t_tile.vertices[Tile::TL_1_Y] - vertices[Tile::BR_1_Y];
-        vertices[Tile::BR_2_Y] += t_tile.vertices[Tile::TL_2_Y] - vertices[Tile::BR_2_Y];
+        vertices[Tile::BR_1_POSITION_Y] += t_tile.vertices[Tile::TL_1_POSITION_Y] - vertices[Tile::BR_1_POSITION_Y];
+        vertices[Tile::BR_2_POSITION_Y] += t_tile.vertices[Tile::TL_2_POSITION_Y] - vertices[Tile::BR_2_POSITION_Y];
 
         tile->UpdateNormal();
         tile->VerticesToGpu(*vao);
@@ -468,7 +468,7 @@ void sg::map::TerrainLayer::UpdateNorthEastNeighbor(const Tile& t_tile) const
         const auto& tile{ t_tile.ne };
         auto& vertices{ tile->vertices };
 
-        vertices[Tile::BL_1_Y] += t_tile.vertices[Tile::TR_2_Y] - vertices[Tile::BL_1_Y];
+        vertices[Tile::BL_1_POSITION_Y] += t_tile.vertices[Tile::TR_2_POSITION_Y] - vertices[Tile::BL_1_POSITION_Y];
 
         tile->UpdateNormal();
         tile->VerticesToGpu(*vao);
@@ -482,7 +482,7 @@ void sg::map::TerrainLayer::UpdateSouthWestNeighbor(const Tile& t_tile) const
         const auto& tile{ t_tile.sw };
         auto& vertices{ tile->vertices };
 
-        vertices[Tile::TR_2_Y] += t_tile.vertices[Tile::BL_1_Y] - vertices[Tile::TR_2_Y];
+        vertices[Tile::TR_2_POSITION_Y] += t_tile.vertices[Tile::BL_1_POSITION_Y] - vertices[Tile::TR_2_POSITION_Y];
 
         tile->UpdateNormal();
         tile->VerticesToGpu(*vao);
@@ -496,8 +496,8 @@ void sg::map::TerrainLayer::UpdateSouthEastNeighbor(const Tile& t_tile) const
         const auto& tile{ t_tile.se };
         auto& vertices{ tile->vertices };
 
-        vertices[Tile::TL_1_Y] += t_tile.vertices[Tile::BR_1_Y] - vertices[Tile::TL_1_Y];
-        vertices[Tile::TL_2_Y] += t_tile.vertices[Tile::BR_2_Y] - vertices[Tile::TL_2_Y];
+        vertices[Tile::TL_1_POSITION_Y] += t_tile.vertices[Tile::BR_1_POSITION_Y] - vertices[Tile::TL_1_POSITION_Y];
+        vertices[Tile::TL_2_POSITION_Y] += t_tile.vertices[Tile::BR_2_POSITION_Y] - vertices[Tile::TL_2_POSITION_Y];
 
         tile->UpdateNormal();
         tile->VerticesToGpu(*vao);

@@ -79,6 +79,8 @@ namespace sg::map
          */
         void Render(const ogl::camera::Camera& t_camera, const glm::vec4& t_plane = glm::vec4(0.0f)) override;
 
+        void CreateRoad(const Tile& t_tile);
+
     protected:
 
     private:

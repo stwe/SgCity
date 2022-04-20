@@ -86,12 +86,12 @@ namespace sg::ogl::resource
 
         inline static const std::vector<std::string> FACES
         {
-            "E:/Dev/SgCity/resources/skybox/right.jpg",
-            "E:/Dev/SgCity/resources/skybox/left.jpg",
-            "E:/Dev/SgCity/resources/skybox/top.jpg",
-            "E:/Dev/SgCity/resources/skybox/bottom.jpg",
-            "E:/Dev/SgCity/resources/skybox/front.jpg",
-            "E:/Dev/SgCity/resources/skybox/back.jpg"
+            "E:/Dev/SgCity/resources/skybox/NissiBeach2/right.jpg",
+            "E:/Dev/SgCity/resources/skybox/NissiBeach2/left.jpg",
+            "E:/Dev/SgCity/resources/skybox/NissiBeach2/top.jpg",
+            "E:/Dev/SgCity/resources/skybox/NissiBeach2/bottom.jpg",
+            "E:/Dev/SgCity/resources/skybox/NissiBeach2/front.jpg",
+            "E:/Dev/SgCity/resources/skybox/NissiBeach2/back.jpg"
         };
 
         //-------------------------------------------------

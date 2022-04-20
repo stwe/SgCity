@@ -50,24 +50,24 @@ sg::map::Tile::~Tile() noexcept
 
 void sg::map::Tile::Raise()
 {
-    vertices[TL_1_Y] += RAISE_Y;
-    vertices[BL_1_Y] += RAISE_Y;
-    vertices[BR_1_Y] += RAISE_Y;
+    vertices[TL_1_POSITION_Y] += RAISE_Y;
+    vertices[BL_1_POSITION_Y] += RAISE_Y;
+    vertices[BR_1_POSITION_Y] += RAISE_Y;
 
-    vertices[TL_2_Y] += RAISE_Y;
-    vertices[BR_2_Y] += RAISE_Y;
-    vertices[TR_2_Y] += RAISE_Y;
+    vertices[TL_2_POSITION_Y] += RAISE_Y;
+    vertices[BR_2_POSITION_Y] += RAISE_Y;
+    vertices[TR_2_POSITION_Y] += RAISE_Y;
 }
 
 void sg::map::Tile::Lower()
 {
-    vertices[TL_1_Y] -= RAISE_Y;
-    vertices[BL_1_Y] -= RAISE_Y;
-    vertices[BR_1_Y] -= RAISE_Y;
+    vertices[TL_1_POSITION_Y] -= RAISE_Y;
+    vertices[BL_1_POSITION_Y] -= RAISE_Y;
+    vertices[BR_1_POSITION_Y] -= RAISE_Y;
 
-    vertices[TL_2_Y] -= RAISE_Y;
-    vertices[BR_2_Y] -= RAISE_Y;
-    vertices[TR_2_Y] -= RAISE_Y;
+    vertices[TL_2_POSITION_Y] -= RAISE_Y;
+    vertices[BR_2_POSITION_Y] -= RAISE_Y;
+    vertices[TR_2_POSITION_Y] -= RAISE_Y;
 }
 
 //-------------------------------------------------
@@ -78,29 +78,29 @@ void sg::map::Tile::UpdateNormal()
 {
     const auto normal{ CalcNormal() };
 
-    vertices[TL_1_N_START_INDEX] = normal.x;
-    vertices[TL_1_N_START_INDEX + 1] = normal.y;
-    vertices[TL_1_N_START_INDEX + 2] = normal.z;
+    vertices[TL_1_NORMAL_X] = normal.x;
+    vertices[TL_1_NORMAL_X + 1] = normal.y;
+    vertices[TL_1_NORMAL_X + 2] = normal.z;
 
-    vertices[BL_1_N_START_INDEX] = normal.x;
-    vertices[BL_1_N_START_INDEX + 1] = normal.y;
-    vertices[BL_1_N_START_INDEX + 2] = normal.z;
+    vertices[BL_1_NORMAL_X] = normal.x;
+    vertices[BL_1_NORMAL_X + 1] = normal.y;
+    vertices[BL_1_NORMAL_X + 2] = normal.z;
 
-    vertices[BR_1_N_START_INDEX] = normal.x;
-    vertices[BR_1_N_START_INDEX + 1] = normal.y;
-    vertices[BR_1_N_START_INDEX + 2] = normal.z;
+    vertices[BR_1_NORMAL_X] = normal.x;
+    vertices[BR_1_NORMAL_X + 1] = normal.y;
+    vertices[BR_1_NORMAL_X + 2] = normal.z;
 
-    vertices[TL_2_N_START_INDEX] = normal.x;
-    vertices[TL_2_N_START_INDEX + 1] = normal.y;
-    vertices[TL_2_N_START_INDEX + 2] = normal.z;
+    vertices[TL_2_NORMAL_X] = normal.x;
+    vertices[TL_2_NORMAL_X + 1] = normal.y;
+    vertices[TL_2_NORMAL_X + 2] = normal.z;
 
-    vertices[BR_2_N_START_INDEX] = normal.x;
-    vertices[BR_2_N_START_INDEX + 1] = normal.y;
-    vertices[BR_2_N_START_INDEX + 2] = normal.z;
+    vertices[BR_2_NORMAL_X] = normal.x;
+    vertices[BR_2_NORMAL_X + 1] = normal.y;
+    vertices[BR_2_NORMAL_X + 2] = normal.z;
 
-    vertices[TR_2_N_START_INDEX] = normal.x;
-    vertices[TR_2_N_START_INDEX + 1] = normal.y;
-    vertices[TR_2_N_START_INDEX + 2] = normal.z;
+    vertices[TR_2_NORMAL_X] = normal.x;
+    vertices[TR_2_NORMAL_X + 1] = normal.y;
+    vertices[TR_2_NORMAL_X + 2] = normal.z;
 }
 
 //-------------------------------------------------
@@ -114,13 +114,13 @@ void sg::map::Tile::UpdateTileType(const TileType t_tileType)
 
     // update vertices
     const auto textureNr{ static_cast<float>(t_tileType) };
-    vertices[TL_1_TEXTURE_INDEX] = textureNr;
-    vertices[BL_1_TEXTURE_INDEX] = textureNr;
-    vertices[BR_1_TEXTURE_INDEX] = textureNr;
+    vertices[TL_1_TEXTURE_NR] = textureNr;
+    vertices[BL_1_TEXTURE_NR] = textureNr;
+    vertices[BR_1_TEXTURE_NR] = textureNr;
 
-    vertices[TL_2_TEXTURE_INDEX] = textureNr;
-    vertices[BR_2_TEXTURE_INDEX] = textureNr;
-    vertices[TR_2_TEXTURE_INDEX] = textureNr;
+    vertices[TL_2_TEXTURE_NR] = textureNr;
+    vertices[BR_2_TEXTURE_NR] = textureNr;
+    vertices[TR_2_TEXTURE_NR] = textureNr;
 }
 
 //-------------------------------------------------
@@ -134,13 +134,13 @@ void sg::map::Tile::UpdateSelected(const bool t_selected)
 
     // update vertices
     const auto sf{ static_cast<float>(t_selected) };
-    vertices[TL_1_SELECTED_INDEX] = sf;
-    vertices[BL_1_SELECTED_INDEX] = sf;
-    vertices[BR_1_SELECTED_INDEX] = sf;
+    vertices[TL_1_SELECTED] = sf;
+    vertices[BL_1_SELECTED] = sf;
+    vertices[BR_1_SELECTED] = sf;
 
-    vertices[TL_2_SELECTED_INDEX] = sf;
-    vertices[BR_2_SELECTED_INDEX] = sf;
-    vertices[TR_2_SELECTED_INDEX] = sf;
+    vertices[TL_2_SELECTED] = sf;
+    vertices[BR_2_SELECTED] = sf;
+    vertices[TR_2_SELECTED] = sf;
 }
 
 //-------------------------------------------------
@@ -227,10 +227,10 @@ void sg::map::Tile::CreateMapIndexColor()
 glm::vec3 sg::map::Tile::CalcNormal() const
 {
     // read out positions
-    const auto v0{ glm::vec3(vertices[TL_1_Y - 1], vertices[TL_1_Y], vertices[TL_1_Y + 1]) };
-    const auto v1{ glm::vec3(vertices[BL_1_Y - 1], vertices[BL_1_Y], vertices[BL_1_Y + 1]) };
-    const auto v2{ glm::vec3(vertices[BR_1_Y - 1], vertices[BR_1_Y], vertices[BR_1_Y + 1]) };
-    const auto v3{ glm::vec3(vertices[TR_2_Y - 1], vertices[TR_2_Y], vertices[TR_2_Y + 1]) };
+    const auto v0{ glm::vec3(vertices[TL_1_POSITION_Y - 1], vertices[TL_1_POSITION_Y], vertices[TL_1_POSITION_Y + 1]) };
+    const auto v1{ glm::vec3(vertices[BL_1_POSITION_Y - 1], vertices[BL_1_POSITION_Y], vertices[BL_1_POSITION_Y + 1]) };
+    const auto v2{ glm::vec3(vertices[BR_1_POSITION_Y - 1], vertices[BR_1_POSITION_Y], vertices[BR_1_POSITION_Y + 1]) };
+    const auto v3{ glm::vec3(vertices[TR_2_POSITION_Y - 1], vertices[TR_2_POSITION_Y], vertices[TR_2_POSITION_Y + 1]) };
 
     const std::vector vertex = { v0, v1, v2, v3 };
 

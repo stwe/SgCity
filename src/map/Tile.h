@@ -70,51 +70,61 @@ namespace sg::map
             2) tl, br, tr
         */
 
-        // Height value index of each vertex
+        // position.y array index of each vertex
 
-        static constexpr auto TL_1_Y{ 1 };
-        static constexpr auto BL_1_Y{ 14 };
-        static constexpr auto BR_1_Y{ 27 };
+        static constexpr auto TL_1_POSITION_Y{ 1 };
+        static constexpr auto BL_1_POSITION_Y{ 14 };
+        static constexpr auto BR_1_POSITION_Y{ 27 };
 
-        static constexpr auto TL_2_Y{ 40 };
-        static constexpr auto BR_2_Y{ 53 };
-        static constexpr auto TR_2_Y{ 66 };
+        static constexpr auto TL_2_POSITION_Y{ 40 };
+        static constexpr auto BR_2_POSITION_Y{ 53 };
+        static constexpr auto TR_2_POSITION_Y{ 66 };
 
         static constexpr std::array<int, 6> Y_INDEX =
         {
-            TL_1_Y, BL_1_Y, BR_1_Y,
-            TL_2_Y, BR_2_Y, TR_2_Y
+            TL_1_POSITION_Y, BL_1_POSITION_Y, BR_1_POSITION_Y,
+            TL_2_POSITION_Y, BR_2_POSITION_Y, TR_2_POSITION_Y
         };
 
-        // Start index of normals
+        // uv.x array index of each vertex
 
-        static constexpr auto TL_1_N_START_INDEX{ 8 };
-        static constexpr auto BL_1_N_START_INDEX{ 21 };
-        static constexpr auto BR_1_N_START_INDEX{ 34 };
+        static constexpr auto TL_1_UV_X{ 3 };
+        static constexpr auto BL_1_UV_X{ 16 };
+        static constexpr auto BR_1_UV_X{ 29 };
 
-        static constexpr auto TL_2_N_START_INDEX{ 47 };
-        static constexpr auto BR_2_N_START_INDEX{ 60 };
-        static constexpr auto TR_2_N_START_INDEX{ 73 };
+        static constexpr auto TL_2_UV_X{ 42 };
+        static constexpr auto BR_2_UV_X{ 55 };
+        static constexpr auto TR_2_UV_X{ 68 };
 
-        // For setting texture numbers
+        // normal.x array index of each vertex
 
-        static constexpr auto TL_1_TEXTURE_INDEX{ 11 };
-        static constexpr auto BL_1_TEXTURE_INDEX{ 24 };
-        static constexpr auto BR_1_TEXTURE_INDEX{ 37 };
+        static constexpr auto TL_1_NORMAL_X{ 8 };
+        static constexpr auto BL_1_NORMAL_X{ 21 };
+        static constexpr auto BR_1_NORMAL_X{ 34 };
 
-        static constexpr auto TL_2_TEXTURE_INDEX{ 50 };
-        static constexpr auto BR_2_TEXTURE_INDEX{ 63 };
-        static constexpr auto TR_2_TEXTURE_INDEX{ 76 };
+        static constexpr auto TL_2_NORMAL_X{ 47 };
+        static constexpr auto BR_2_NORMAL_X{ 60 };
+        static constexpr auto TR_2_NORMAL_X{ 73 };
 
-        // For setting selected states
+        // texture number array index of each vertex
 
-        static constexpr auto TL_1_SELECTED_INDEX{ 12 };
-        static constexpr auto BL_1_SELECTED_INDEX{ 25 };
-        static constexpr auto BR_1_SELECTED_INDEX{ 38 };
+        static constexpr auto TL_1_TEXTURE_NR{ 11 };
+        static constexpr auto BL_1_TEXTURE_NR{ 24 };
+        static constexpr auto BR_1_TEXTURE_NR{ 37 };
 
-        static constexpr auto TL_2_SELECTED_INDEX{ 51 };
-        static constexpr auto BR_2_SELECTED_INDEX{ 64 };
-        static constexpr auto TR_2_SELECTED_INDEX{ 77 };
+        static constexpr auto TL_2_TEXTURE_NR{ 50 };
+        static constexpr auto BR_2_TEXTURE_NR{ 63 };
+        static constexpr auto TR_2_TEXTURE_NR{ 76 };
+
+        // selected state array index of each vertex
+
+        static constexpr auto TL_1_SELECTED{ 12 };
+        static constexpr auto BL_1_SELECTED{ 25 };
+        static constexpr auto BR_1_SELECTED{ 38 };
+
+        static constexpr auto TL_2_SELECTED{ 51 };
+        static constexpr auto BR_2_SELECTED{ 64 };
+        static constexpr auto TR_2_SELECTED{ 77 };
 
         //-------------------------------------------------
         // Types

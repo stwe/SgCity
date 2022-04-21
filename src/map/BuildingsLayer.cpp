@@ -51,6 +51,7 @@ void sg::map::BuildingsLayer::Render(const ogl::camera::Camera& t_camera, const 
     m_skip = 0;
 
     // todo: cache models
+    // todo: plane
     for (const auto& tile : tiles)
     {
         if (tile->type == Tile::TileType::RESIDENTIAL)

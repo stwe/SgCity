@@ -33,7 +33,10 @@ namespace sg::event
         KEY_PRESSED, KEY_RELEASED,
 
         // mouse
-        MOUSE_BUTTON_PRESSED, MOUSE_BUTTON_RELEASED, MOUSE_MOVED, MOUSE_SCROLLED, MOUSE_ENTER
+        MOUSE_BUTTON_PRESSED, MOUSE_BUTTON_RELEASED, MOUSE_MOVED, MOUSE_SCROLLED, MOUSE_ENTER,
+
+        // content
+        CREATE_ROAD
     };
 
     //-------------------------------------------------
@@ -136,6 +139,21 @@ namespace sg::event
             : enter{ t_enter }
         {
             type = SgEventType::MOUSE_ENTER;
+        }
+    };
+
+    //-------------------------------------------------
+    // Content
+    //-------------------------------------------------
+
+    struct CreateRoadEvent : SgEvent
+    {
+        int index{ -1 };
+
+        explicit CreateRoadEvent(const int t_index)
+            : index{ t_index }
+        {
+            type = SgEventType::CREATE_ROAD;
         }
     };
 }

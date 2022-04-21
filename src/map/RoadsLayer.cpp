@@ -24,6 +24,8 @@
 #include "ogl/OpenGL.h"
 #include "ogl/math/Transform.h"
 #include "ogl/resource/ResourceManager.h"
+#include "event/EventManager.h"
+#include "eventpp/utilities/argumentadapter.h"
 
 //-------------------------------------------------
 // Ctors. / Dtor.
@@ -63,14 +65,20 @@ void sg::map::RoadsLayer::Render(const ogl::camera::Camera& t_camera, const glm:
     shaderProgram.SetUniform("model", modelMatrix);
     shaderProgram.SetUniform("view", t_camera.GetViewMatrix());
     shaderProgram.SetUniform("projection", window->GetProjectionMatrix());
+    // plane
 
     const auto mv{ t_camera.GetViewMatrix() * modelMatrix };
     const auto n{ glm::inverseTranspose(glm::mat3(mv)) };
     shaderProgram.SetUniform("normalMatrix", n);
 
+    // diffuseMap 0
+    // rMap 1
+    // cMap 2
+    // iMap 3
+
     const auto& texture{ ogl::resource::ResourceManager::LoadTexture("E:/Dev/SgCity/resources/texture/roads.png") };
     texture.BindForReading(GL_TEXTURE0);
-    shaderProgram.SetUniform("diffuseMap", 0);
+    shaderProgram.SetUniform("tMap", 0);
 
     vao->DrawPrimitives();
 
@@ -80,13 +88,73 @@ void sg::map::RoadsLayer::Render(const ogl::camera::Camera& t_camera, const glm:
     ogl::OpenGL::DisableFaceCulling();
 }
 
-void sg::map::RoadsLayer::CreateRoad(const Tile& t_tile)
+//-------------------------------------------------
+// Init
+//-------------------------------------------------
+
+void sg::map::RoadsLayer::Init()
 {
-    Log::SG_LOG_DEBUG("[RoadsLayer::Update()] Built a road at {}.", t_tile.mapIndex);
+    Log::SG_LOG_DEBUG("[RoadsLayer::Init()] Initialize the RoadsLayer.");
+
+    position = glm::vec3(0.0f);
+
+    modelMatrix = ogl::math::Transform::CreateModelMatrix(
+        position,
+        glm::vec3(0.0f),
+        glm::vec3(1.0f)
+    );
+
+    InitEventDispatcher();
+    CreateTiles();
+    RoadTilesToGpu();
+
+    Log::SG_LOG_DEBUG("[RoadsLayer::Init()] The RoadsLayer was successfully initialized.");
+}
+
+void sg::map::RoadsLayer::InitEventDispatcher()
+{
+    Log::SG_LOG_DEBUG("[RoadsLayer::InitEventDispatcher()] Append listeners.");
+
+    // create road
+    event::EventManager::eventDispatcher.appendListener(
+        event::SgEventType::CREATE_ROAD,
+        eventpp::argumentAdapter<void(const event::CreateRoadEvent&)>(
+            [this](const event::CreateRoadEvent& t_event)
+            {
+                OnCreateRoad(*tiles[t_event.index]);
+            }
+        )
+    );
+}
+
+//-------------------------------------------------
+// Override
+//-------------------------------------------------
+
+void sg::map::RoadsLayer::CreateTiles()
+{
+    auto i{ 0 };
+    for (const auto& tile : tiles)
+    {
+        if (tile->type == Tile::TileType::TRAFFIC)
+        {
+            m_roadTiles.emplace_back(CreateRoadTile(*tile, i));
+            i++;
+        }
+    }
+}
+
+//-------------------------------------------------
+// Listeners
+//-------------------------------------------------
+
+void sg::map::RoadsLayer::OnCreateRoad(const Tile& t_tile)
+{
+    Log::SG_LOG_DEBUG("[RoadsLayer::OnCreateRoad()] Built a road at {}.", t_tile.mapIndex);
 
     if (!CheckTerrainForRoad(t_tile))
     {
-        Log::SG_LOG_DEBUG("[RoadsLayer::Update()] No road can be built at {}.", t_tile.mapIndex);
+        Log::SG_LOG_DEBUG("[RoadsLayer::OnCreateRoad()] No road can be built at {}.", t_tile.mapIndex);
         return;
     }
 
@@ -113,45 +181,6 @@ void sg::map::RoadsLayer::CreateRoad(const Tile& t_tile)
 
         // update draw count
         vao->drawCount = static_cast<int>(m_roadTiles.size()) * Tile::VERTICES_PER_TILE;
-    }
-}
-
-//-------------------------------------------------
-// Init
-//-------------------------------------------------
-
-void sg::map::RoadsLayer::Init()
-{
-    Log::SG_LOG_DEBUG("[RoadsLayer::Init()] Initialize the RoadsLayer.");
-
-    position = glm::vec3(0.0f);
-
-    modelMatrix = ogl::math::Transform::CreateModelMatrix(
-        position,
-        glm::vec3(0.0f),
-        glm::vec3(1.0f)
-    );
-
-    CreateTiles();
-    RoadTilesToGpu();
-
-    Log::SG_LOG_DEBUG("[RoadsLayer::Init()] The RoadsLayer was successfully initialized.");
-}
-
-//-------------------------------------------------
-// Override
-//-------------------------------------------------
-
-void sg::map::RoadsLayer::CreateTiles()
-{
-    auto i{ 0 };
-    for (const auto& tile : tiles)
-    {
-        if (tile->type == Tile::TileType::TRAFFIC)
-        {
-            m_roadTiles.emplace_back(CreateRoadTile(*tile, i));
-            i++;
-        }
     }
 }
 
@@ -203,7 +232,6 @@ std::unique_ptr<sg::map::RoadTile> sg::map::RoadsLayer::CreateRoadTile(const Til
 
     roadTile->type = Tile::TileType::TRAFFIC;
 
-    // todo: invalid offsets
     UpdateTexture(*roadTile);
 
     return roadTile;

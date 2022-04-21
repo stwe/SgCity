@@ -79,8 +79,6 @@ namespace sg::map
          */
         void Render(const ogl::camera::Camera& t_camera, const glm::vec4& t_plane = glm::vec4(0.0f)) override;
 
-        void CreateRoad(const Tile& t_tile);
-
     protected:
 
     private:
@@ -102,6 +100,11 @@ namespace sg::map
          */
         void Init();
 
+        /**
+         * Initializes the event dispatcher.
+         */
+        void InitEventDispatcher();
+
         //-------------------------------------------------
         // Override
         //-------------------------------------------------
@@ -110,6 +113,15 @@ namespace sg::map
          * Creates Layer tiles.
          */
         void CreateTiles() override;
+
+        //-------------------------------------------------
+        // Listeners
+        //-------------------------------------------------
+
+        /**
+         * On create road event handler.
+         */
+        void OnCreateRoad(const Tile& t_tile);
 
         //-------------------------------------------------
         // Helper

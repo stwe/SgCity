@@ -17,8 +17,8 @@ flat out float vIntensity;
 uniform mat4 model;
 uniform mat4 view;
 uniform mat4 projection;
-uniform mat3 normalMatrix;
 uniform vec4 plane;
+uniform mat3 normalMatrix;
 
 void main()
 {

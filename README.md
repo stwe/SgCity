@@ -18,13 +18,14 @@ Tile based 3D city builder maked from scratch with OpenGL.
 * A skybox for a nice background
 * A camera that allows us to move freely
 * Terrain manipulation (raise and lower)
-* Different tiles for residential, commercial, industrial and traffic zones
 * Tile selection
+* Different tiles for residential, commercial, industrial and traffic zones
 * Animated water surfaces
 * Loads 3D models made in Blender (so we can load plants, trees, buildings etc.)
 
 ## Next
 
+* Config game
 * Traffic system
 * Find connected regions
 * Heightmap based terrain creation

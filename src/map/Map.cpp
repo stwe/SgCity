@@ -177,13 +177,6 @@ void sg::map::Map::InitEventDispatcher() const
             {
                 if (t_event.button == GLFW_MOUSE_BUTTON_LEFT)
                 {
-                    /*
-                    if (ImGui::GetIO().WantCaptureMouse)
-                    {
-                        return;
-                    }
-                    */
-
                     //m_waterLayer->OnLeftMouseButtonReleased();
                     m_terrainLayer->OnLeftMouseButtonReleased();
                     //m_roadsLayer->OnLeftMouseButtonReleased();
@@ -201,13 +194,6 @@ void sg::map::Map::InitEventDispatcher() const
         (
             [this](const event::MouseMovedEvent& t_event)
             {
-                /*
-                if (ImGui::GetIO().WantCaptureMouse)
-                {
-                    return;
-                }
-                */
-
                 //m_waterLayer->OnMouseMoved();
                 m_terrainLayer->OnMouseMoved();
                 //m_roadsLayer->OnMouseMoved();

@@ -25,6 +25,7 @@
 #include "ogl/math/Transform.h"
 #include "ogl/resource/ResourceManager.h"
 #include "ogl/input/PickingTexture.h"
+#include "event/EventManager.h"
 
 //-------------------------------------------------
 // Ctors. / Dtor.
@@ -116,7 +117,7 @@ void sg::map::TerrainLayer::Render(const ogl::camera::Camera& t_camera, const gl
 
     const auto& trafficTexture{ ogl::resource::ResourceManager::LoadTexture("E:/Dev/SgCity/resources/texture/t.png") };
     trafficTexture.BindForReading(GL_TEXTURE4);
-    shaderProgram.SetUniform("trafficMap", 4);
+    shaderProgram.SetUniform("tMap", 4);
 
     vao->DrawPrimitives();
 
@@ -560,6 +561,13 @@ void sg::map::TerrainLayer::ChangeTileByAction(const gui::Action t_action, Tile&
         break;
     case gui::Action::MAKE_TRAFFIC_ZONE:
         setTileType(Tile::TileType::TRAFFIC);
+
+        // notifies all listeners that a road should be created
+        // in the RoadsLayer, a listener handle the CREATE_ROAD event
+        event::EventManager::eventDispatcher.dispatch(
+            event::SgEventType::CREATE_ROAD,
+            event::CreateRoadEvent(t_tile.mapIndex)
+        );
         break;
     case gui::Action::CREATE_PLANT:
         setTileType(Tile::TileType::PLANTS);

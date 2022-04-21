@@ -13,7 +13,7 @@ uniform sampler2D diffuseMap;
 uniform sampler2D rMap;
 uniform sampler2D cMap;
 uniform sampler2D iMap;
-uniform sampler2D trafficMap;
+uniform sampler2D tMap;
 
 vec4 col;
 
@@ -30,7 +30,7 @@ void main()
     else if (vTextureNr == 3)
         col = texture(iMap, vUv);
     else if (vTextureNr == 4)
-        col = texture(trafficMap, vUv);
+        col = texture(tMap, vUv);
 
     float ambientIntensity = 0.4;
     fragColor = max(vIntensity * col, ambientIntensity * col);

@@ -38,6 +38,9 @@ sg::map::Layer::Layer(std::shared_ptr<ogl::Window> t_window, std::vector<std::sh
     , tiles{ std::move(t_tiles) }
 {
     Log::SG_LOG_DEBUG("[Layer::Layer()] Create Layer.");
+
+    // todo
+    tileCount = 64;
 }
 
 sg::map::Layer::~Layer() noexcept

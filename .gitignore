@@ -49,3 +49,5 @@ conanbuildinfo.cmake
 !/resources/water/normal.png
 
 !/resources/skybox/NissiBeach2/*
+
+!/config.ini

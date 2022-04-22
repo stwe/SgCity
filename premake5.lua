@@ -48,11 +48,11 @@ project "SgCity"
         systemversion "latest"
 
     filter "configurations:Debug"
-        defines { "SG_CITY_DEBUG_BUILD", "GLFW_INCLUDE_NONE" }
+        defines { "SG_CITY_DEBUG_BUILD", "GLFW_INCLUDE_NONE", "_CRT_SECURE_NO_WARNINGS" }
         runtime "Debug"
         symbols "On"
 
     filter "configurations:Release"
-        defines "GLFW_INCLUDE_NONE"
+        defines { "GLFW_INCLUDE_NONE", "_CRT_SECURE_NO_WARNINGS" }
         runtime "Release"
         optimize "On"

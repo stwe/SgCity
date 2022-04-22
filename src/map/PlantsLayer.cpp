@@ -18,6 +18,7 @@
 
 #include <imgui.h>
 #include "PlantsLayer.h"
+#include "Application.h"
 #include "Tile.h"
 #include "Log.h"
 #include "ogl/primitives/Sphere.h"
@@ -60,10 +61,13 @@ void sg::map::PlantsLayer::Render(const ogl::camera::Camera& t_camera, const glm
             auto rotation{ glm::vec3(0.0f) };
             auto scale{ glm::vec3(1.0f) };
 
-            if (!m_model->sphereVolume.IsOnFrustum(t_camera.GetCurrentFrustum(), position, rotation, scale))
+            if (m_frustumCulling)
             {
-                m_skip++;
-                continue;
+                if (!m_model->sphereVolume.IsOnFrustum(t_camera.GetCurrentFrustum(), position, rotation, scale))
+                {
+                    m_skip++;
+                    continue;
+                }
             }
 
             m_model->Render(t_camera, position, rotation, scale, t_plane);
@@ -73,7 +77,10 @@ void sg::map::PlantsLayer::Render(const ogl::camera::Camera& t_camera, const glm
                 position, rotation, scale) * glm::vec4(m_model->sphereVolume.center, 1.0f)
             };
 
-            m_model->sphere->Render(t_camera, transformMatrix);
+            if (m_renderSphere)
+            {
+                m_model->sphere->Render(t_camera, transformMatrix);
+            }
 
             m_render++;
         }
@@ -86,6 +93,9 @@ void sg::map::PlantsLayer::RenderImGui()
     ImGui::Text("Plants Layer");
     ImGui::PopStyleColor();
 
+    ImGui::Checkbox("Plants frustum culling", &m_frustumCulling);
+    ImGui::Checkbox("Plants render sphere volume", &m_renderSphere);
+
     ImGui::Text("Rendered plants: %d", m_render);
     ImGui::Text("Skipped plants: %d", m_skip);
 }
@@ -97,6 +107,9 @@ void sg::map::PlantsLayer::RenderImGui()
 void sg::map::PlantsLayer::Init()
 {
     Log::SG_LOG_DEBUG("[PlantsLayer::Init()] Initialize the PlantsLayer.");
+
+    m_frustumCulling = Application::INI.Get<bool>("plants", "frustum_culling");
+    m_renderSphere = Application::INI.Get<bool>("plants", "render_sphere_volume");
 
     m_model = ogl::resource::ResourceManager::LoadModel(window, "E:/Dev/SgCity/resources/model/tree/prop_001_pine.obj");
 

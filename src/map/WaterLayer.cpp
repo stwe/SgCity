@@ -95,6 +95,9 @@ void sg::map::WaterLayer::Render(const ogl::camera::Camera& t_camera, const glm:
     shaderProgram.SetUniform("moveFactor", m_moveFactor);
     shaderProgram.SetUniform("lightColor", glm::vec3(0.8, 0.8, 0.8));
 
+    shaderProgram.SetUniform("near", window->nearPlane);
+    shaderProgram.SetUniform("far", window->farPlane);
+
     vao->DrawPrimitives();
 
     ogl::resource::ShaderProgram::Unbind();
@@ -141,7 +144,7 @@ void sg::map::WaterLayer::Init()
 {
     Log::SG_LOG_DEBUG("[WaterLayer::Init()] Initialize the WaterLayer.");
 
-    m_waterFbos = std::make_unique<ogl::buffer::WaterFbos>(Application::SCREEN_WIDTH, Application::SCREEN_HEIGHT);
+    m_waterFbos = std::make_unique<ogl::buffer::WaterFbos>(window->GetWidth(), window->GetHeight());
     position = glm::vec3(tileCount / 2, -WATER_HEIGHT, tileCount / 2);
     modelMatrix = ogl::math::Transform::CreateModelMatrix(
         position,

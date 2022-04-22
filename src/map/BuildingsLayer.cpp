@@ -18,6 +18,7 @@
 
 #include <imgui.h>
 #include "BuildingsLayer.h"
+#include "Application.h"
 #include "Tile.h"
 #include "Log.h"
 #include "ogl/primitives/Sphere.h"
@@ -58,10 +59,13 @@ void sg::map::BuildingsLayer::Render(const ogl::camera::Camera& t_camera, const 
         {
             auto position{ glm::vec3(tile->mapX + 0.5f, 0.001f, tile->mapZ + 0.5f) };
 
-            if (!m_model->sphereVolume.IsOnFrustum(t_camera.GetCurrentFrustum(), position))
+            if (m_frustumCulling)
             {
-                m_skip++;
-                continue;
+                if (!m_model->sphereVolume.IsOnFrustum(t_camera.GetCurrentFrustum(), position))
+                {
+                    m_skip++;
+                    continue;
+                }
             }
 
             m_model->Render(t_camera, position, glm::vec3(0.0f), glm::vec3(1.0), t_plane);
@@ -71,7 +75,10 @@ void sg::map::BuildingsLayer::Render(const ogl::camera::Camera& t_camera, const 
                 position, glm::vec3(0.0f), glm::vec3(1.0f)) * glm::vec4(m_model->sphereVolume.center, 1.0f)
             };
 
-            m_model->sphere->Render(t_camera, transformMatrix);
+            if (m_renderSphere)
+            {
+                m_model->sphere->Render(t_camera, transformMatrix);
+            }
 
             m_render++;
         }
@@ -84,6 +91,9 @@ void sg::map::BuildingsLayer::RenderImGui()
     ImGui::Text("Buildings Layer");
     ImGui::PopStyleColor();
 
+    ImGui::Checkbox("Buildings frustum culling", &m_frustumCulling);
+    ImGui::Checkbox("Buildings render sphere volume", &m_renderSphere);
+
     ImGui::Text("Rendered buildings: %d", m_render);
     ImGui::Text("Skipped buildings: %d", m_skip);
 }
@@ -95,6 +105,9 @@ void sg::map::BuildingsLayer::RenderImGui()
 void sg::map::BuildingsLayer::Init()
 {
     Log::SG_LOG_DEBUG("[BuildingsLayer::Init()] Initialize the BuildingsLayer.");
+
+    m_frustumCulling = Application::INI.Get<bool>("buildings", "frustum_culling");
+    m_renderSphere = Application::INI.Get<bool>("buildings", "render_sphere_volume");
 
     m_model = ogl::resource::ResourceManager::LoadModel(window, "E:/Dev/SgCity/resources/model/house/node_115.obj");
 

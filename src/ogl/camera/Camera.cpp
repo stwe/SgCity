@@ -161,11 +161,11 @@ void sg::ogl::camera::Camera::RenderImGui()
 sg::ogl::camera::Frustum sg::ogl::camera::Camera::GetCurrentFrustum() const
 {
     Frustum frustum;
-    const float halfVSide{ Window::FAR_PLANE * tanf(glm::radians(Window::FOV_DEG) * 0.5f) };
+    const float halfVSide{ m_window->farPlane * tanf(glm::radians(m_window->fovDeg) * 0.5f) };
     const float halfHSide{ halfVSide * static_cast<float>(m_window->GetWidth()) / static_cast<float>(m_window->GetHeight()) };
-    const glm::vec3 frontMultFar{ Window::FAR_PLANE * m_front };
+    const glm::vec3 frontMultFar{ m_window->farPlane * m_front };
 
-    frustum.nearFace = { position + Window::NEAR_PLANE * m_front, m_front };
+    frustum.nearFace = { position + m_window->nearPlane * m_front, m_front };
     frustum.farFace = { position + frontMultFar, -m_front };
     frustum.rightFace = { position, glm::cross(m_up, frontMultFar + m_right * halfHSide) };
     frustum.leftFace = { position, glm::cross(frontMultFar - m_right * halfHSide, m_up) };

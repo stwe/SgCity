@@ -60,13 +60,20 @@ void sg::Application::Init()
     Log::SG_LOG_DEBUG("[Application::Init()] Initializing application.");
 
     // create && init window
-    m_window = std::make_shared<ogl::Window>(SCREEN_WIDTH, SCREEN_HEIGHT, "SgCity Sandbox");
+    const auto ww{ INI.Get<int>("window", "width") };
+    const auto wh{ INI.Get<int>("window", "height") };
+    auto wt{ INI.Get<std::string>("window", "title") };
+    m_window = std::make_shared<ogl::Window>(ww, wh, wt);
 
     // create && init camera
-    m_camera = std::make_unique<ogl::camera::Camera>(m_window, glm::vec3(0.0f, 10.0f, 14.0f), 45.0f, -26.0f);
+    const auto pos{ INI.GetVector<float>("camera", "position") };
+    const auto yaw{ INI.Get<float>("camera", "yaw") };
+    const auto pitch{ INI.Get<float>("camera", "pitch") };
+    m_camera = std::make_unique<ogl::camera::Camera>(m_window, glm::vec3(pos[0], pos[1], pos[2]), yaw, pitch);
 
     // create && init map tiles
-    m_map = std::make_unique<map::Map>(m_window, TILE_COUNT);
+    const auto tc{ INI.Get<int>("world", "tile_count") };
+    m_map = std::make_unique<map::Map>(m_window, tc);
 
     // create skybox
     m_skybox = std::make_unique<ogl::resource::Skybox>();

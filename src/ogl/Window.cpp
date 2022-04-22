@@ -18,6 +18,7 @@
 
 #include <glm/gtc/matrix_transform.hpp>
 #include "Window.h"
+#include "Application.h"
 #include "OpenGL.h"
 #include "Log.h"
 #include "SgException.h"
@@ -173,6 +174,10 @@ void sg::ogl::Window::Init()
 {
     Log::SG_LOG_DEBUG("[Window::Init()] Initializing window.");
 
+    fovDeg = Application::INI.Get<float>("frustum", "fov_deg");
+    nearPlane = Application::INI.Get<float>("frustum", "near");
+    farPlane = Application::INI.Get<float>("frustum", "far");
+
     InitWindow();
     InitProjectionMatrix();
     InitImGui();
@@ -295,11 +300,11 @@ void sg::ogl::Window::UpdateProjectionMatrix()
 {
     m_projectionMatrix = glm::perspectiveFov
         (
-            glm::radians(FOV_DEG),
+            glm::radians(fovDeg),
             static_cast<float>(m_width),
             static_cast<float>(m_height),
-            NEAR_PLANE,
-            FAR_PLANE
+            nearPlane,
+            farPlane
         );
 }
 

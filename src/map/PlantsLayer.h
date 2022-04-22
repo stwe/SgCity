@@ -112,6 +112,16 @@ namespace sg::map
          */
         int m_skip{ 0 };
 
+        /**
+         * Enables / disables the frustum culling.
+         */
+        bool m_frustumCulling{ false };
+
+        /**
+         * Enables / disables the rendering of the sphere volume.
+         */
+        bool m_renderSphere{ false };
+
         //-------------------------------------------------
         // Init
         //-------------------------------------------------

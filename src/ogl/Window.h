@@ -56,20 +56,24 @@ namespace sg::ogl
          */
         static constexpr auto MIN_HEIGHT{ 480 };
 
+        //-------------------------------------------------
+        // Member
+        //-------------------------------------------------
+
         /**
          * The field of view.
          */
-        static constexpr auto FOV_DEG{ 60.0f };
+        float fovDeg{ 60.0f };
 
         /**
          * The near plane of the frustum.
          */
-        static constexpr auto NEAR_PLANE{ 0.01f };
+        float nearPlane{ 0.01f };
 
         /**
          * The far plane of the frustum.
          */
-        static constexpr auto FAR_PLANE{ 5000.0f };
+        float farPlane{ 5000.0f };
 
         //-------------------------------------------------
         // Ctors. / Dtor.

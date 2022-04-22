@@ -19,6 +19,7 @@
 #pragma once
 
 #include <memory>
+#include "ini/ini.h"
 
 //-------------------------------------------------
 // Forward declarations
@@ -65,20 +66,11 @@ namespace sg
          */
         static constexpr auto FRAME_TIME{ 1.0 / 60.0 };
 
-        /**
-         * The number of tiles in x and z direction.
-         */
-        static constexpr auto TILE_COUNT{ 64 };
+        //-------------------------------------------------
+        // Member
+        //-------------------------------------------------
 
-        /**
-         * The width of the screen.
-         */
-        static constexpr auto SCREEN_WIDTH{ 1024 };
-
-        /**
-         * The height of the screen.
-         */
-        static constexpr auto SCREEN_HEIGHT{ 768 };
+        inline static const inih::INIReader INI{ "./config.ini" };
 
         //-------------------------------------------------
         // Ctors. / Dtor.

@@ -33,14 +33,12 @@ sg::map::Layer::Layer(std::shared_ptr<ogl::Window> t_window, const int t_tileCou
     Log::SG_LOG_DEBUG("[Layer::Layer()] Create Layer.");
 }
 
-sg::map::Layer::Layer(std::shared_ptr<ogl::Window> t_window, std::vector<std::shared_ptr<Tile>> t_tiles)
+sg::map::Layer::Layer(std::shared_ptr<ogl::Window> t_window, const int t_tileCount, std::vector<std::shared_ptr<Tile>> t_tiles)
     : window{ std::move(t_window) }
+    , tileCount{ t_tileCount }
     , tiles{ std::move(t_tiles) }
 {
     Log::SG_LOG_DEBUG("[Layer::Layer()] Create Layer.");
-
-    // todo
-    tileCount = 64;
 }
 
 sg::map::Layer::~Layer() noexcept

@@ -109,8 +109,8 @@ void sg::map::Map::RenderImGui() const
     ImGui::PushStyleColor(ImGuiCol_Text, IM_COL32(0, 255, 0, 255));
     ImGui::Text("Map");
     ImGui::PopStyleColor();
-    ImGui::Text("Mouse x: %.*f", 0, window->GetMouseX());
-    ImGui::Text("Mouse y: %.*f", 0, window->GetMouseY());
+    ImGui::Text("Mouse x: %.*f", 0, window->GetMouseX()); // NOLINT(clang-diagnostic-double-promotion)
+    ImGui::Text("Mouse y: %.*f", 0, window->GetMouseY()); // NOLINT(clang-diagnostic-double-promotion)
 
     m_terrainLayer->RenderImGui();
     //m_roadsLayer->RenderImGui();
@@ -133,9 +133,9 @@ void sg::map::Map::Init()
 
     m_waterLayer = std::make_unique<WaterLayer>(window, m_tileCount);
     m_terrainLayer = std::make_unique<TerrainLayer>(window, m_tileCount);
-    m_roadsLayer = std::make_unique<RoadsLayer>(window, m_terrainLayer->tiles);
-    m_buildingsLayer = std::make_unique<BuildingsLayer>(window, m_terrainLayer->tiles);
-    m_plantsLayer = std::make_unique<PlantsLayer>(window, m_terrainLayer->tiles);
+    m_roadsLayer = std::make_unique<RoadsLayer>(window, m_tileCount, m_terrainLayer->tiles);
+    m_buildingsLayer = std::make_unique<BuildingsLayer>(window, m_tileCount, m_terrainLayer->tiles);
+    m_plantsLayer = std::make_unique<PlantsLayer>(window, m_tileCount, m_terrainLayer->tiles);
 
     Log::SG_LOG_DEBUG("[Map::Init()] The map was successfully initialized.");
 }

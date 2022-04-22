@@ -99,9 +99,10 @@ namespace sg::map
          * Constructs a new Layer object.
          *
          * @param t_window The Window object.
+         * @param t_tileCount The number of tiles in x and z direction.
          * @param t_tiles The Tile objects.
          */
-        Layer(std::shared_ptr<ogl::Window> t_window, std::vector<std::shared_ptr<Tile>> t_tiles);
+        Layer(std::shared_ptr<ogl::Window> t_window, int t_tileCount, std::vector<std::shared_ptr<Tile>> t_tiles);
 
         Layer(const Layer& t_other) = delete;
         Layer(Layer&& t_other) noexcept = delete;

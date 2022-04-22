@@ -51,9 +51,10 @@ namespace sg::map
          * Constructs a new PlantsLayer object.
          *
          * @param t_window The Window object.
+         * @param t_tileCount The number of tiles in x and z direction.
          * @param t_tiles The Tile objects.
          */
-        PlantsLayer(std::shared_ptr<ogl::Window> t_window, std::vector<std::shared_ptr<Tile>> t_tiles);
+        PlantsLayer(std::shared_ptr<ogl::Window> t_window, int t_tileCount, std::vector<std::shared_ptr<Tile>> t_tiles);
 
         PlantsLayer(const PlantsLayer& t_other) = delete;
         PlantsLayer(PlantsLayer&& t_other) noexcept = delete;

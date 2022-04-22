@@ -49,7 +49,7 @@ sg::map::WaterLayer::~WaterLayer() noexcept
 
 void sg::map::WaterLayer::Update()
 {
-    m_moveFactor += 0.006f * static_cast<float>(Application::FRAME_TIME);
+    m_moveFactor += 0.024f * static_cast<float>(Application::FRAME_TIME);
     m_moveFactor = fmod(m_moveFactor, 1.0f);
 }
 
@@ -60,12 +60,14 @@ void sg::map::WaterLayer::Render(const ogl::camera::Camera& t_camera, const glm:
 
     vao->Bind();
 
-    const auto& shaderProgram{ ogl::resource::ResourceManager::LoadShaderProgram("E:/Dev/SgCity/resources/shader/water") };
+    const auto& shaderProgram{ ogl::resource::ResourceManager::LoadShaderProgram("E:/Dev/SgCity/resources/shader/layer/water") };
     shaderProgram.Bind();
 
     shaderProgram.SetUniform("model", modelMatrix);
     shaderProgram.SetUniform("view", t_camera.GetViewMatrix());
     shaderProgram.SetUniform("projection", window->GetProjectionMatrix());
+    shaderProgram.SetUniform("cameraPosition", t_camera.position);
+    shaderProgram.SetUniform("lightPosition", glm::vec3(0.5, 1.0, 0.0));
 
     // todo: method in texture
     glActiveTexture(GL_TEXTURE0);
@@ -90,10 +92,7 @@ void sg::map::WaterLayer::Render(const ogl::camera::Camera& t_camera, const glm:
     glBindTexture(GL_TEXTURE_2D, m_waterFbos->refractionDepthTextureId);
     shaderProgram.SetUniform("depthTexture", 4);
 
-    shaderProgram.SetUniform("cameraPosition", t_camera.position);
     shaderProgram.SetUniform("moveFactor", m_moveFactor);
-
-    shaderProgram.SetUniform("lightPosition", glm::vec3(0.5, 1.0, 0.0));
     shaderProgram.SetUniform("lightColor", glm::vec3(0.8, 0.8, 0.8));
 
     vao->DrawPrimitives();
@@ -115,7 +114,7 @@ void sg::map::WaterLayer::RenderImGui()
     if (m_waterFbos->reflectionColorTextureId)
     {
         ImGui::Image(
-            reinterpret_cast<ImTextureID>(static_cast<uintptr_t>(m_waterFbos->reflectionColorTextureId)),
+            reinterpret_cast<ImTextureID>(static_cast<uintptr_t>(m_waterFbos->reflectionColorTextureId)), // NOLINT(performance-no-int-to-ptr)
             ImVec2(128.0f, 128.0f),
             ImVec2(0.0f, 0.0f),
             ImVec2(1.0f, -1.0f)
@@ -126,7 +125,7 @@ void sg::map::WaterLayer::RenderImGui()
     if (m_waterFbos->refractionColorTextureId)
     {
         ImGui::Image(
-            reinterpret_cast<ImTextureID>(static_cast<uintptr_t>(m_waterFbos->refractionColorTextureId)),
+            reinterpret_cast<ImTextureID>(static_cast<uintptr_t>(m_waterFbos->refractionColorTextureId)), // NOLINT(performance-no-int-to-ptr)
             ImVec2(128.0f, 128.0f),
             ImVec2(0.0f, 0.0f),
             ImVec2(1.0f, -1.0f)

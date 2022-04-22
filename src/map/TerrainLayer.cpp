@@ -87,7 +87,7 @@ void sg::map::TerrainLayer::Render(const ogl::camera::Camera& t_camera, const gl
 
     vao->Bind();
 
-    const auto& shaderProgram{ ogl::resource::ResourceManager::LoadShaderProgram("E:/Dev/SgCity/resources/shader/map") };
+    const auto& shaderProgram{ ogl::resource::ResourceManager::LoadShaderProgram("E:/Dev/SgCity/resources/shader/layer/terrain") };
     shaderProgram.Bind();
 
     shaderProgram.SetUniform("model", modelMatrix);
@@ -540,7 +540,7 @@ void sg::map::TerrainLayer::ChangeTileByAction(const gui::Action t_action, Tile&
         }
     };
 
-    switch (t_action)
+    switch (t_action) // NOLINT(clang-diagnostic-switch-enum)
     {
     case gui::Action::RAISE:
         t_tile.Raise();

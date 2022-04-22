@@ -8,9 +8,13 @@ out vec2 vUv;
 uniform mat4 model;
 uniform mat4 view;
 uniform mat4 projection;
+uniform vec4 plane;
 
 void main()
 {
-    gl_Position = projection * view * model * vec4(aPosition, 1.0);
+    vec4 worldPosition = model * vec4(aPosition, 1.0);
+    gl_Position = projection * view * worldPosition;
+    gl_ClipDistance[0] = dot(worldPosition, plane);
+
     vUv = aUv;
 }

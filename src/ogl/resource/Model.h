@@ -111,12 +111,14 @@ namespace sg::ogl::resource
          * @param t_position The position of the model.
          * @param t_rotation The rotation of the model.
          * @param t_scale The scale of the model.
+         * @param t_plane The clipping plane.
          */
         void Render(
             const camera::Camera& t_camera,
             const glm::vec3& t_position,
             const glm::vec3& t_rotation = glm::vec3(0.0f),
-            const glm::vec3& t_scale = glm::vec3(1.0f)
+            const glm::vec3& t_scale = glm::vec3(1.0f),
+            const glm::vec4& t_plane = glm::vec4(0.0f)
         ) const;
 
     protected:

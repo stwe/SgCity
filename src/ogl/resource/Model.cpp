@@ -58,7 +58,8 @@ void sg::ogl::resource::Model::Render(
     const camera::Camera& t_camera,
     const glm::vec3& t_position,
     const glm::vec3& t_rotation,
-    const glm::vec3& t_scale
+    const glm::vec3& t_scale,
+    const glm::vec4& t_plane
 ) const
 {
     OpenGL::EnableAlphaBlending();
@@ -71,6 +72,7 @@ void sg::ogl::resource::Model::Render(
         shaderProgram.SetUniform("model", math::Transform::CreateModelMatrix(t_position, t_rotation, t_scale));
         shaderProgram.SetUniform("view", t_camera.GetViewMatrix());
         shaderProgram.SetUniform("projection", m_window->GetProjectionMatrix());
+        shaderProgram.SetUniform("plane", t_plane);
 
         mesh->vao->Bind();
 
@@ -146,8 +148,8 @@ std::unique_ptr<sg::ogl::resource::Mesh> sg::ogl::resource::Model::ProcessMesh(c
 
     // Prevent duplicate warnings.
     auto missingUv{ false };
-    auto missingTangent{ false };
-    auto missingBiTangent{ false };
+    //auto missingTangent{ false };
+    //auto missingBiTangent{ false };
 
     // Walk through each of the mesh's vertices.
     for (auto i{ 0u }; i < t_mesh->mNumVertices; ++i)

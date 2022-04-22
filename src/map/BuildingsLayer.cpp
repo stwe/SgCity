@@ -64,7 +64,7 @@ void sg::map::BuildingsLayer::Render(const ogl::camera::Camera& t_camera, const 
                 continue;
             }
 
-            m_model->Render(t_camera, position);
+            m_model->Render(t_camera, position, glm::vec3(0.0f), glm::vec3(1.0), t_plane);
 
             const glm::vec3 transformMatrix{
                 ogl::math::Transform::CreateModelMatrix(

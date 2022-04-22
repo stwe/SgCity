@@ -57,7 +57,7 @@ void sg::map::PlantsLayer::Render(const ogl::camera::Camera& t_camera, const glm
         if (tile->type == Tile::TileType::PLANTS)
         {
             auto position{ glm::vec3(tile->mapX + 0.5f, 0.0f, tile->mapZ + 0.5f) };
-            auto rotation{ glm::vec3(0.0f, 0.0f, 0.0f) };
+            auto rotation{ glm::vec3(0.0f) };
             auto scale{ glm::vec3(1.0f) };
 
             if (!m_model->sphereVolume.IsOnFrustum(t_camera.GetCurrentFrustum(), position, rotation, scale))
@@ -66,7 +66,7 @@ void sg::map::PlantsLayer::Render(const ogl::camera::Camera& t_camera, const glm
                 continue;
             }
 
-            m_model->Render(t_camera, position, rotation, scale);
+            m_model->Render(t_camera, position, rotation, scale, t_plane);
 
             const glm::vec3 transformMatrix{
                 ogl::math::Transform::CreateModelMatrix(

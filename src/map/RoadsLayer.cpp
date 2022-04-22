@@ -59,26 +59,16 @@ void sg::map::RoadsLayer::Render(const ogl::camera::Camera& t_camera, const glm:
 
     vao->Bind();
 
-    const auto& shaderProgram{ ogl::resource::ResourceManager::LoadShaderProgram("E:/Dev/SgCity/resources/shader/map") };
+    const auto& shaderProgram{ ogl::resource::ResourceManager::LoadShaderProgram("E:/Dev/SgCity/resources/shader/layer/roads") };
     shaderProgram.Bind();
 
     shaderProgram.SetUniform("model", modelMatrix);
     shaderProgram.SetUniform("view", t_camera.GetViewMatrix());
     shaderProgram.SetUniform("projection", window->GetProjectionMatrix());
-    // plane
-
-    const auto mv{ t_camera.GetViewMatrix() * modelMatrix };
-    const auto n{ glm::inverseTranspose(glm::mat3(mv)) };
-    shaderProgram.SetUniform("normalMatrix", n);
-
-    // diffuseMap 0
-    // rMap 1
-    // cMap 2
-    // iMap 3
 
     const auto& texture{ ogl::resource::ResourceManager::LoadTexture("E:/Dev/SgCity/resources/texture/roads.png") };
     texture.BindForReading(GL_TEXTURE0);
-    shaderProgram.SetUniform("tMap", 0);
+    shaderProgram.SetUniform("diffuseMap", 0);
 
     vao->DrawPrimitives();
 

@@ -37,13 +37,12 @@ conanbuildinfo.cmake
 !/resources/texture/i.png
 !/resources/texture/info.png
 !/resources/texture/lower.png
-!/resources/texture/plants.png
 !/resources/texture/r.png
 !/resources/texture/raise.png
 !/resources/texture/roads.png
-!/resources/texture/select.png
 !/resources/texture/t.png
 !/resources/texture/traffic.png
+!/resources/texture/trees.png
 
 !/resources/water/dudv.png
 !/resources/water/normal.png

@@ -140,7 +140,7 @@ void sg::Application::RenderImGui() const
 {
     ogl::Window::ImGuiBegin();
 
-    m_camera->RenderImGui();
+    //m_camera->RenderImGui();
     m_map->RenderImGui();
 
     ogl::Window::ImGuiEnd();

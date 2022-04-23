@@ -116,7 +116,7 @@ void sg::map::Map::RenderImGui() const
     //m_roadsLayer->RenderImGui();
     m_buildingsLayer->RenderImGui();
     m_plantsLayer->RenderImGui();
-    m_waterLayer->RenderImGui();
+    //m_waterLayer->RenderImGui();
 
     ImGui::End();
 }

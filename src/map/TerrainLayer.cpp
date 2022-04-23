@@ -131,6 +131,12 @@ void sg::map::TerrainLayer::RenderImGui()
 {
     m_mapEditGui.RenderImGui();
 
+    ImGui::PushStyleColor(ImGuiCol_Text, IM_COL32(0, 255, 0, 255));
+    ImGui::Text("Terrain Layer");
+    ImGui::PopStyleColor();
+
+    ImGui::Text("Regions: %d", m_numRegions);
+
     if (m_currentTile)
     {
         m_currentTile->RenderImGui();
@@ -311,42 +317,50 @@ void sg::map::TerrainLayer::AddTileNeighbors() const
             if (z > 0)
             {
                 tiles[i]->n = tiles[(z - 1) * tileCount + x];
+                tiles[i]->neighbors.push_back(tiles[i]->n);
             }
 
             if (z < tileCount - 1)
             {
                 tiles[i]->s = tiles[(z + 1) * tileCount + x];
+                tiles[i]->neighbors.push_back(tiles[i]->s);
             }
 
             if (x > 0)
             {
                 tiles[i]->w = tiles[z * tileCount + (x - 1)];
+                tiles[i]->neighbors.push_back(tiles[i]->w);
             }
 
             if (x < tileCount - 1)
             {
                 tiles[i]->e = tiles[z * tileCount + (x + 1)];
+                tiles[i]->neighbors.push_back(tiles[i]->e);
             }
 
             // connect diagonally
             if (z > 0 && x < tileCount - 1)
             {
                 tiles[i]->ne = tiles[(z - 1) * tileCount + (x + 1)];
+                tiles[i]->neighbors.push_back(tiles[i]->ne);
             }
 
             if (z > 0 && x > 0)
             {
                 tiles[i]->nw = tiles[(z - 1) * tileCount + (x - 1)];
+                tiles[i]->neighbors.push_back(tiles[i]->nw);
             }
 
             if (z < tileCount - 1 && x > 0)
             {
                 tiles[i]->sw = tiles[(z + 1) * tileCount + (x - 1)];
+                tiles[i]->neighbors.push_back(tiles[i]->sw);
             }
 
             if (z < tileCount - 1 && x < tileCount - 1)
             {
                 tiles[i]->se = tiles[(z + 1) * tileCount + (x + 1)];
+                tiles[i]->neighbors.push_back(tiles[i]->se);
             }
         }
     }
@@ -528,7 +542,7 @@ void sg::map::TerrainLayer::SetTileSelectedState(const bool t_selected, Tile& t_
     t_tile.VerticesToGpu(*vao);
 }
 
-void sg::map::TerrainLayer::ChangeTileByAction(const gui::Action t_action, Tile& t_tile) const
+void sg::map::TerrainLayer::ChangeTileByAction(const gui::Action t_action, Tile& t_tile)
 {
     // helper
     auto setTileType = [&](const Tile::TileType t_tileType) -> void
@@ -574,5 +588,77 @@ void sg::map::TerrainLayer::ChangeTileByAction(const gui::Action t_action, Tile&
         break;
     default:
         break;
+    }
+
+    FindConnectedRegions();
+}
+
+//-------------------------------------------------
+// Regions
+//-------------------------------------------------
+
+void sg::map::TerrainLayer::FindConnectedRegions()
+{
+    auto regions{ 0 };
+
+    for (const auto& tile : tiles)
+    {
+        tile->region = Tile::NO_REGION;
+    }
+
+    for (const auto& tile : tiles)
+    {
+        auto found{ false };
+        for (const auto tileType : Tile::REGION_TILE_TYPES)
+        {
+            if (tileType == tile->type)
+            {
+                found = true;
+                break;
+            }
+        }
+
+        if (tile->region == Tile::NO_REGION && found)
+        {
+            regions++;
+            DepthSearch(*tile, regions);
+        }
+    }
+
+    m_numRegions = regions;
+}
+
+void sg::map::TerrainLayer::DepthSearch(Tile& t_startTile, const int t_region)
+{
+    if (t_startTile.region != Tile::NO_REGION)
+    {
+        return;
+    }
+
+    auto found{ false };
+    for (const auto tileType : Tile::REGION_TILE_TYPES)
+    {
+        if (tileType == t_startTile.type)
+        {
+            found = true;
+            break;
+        }
+    }
+
+    if (!found)
+    {
+        return;
+    }
+
+    t_startTile.region = t_region;
+
+    // todo: create && update regions minimap
+    // changing the color needs also a Vbo update
+    //t_startTile.SetColor(static_cast<glm::vec3>(m_randomColors[t_region - 1]));
+    //UpdateMapVboByTileIndex(t_startTile.GetMapIndex());
+
+    for (const auto& neighbor : t_startTile.neighbors)
+    {
+            DepthSearch(*neighbor, t_region);
     }
 }

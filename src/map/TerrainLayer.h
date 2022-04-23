@@ -180,6 +180,11 @@ namespace sg::map
          */
         std::vector<int> m_selectedIndices;
 
+        /**
+         * The current number of different regions.
+         */
+        int m_numRegions{ 0 };
+
         //-------------------------------------------------
         // Init
         //-------------------------------------------------
@@ -245,6 +250,23 @@ namespace sg::map
          * @param t_action The menu action.
          * @param t_tile The Tile object to change.
          */
-        void ChangeTileByAction(gui::Action t_action, Tile& t_tile) const;
+        void ChangeTileByAction(gui::Action t_action, Tile& t_tile);
+
+        //-------------------------------------------------
+        // Regions
+        //-------------------------------------------------
+
+        /**
+         * Iterates over tiles and find connected regions.
+         */
+        void FindConnectedRegions();
+
+        /**
+         * Assigns the region to the neighbors of a tile.
+         *
+         * @param t_startTile The start tile.
+         * @param t_region The region to assign.
+         */
+        void DepthSearch(Tile& t_startTile, int t_region);
     };
 }

@@ -80,7 +80,7 @@ namespace sg::gui
             "Make commercial zone",
             "Make industrial zone",
             "Make traffic zone",
-            "Create a plant",
+            "Create a tree",
             "Info",
         };
 

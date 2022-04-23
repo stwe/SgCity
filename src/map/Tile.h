@@ -80,7 +80,7 @@ namespace sg::map
         static constexpr auto BR_2_POSITION_Y{ 53 };
         static constexpr auto TR_2_POSITION_Y{ 66 };
 
-        static constexpr std::array<int, 6> Y_INDEX =
+        static constexpr std::array<int, 6> Y_INDEX
         {
             TL_1_POSITION_Y, BL_1_POSITION_Y, BR_1_POSITION_Y,
             TL_2_POSITION_Y, BR_2_POSITION_Y, TR_2_POSITION_Y
@@ -126,10 +126,18 @@ namespace sg::map
         static constexpr auto BR_2_SELECTED{ 64 };
         static constexpr auto TR_2_SELECTED{ 77 };
 
+        /**
+         * Indicates the the tile does not belong to any region.
+         */
+        static constexpr auto NO_REGION{ 0 };
+
         //-------------------------------------------------
         // Types
         //-------------------------------------------------
 
+        /**
+         * Determines the type of the tile.
+         */
         enum class TileType
         {
             NONE,
@@ -138,6 +146,17 @@ namespace sg::map
             INDUSTRIAL,
             TRAFFIC,
             PLANTS
+        };
+
+        /**
+         * Types that are connected to regions.
+         */
+        static constexpr std::array<TileType, 4> REGION_TILE_TYPES
+        {
+            TileType::RESIDENTIAL,
+            TileType::COMMERCIAL,
+            TileType::INDUSTRIAL,
+            TileType::TRAFFIC
         };
 
         //-------------------------------------------------
@@ -190,6 +209,14 @@ namespace sg::map
         std::shared_ptr<Tile> ne;
         std::shared_ptr<Tile> sw;
         std::shared_ptr<Tile> se;
+
+        std::vector<std::shared_ptr<Tile>> neighbors;
+
+        /**
+         * Each Tilewill be labelled depending on what region it is in.
+         * Tiles are in the same region if there is a path (through zones or roads) between them.
+         */
+        int region{ NO_REGION };
 
         //-------------------------------------------------
         // Ctors. / Dtor.

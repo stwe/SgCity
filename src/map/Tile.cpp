@@ -175,8 +175,8 @@ void sg::map::Tile::RenderImGui() const
     }
 
     ImGui::Text("Tile index: %d", mapIndex);
-    ImGui::Text("Tile map x: %f", mapX);
-    ImGui::Text("Tile map y: %f", mapZ);
+    ImGui::Text("Tile map x: %d", static_cast<int>(mapX));
+    ImGui::Text("Tile map y: %d", static_cast<int>(mapZ));
 
     ImGui::End();
 }

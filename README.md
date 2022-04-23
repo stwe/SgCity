@@ -5,7 +5,7 @@ Tile based 3D city builder maked from scratch with OpenGL.
 [![Codacy Badge](https://app.codacy.com/project/badge/Grade/51367f1966914a838f48dc864ddfdd79)](https://www.codacy.com/gh/stwe/SgCity/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=stwe/SgCity&amp;utm_campaign=Badge_Grade)
 
 
-<img src="https://github.com/stwe/SgCity/blob/main/resources/devlog/2022-03-19.png" width="500" height="400" />
+<img src="https://github.com/stwe/SgCity/blob/main/resources/devlog/2022-04-23.png" width="500" height="400" />
 
 ## Current Features
 
@@ -15,19 +15,22 @@ Tile based 3D city builder maked from scratch with OpenGL.
 * OpenGL renderer
 * Event system
 * ImGui based menus
+* Configurable with a config.ini
 * A skybox for a nice background
 * A camera that allows us to move freely
 * Terrain manipulation (raise and lower)
 * Tile selection
 * Different tiles for residential, commercial, industrial and traffic zones
+* The game determines if zones are connected, e.g. with a road.
+* A road network can be built.
 * Animated water surfaces
 * Loads 3D models made in Blender (so we can load plants, trees, buildings etc.)
 
 ## Next
 
-* Config game
-* Traffic system
-* Find connected regions
+* Select buildings via menu
+* Align game objects to the grid and highlights the tiles in color
+* A complete city with simple gameplay
 * Heightmap based terrain creation
 * Load and save the city
 

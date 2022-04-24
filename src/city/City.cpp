@@ -16,10 +16,11 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
+#include <algorithm>
 #include <imgui.h>
 #include "City.h"
 #include "Application.h"
-#include "Log.h"
+#include "SgAssert.h"
 #include "map/Map.h"
 #include "map/TerrainLayer.h"
 #include "map/Tile.h"
@@ -48,7 +49,7 @@ sg::city::City::~City() noexcept
 
 void sg::city::City::Update()
 {
-    float populationTotal{ 0 };
+    auto populationTotal{ 0.0f };
 
     currentTime += static_cast<float>(Application::FRAME_TIME);
     if (currentTime < TIME_PER_DAY)
@@ -69,20 +70,45 @@ void sg::city::City::Update()
         if (tile->type == map::Tile::TileType::RESIDENTIAL)
         {
             Distribute(homelessPeople, tile, birthRate - deathRate);
-            populationTotal += tile->population;
+            populationTotal += tile->curResidentsOrEmployees;
         }
+
+        if (tile->type == map::Tile::TileType::COMMERCIAL)
+        {
+            Distribute(unemployedPeople, tile, 0.0f);
+        }
+
+        if (tile->type == map::Tile::TileType::INDUSTRIAL)
+        {
+            Distribute(unemployedPeople, tile, 0.0f);
+        }
+
+        // todo: tile update -> change variant
     }
 
+    // adjust the number of homeless people for births and deaths
     homelessPeople += homelessPeople * (birthRate - deathRate);
     populationTotal += homelessPeople;
 
-    float newWorkers = (populationTotal - population) * proportionCanWork;
+    // todo --------------------
+
+    // adjust the number of unemployed people for births and deaths
+    auto newWorkers{ (populationTotal - population) * proportionCanWork };
     newWorkers *= newWorkers < 0 ? -1 : 1;
     unemployedPeople += newWorkers;
     employable += newWorkers;
-    if (unemployedPeople < 0) unemployedPeople = 0;
-    if (employable < 0) employable = 0;
 
+    if (unemployedPeople < 0)
+    {
+        unemployedPeople = 0;
+    }
+
+    if (employable < 0)
+    {
+        employable = 0;
+    }
+
+    // update city population
     population = populationTotal;
 }
 
@@ -105,45 +131,48 @@ float sg::city::City::Distribute(float& t_from, const std::shared_ptr<map::Tile>
 {
     constexpr auto moveRate{ 4 };
 
-    // if there homeless people
+    // when there are homeless or unemployed
     if (t_from > 0)
     {
-                           // default           50 - 0
-        auto movingToTile{ t_toTile->maxPopulation - static_cast<int>(t_toTile->population) }; // = 50
+        auto movingToTile{ t_toTile->maxResidentsOrEmployees - static_cast<int>(t_toTile->curResidentsOrEmployees) };
 
-        // limit movingToTile to moveRate
-        if (movingToTile > moveRate)
-        {
-            movingToTile = moveRate; // movingToTile = 4
-        }
+        // limit movingToTile to value of moveRate
+        movingToTile = std::min(movingToTile, moveRate);
+        SG_ASSERT(movingToTile >= 0 && movingToTile <= moveRate, "[City::Distribute()] Invalid moving value")
 
-        // limit movingToTile to t_from
+        // limit movingToTile to value of t_from
         if (static_cast<int>(t_from) - movingToTile < 0)
         {
             movingToTile = static_cast<int>(t_from);
+            SG_ASSERT(movingToTile >= 0 && movingToTile <= moveRate, "[City::Distribute()] Invalid moving value")
         }
 
-        // move from t_from ...
+        // and now the homeless/unemployed go ...
         t_from -= static_cast<float>(movingToTile);
 
-        // into the tile
-        t_toTile->population += static_cast<float>(movingToTile);
+        // ... into the tile
+        t_toTile->curResidentsOrEmployees += static_cast<float>(movingToTile);
     }
 
     // adjust the tile population for births and deaths
-    t_toTile->population += t_toTile->population * t_rate;
+    // only affects residential tiles if non-zero rate is passed
+    t_toTile->curResidentsOrEmployees += t_toTile->curResidentsOrEmployees * t_rate;
 
-    // move population that cannot be sustained by the tile into the pool
-    if (t_toTile->population > static_cast<float>(t_toTile->maxPopulation))
+    // move residents that cannot be sustained by the tile into the pool
+    const auto maxRes{ static_cast<float>(t_toTile->maxResidentsOrEmployees) };
+    if (t_toTile->curResidentsOrEmployees > maxRes)
     {
+        // should only affects residential tiles
+        SG_ASSERT(t_toTile->type == map::Tile::TileType::RESIDENTIAL, "[City::Distribute()] Invalid tile type")
+
         // new homeless people
-        t_from += t_toTile->population - static_cast<float>(t_toTile->maxPopulation);
+        t_from += t_toTile->curResidentsOrEmployees - maxRes;
 
         // limit tile population to tile max population
-        t_toTile->population = static_cast<float>(t_toTile->maxPopulation);
+        t_toTile->curResidentsOrEmployees = maxRes;
     }
 
-    return t_toTile->population;
+    return t_toTile->curResidentsOrEmployees;
 }
 
 //-------------------------------------------------
@@ -157,8 +186,16 @@ void sg::city::City::Init()
     birthRate = Application::INI.Get<float>("city", "birth_rate");
     deathRate = Application::INI.Get<float>("city", "death_rate");
     homelessPeople = Application::INI.Get<float>("city", "homeless_people");
-    unemployedPeople = Application::INI.Get<float>("city", "unemployed_people");
     proportionCanWork = Application::INI.Get<float>("city", "proportion_population_can_work");
+
+    // at the beginning all residents are homeless
+    population = homelessPeople;
+
+    // indicates how many of the homeless are able to work
+    employable = homelessPeople * proportionCanWork;
+
+    // at the beginning all employable homeless people are also unemployed
+    unemployedPeople = employable;
 
     Log::SG_LOG_DEBUG("[City::Init()] The city was successfully initialized.");
 }

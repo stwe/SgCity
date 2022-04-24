@@ -213,22 +213,20 @@ namespace sg::map
         std::vector<std::shared_ptr<Tile>> neighbors;
 
         /**
-         * Each Tilewill be labelled depending on what region it is in.
+         * Each Tile will be labelled depending on what region it is in.
          * Tiles are in the same region if there is a path (through zones or roads) between them.
          */
         int region{ NO_REGION };
 
-        // todo
+        /**
+         * The number of current residents / employees.
+         */
+        float curResidentsOrEmployees{ 0 };
 
         /**
-         * The number of current residents.
+         * The maximum number of residents / employees.
          */
-        float population{ 0 };
-
-        /**
-         * Maximum population.
-         */
-        int maxPopulation{ 50 };
+        int maxResidentsOrEmployees{ 50 };
 
         //-------------------------------------------------
         // Ctors. / Dtor.

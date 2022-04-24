@@ -64,38 +64,38 @@ namespace sg::city
         /**
          * Proportion of residents who give birth each day.
          */
-        float birthRate{ 0.00050f };
+        float birthRate{ 0.0f };
 
         /**
          * Proportion of residents who die.
          * death rate = 1 / (life expectancy * 360)
          */
-        float deathRate{ 0.00025f };
+        float deathRate{ 0.0f };
 
         /**
          * Number of people who do not have a home.
          */
-        float homelessPeople{ 50.0f };
+        float homelessPeople{ 0.0f };
 
         /**
          * Number of people who do not have a job.
          */
-        float unemployedPeople{ 25.0f };
+        float unemployedPeople{ 0.0f };
 
         /**
          * Proportion of the population that can work.
          */
-        float proportionCanWork{ 0.50f };
+        float proportionCanWork{ 0.0f };
 
         /**
          * The total population.
          */
-        float population{ homelessPeople };
+        float population{ 0.0f };
 
         /**
-         * Equal to proportionCanWork (0.5) x population (50.0).
+         * The total employable people.
          */
-        float employable{ unemployedPeople };
+        float employable{ 0.0f };
 
         /**
          * Days already gone.

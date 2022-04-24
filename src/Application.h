@@ -25,6 +25,11 @@
 // Forward declarations
 //-------------------------------------------------
 
+namespace sg::city
+{
+    class City;
+}
+
 namespace sg::map
 {
     class Map;
@@ -111,12 +116,17 @@ namespace sg
         /**
          * The Map object.
          */
-        std::unique_ptr<map::Map> m_map;
+        std::shared_ptr<map::Map> m_map;
 
         /**
          * A Skybox object.
          */
         std::unique_ptr<ogl::resource::Skybox> m_skybox;
+
+        /**
+         * A City object.
+         */
+        std::unique_ptr<city::City> m_city;
 
         //-------------------------------------------------
         // Logic

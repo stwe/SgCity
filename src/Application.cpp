@@ -22,6 +22,7 @@
 #include "Log.h"
 #include "map/Map.h"
 #include "ogl/OpenGL.h"
+#include "city/City.h"
 
 //-------------------------------------------------
 // Ctors. / Dtor.
@@ -73,10 +74,13 @@ void sg::Application::Init()
 
     // create && init map tiles
     const auto tc{ INI.Get<int>("world", "tile_count") };
-    m_map = std::make_unique<map::Map>(m_window, tc);
+    m_map = std::make_shared<map::Map>(m_window, tc);
 
     // create skybox
     m_skybox = std::make_unique<ogl::resource::Skybox>();
+
+    // create && init city
+    m_city = std::make_unique<city::City>("Musterstadt", m_map);
 
     Log::SG_LOG_DEBUG("[Application::Init()] The application was successfully initialized.");
 }
@@ -99,6 +103,7 @@ void sg::Application::Input() const
 void sg::Application::Update()
 {
     m_map->Update();
+    m_city->Update();
 }
 
 void sg::Application::Render()
@@ -142,6 +147,7 @@ void sg::Application::RenderImGui() const
 
     //m_camera->RenderImGui();
     m_map->RenderImGui();
+    m_city->RenderImGui();
 
     ogl::Window::ImGuiEnd();
 }

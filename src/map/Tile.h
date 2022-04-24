@@ -218,6 +218,18 @@ namespace sg::map
          */
         int region{ NO_REGION };
 
+        // todo
+
+        /**
+         * The number of current residents.
+         */
+        float population{ 0 };
+
+        /**
+         * Maximum population.
+         */
+        int maxPopulation{ 50 };
+
         //-------------------------------------------------
         // Ctors. / Dtor.
         //-------------------------------------------------

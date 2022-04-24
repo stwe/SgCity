@@ -57,7 +57,7 @@ void sg::map::Map::Update()
 
 void sg::map::Map::RenderForMousePicking(const ogl::camera::Camera& t_camera) const
 {
-    m_terrainLayer->RenderForMousePicking(*window, t_camera);
+    terrainLayer->RenderForMousePicking(*window, t_camera);
 }
 
 void sg::map::Map::RenderForWater(ogl::camera::Camera& t_camera, const ogl::resource::Skybox& t_skybox) const
@@ -73,7 +73,7 @@ void sg::map::Map::RenderForWater(ogl::camera::Camera& t_camera, const ogl::reso
     t_camera.position.y -= distance;
     t_camera.InvertPitch();
 
-    m_terrainLayer->Render(t_camera, glm::vec4(0.0f, 1.0f, 0.0f, WaterLayer::WATER_HEIGHT));
+    terrainLayer->Render(t_camera, glm::vec4(0.0f, 1.0f, 0.0f, WaterLayer::WATER_HEIGHT));
     m_roadsLayer->Render(t_camera, glm::vec4(0.0f, 1.0f, 0.0f, WaterLayer::WATER_HEIGHT));
     m_buildingsLayer->Render(t_camera, glm::vec4(0.0f, 1.0f, 0.0f, WaterLayer::WATER_HEIGHT));
     m_plantsLayer->Render(t_camera, glm::vec4(0.0f, 1.0f, 0.0f, WaterLayer::WATER_HEIGHT));
@@ -87,7 +87,7 @@ void sg::map::Map::RenderForWater(ogl::camera::Camera& t_camera, const ogl::reso
     // refraction - everything below the water
     m_waterLayer->GetWaterFbos().BindRefractionFboAsRenderTarget();
     ogl::OpenGL::Clear();
-    m_terrainLayer->Render(t_camera, glm::vec4(0.0f, -1.0f, 0.0f, -WaterLayer::WATER_HEIGHT));
+    terrainLayer->Render(t_camera, glm::vec4(0.0f, -1.0f, 0.0f, -WaterLayer::WATER_HEIGHT));
     m_waterLayer->GetWaterFbos().UnbindRenderTarget();
 
     ogl::OpenGL::DisableClipping();
@@ -95,7 +95,7 @@ void sg::map::Map::RenderForWater(ogl::camera::Camera& t_camera, const ogl::reso
 
 void sg::map::Map::Render(const ogl::camera::Camera& t_camera) const
 {
-    m_terrainLayer->Render(t_camera, glm::vec4(0.0f, 1.0f, 0.0f, 100000.0f));
+    terrainLayer->Render(t_camera, glm::vec4(0.0f, 1.0f, 0.0f, 100000.0f));
     m_roadsLayer->Render(t_camera, glm::vec4(0.0f, 1.0f, 0.0f, 100000.0f));
     m_buildingsLayer->Render(t_camera, glm::vec4(0.0f, 1.0f, 0.0f, 100000.0f));
     m_plantsLayer->Render(t_camera, glm::vec4(0.0f, 1.0f, 0.0f, 100000.0f));
@@ -112,7 +112,7 @@ void sg::map::Map::RenderImGui() const
     ImGui::Text("Mouse x: %.*f", 0, window->GetMouseX()); // NOLINT(clang-diagnostic-double-promotion)
     ImGui::Text("Mouse y: %.*f", 0, window->GetMouseY()); // NOLINT(clang-diagnostic-double-promotion)
 
-    m_terrainLayer->RenderImGui();
+    terrainLayer->RenderImGui();
     //m_roadsLayer->RenderImGui();
     m_buildingsLayer->RenderImGui();
     m_plantsLayer->RenderImGui();
@@ -132,10 +132,10 @@ void sg::map::Map::Init()
     InitEventDispatcher();
 
     m_waterLayer = std::make_unique<WaterLayer>(window, m_tileCount);
-    m_terrainLayer = std::make_unique<TerrainLayer>(window, m_tileCount);
-    m_roadsLayer = std::make_unique<RoadsLayer>(window, m_tileCount, m_terrainLayer->tiles);
-    m_buildingsLayer = std::make_unique<BuildingsLayer>(window, m_tileCount, m_terrainLayer->tiles);
-    m_plantsLayer = std::make_unique<PlantsLayer>(window, m_tileCount, m_terrainLayer->tiles);
+    terrainLayer = std::make_unique<TerrainLayer>(window, m_tileCount);
+    m_roadsLayer = std::make_unique<RoadsLayer>(window, m_tileCount, terrainLayer->tiles);
+    m_buildingsLayer = std::make_unique<BuildingsLayer>(window, m_tileCount, terrainLayer->tiles);
+    m_plantsLayer = std::make_unique<PlantsLayer>(window, m_tileCount, terrainLayer->tiles);
 
     Log::SG_LOG_DEBUG("[Map::Init()] The map was successfully initialized.");
 }
@@ -159,7 +159,7 @@ void sg::map::Map::InitEventDispatcher() const
                     }
 
                     //m_waterLayer->OnLeftMouseButtonPressed();
-                    m_terrainLayer->OnLeftMouseButtonPressed();
+                    terrainLayer->OnLeftMouseButtonPressed();
                     //m_roadsLayer->OnLeftMouseButtonPressed();
                     //m_buildingsLayer->OnLeftMouseButtonPressed();
                     //m_plantsLayer->OnLeftMouseButtonPressed();
@@ -178,7 +178,7 @@ void sg::map::Map::InitEventDispatcher() const
                 if (t_event.button == GLFW_MOUSE_BUTTON_LEFT)
                 {
                     //m_waterLayer->OnLeftMouseButtonReleased();
-                    m_terrainLayer->OnLeftMouseButtonReleased();
+                    terrainLayer->OnLeftMouseButtonReleased();
                     //m_roadsLayer->OnLeftMouseButtonReleased();
                     //m_buildingsLayer->OnLeftMouseButtonReleased();
                     //m_plantsLayer->OnLeftMouseButtonReleased();
@@ -195,7 +195,7 @@ void sg::map::Map::InitEventDispatcher() const
             [this](const event::MouseMovedEvent& t_event)
             {
                 //m_waterLayer->OnMouseMoved();
-                m_terrainLayer->OnMouseMoved();
+                terrainLayer->OnMouseMoved();
                 //m_roadsLayer->OnMouseMoved();
                 //m_buildingsLayer->OnMouseMoved();
                 //m_plantsLayer->OnMouseMoved();

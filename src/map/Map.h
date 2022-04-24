@@ -67,6 +67,11 @@ namespace sg::map
          */
         std::shared_ptr<ogl::Window> window;
 
+        /**
+         * The terrain Layer.
+         */
+        std::unique_ptr<TerrainLayer> terrainLayer;
+
         //-------------------------------------------------
         // Ctors. / Dtor.
         //-------------------------------------------------
@@ -114,11 +119,6 @@ namespace sg::map
          * The water Layer.
          */
         std::unique_ptr<WaterLayer> m_waterLayer;
-
-        /**
-         * The terrain Layer.
-         */
-        std::unique_ptr<TerrainLayer> m_terrainLayer;
 
         /**
          * The roads Layer

@@ -90,23 +90,14 @@ void sg::city::City::Update()
     homelessPeople += homelessPeople * (birthRate - deathRate);
     populationTotal += homelessPeople;
 
-    // todo --------------------
-
     // adjust the number of unemployed people for births and deaths
     auto newWorkers{ (populationTotal - population) * proportionCanWork };
     newWorkers *= newWorkers < 0 ? -1 : 1;
     unemployedPeople += newWorkers;
     employable += newWorkers;
 
-    if (unemployedPeople < 0)
-    {
-        unemployedPeople = 0;
-    }
-
-    if (employable < 0)
-    {
-        employable = 0;
-    }
+    unemployedPeople = std::max(unemployedPeople, 0.0f);
+    employable = std::max(employable, 0.0f);
 
     // update city population
     population = populationTotal;

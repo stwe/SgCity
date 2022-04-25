@@ -77,7 +77,7 @@ void sg::map::Map::RenderForWater(ogl::camera::Camera& t_camera, const ogl::reso
     m_roadsLayer->Render(t_camera, glm::vec4(0.0f, 1.0f, 0.0f, WaterLayer::WATER_HEIGHT));
     m_buildingsLayer->Render(t_camera, glm::vec4(0.0f, 1.0f, 0.0f, WaterLayer::WATER_HEIGHT));
     m_plantsLayer->Render(t_camera, glm::vec4(0.0f, 1.0f, 0.0f, WaterLayer::WATER_HEIGHT));
-    //t_skybox.Render(t_window, t_camera);
+    t_skybox.Render(*window, t_camera);
 
     t_camera.position.y += distance;
     t_camera.InvertPitch();

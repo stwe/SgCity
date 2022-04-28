@@ -48,7 +48,7 @@ namespace sg::map
 
         WaterLayer() = delete;
 
-        WaterLayer(std::shared_ptr<ogl::Window> t_window, int t_tileCount);
+        explicit WaterLayer(std::shared_ptr<ogl::Window> t_window);
 
         WaterLayer(const WaterLayer& t_other) = delete;
         WaterLayer(WaterLayer&& t_other) noexcept = delete;

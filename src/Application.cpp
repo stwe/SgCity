@@ -73,8 +73,7 @@ void sg::Application::Init()
     m_camera = std::make_unique<ogl::camera::Camera>(m_window, glm::vec3(pos[0], pos[1], pos[2]), yaw, pitch);
 
     // create && init map tiles
-    const auto tc{ INI.Get<int>("world", "tile_count") };
-    m_map = std::make_shared<map::Map>(m_window, tc);
+    m_map = std::make_shared<map::Map>(m_window);
 
     // create skybox
     m_skybox = std::make_unique<ogl::resource::Skybox>();

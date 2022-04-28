@@ -16,11 +16,10 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-#include <glm/gtc/matrix_inverse.hpp>
 #include "RoadsLayer.h"
 #include "Tile.h"
 #include "Log.h"
-#include "ogl/Window.h"
+#include "Map.h"
 #include "ogl/OpenGL.h"
 #include "ogl/math/Transform.h"
 #include "ogl/resource/ResourceManager.h"
@@ -31,8 +30,8 @@
 // Ctors. / Dtor.
 //-------------------------------------------------
 
-sg::map::RoadsLayer::RoadsLayer(std::shared_ptr<ogl::Window> t_window, const int t_tileCount, std::vector<std::shared_ptr<Tile>> t_tiles)
-    : Layer(std::move(t_window), t_tileCount, std::move(t_tiles))
+sg::map::RoadsLayer::RoadsLayer(std::shared_ptr<ogl::Window> t_window, std::vector<std::shared_ptr<Tile>> t_tiles)
+    : Layer(std::move(t_window), std::move(t_tiles))
 {
     Log::SG_LOG_DEBUG("[RoadsLayer::RoadsLayer()] Create RoadsLayer.");
 
@@ -156,7 +155,7 @@ void sg::map::RoadsLayer::OnCreateRoad(const Tile& t_tile)
     if (!vao)
     {
         vao = std::make_unique<ogl::buffer::Vao>();
-        vao->CreateEmptyDynamicVbo(tileCount * tileCount * Tile::BYTES_PER_TILE, static_cast<int>(m_roadTiles.size()) * Tile::VERTICES_PER_TILE);
+        vao->CreateEmptyDynamicVbo(Map::TILE_COUNT * Map::TILE_COUNT * Tile::BYTES_PER_TILE, static_cast<int>(m_roadTiles.size()) * Tile::VERTICES_PER_TILE);
     }
 
     // store all tiles in Vao
@@ -186,7 +185,7 @@ void sg::map::RoadsLayer::RoadTilesToGpu()
     }
 
     vao = std::make_unique<ogl::buffer::Vao>();
-    vao->CreateEmptyDynamicVbo(tileCount * tileCount * Tile::BYTES_PER_TILE, static_cast<int>(m_roadTiles.size()) * Tile::VERTICES_PER_TILE);
+    vao->CreateEmptyDynamicVbo(Map::TILE_COUNT * Map::TILE_COUNT * Tile::BYTES_PER_TILE, static_cast<int>(m_roadTiles.size()) * Tile::VERTICES_PER_TILE);
 
     for (const auto& roadTile : m_roadTiles)
     {

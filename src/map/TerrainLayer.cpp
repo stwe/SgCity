@@ -18,9 +18,9 @@
 
 #include <glm/gtc/matrix_inverse.hpp>
 #include "TerrainLayer.h"
-#include "Tile.h"
+#include "TileFactory.h"
 #include "Log.h"
-#include "ogl/Window.h"
+#include "Map.h"
 #include "ogl/OpenGL.h"
 #include "ogl/math/Transform.h"
 #include "ogl/resource/ResourceManager.h"
@@ -31,8 +31,8 @@
 // Ctors. / Dtor.
 //-------------------------------------------------
 
-sg::map::TerrainLayer::TerrainLayer(std::shared_ptr<ogl::Window> t_window, const int t_tileCount)
-    : Layer(std::move(t_window), t_tileCount)
+sg::map::TerrainLayer::TerrainLayer(std::shared_ptr<ogl::Window> t_window)
+    : Layer(std::move(t_window))
 {
     Log::SG_LOG_DEBUG("[TerrainLayer::TerrainLayer()] Create TerrainLayer.");
 
@@ -246,7 +246,7 @@ void sg::map::TerrainLayer::OnMouseMoved()
                 for (auto x{ sx }; x <= ex; ++x)
                 {
                     // calc tile map index
-                    const auto i{ z * tileCount + x };
+                    const auto i{ TileFactory::GetMapIndexFromPosition(x, z) };
 
                     // only tiles of type NONE can be selected
                     if (tiles[i]->type == Tile::TileType::NONE)
@@ -290,13 +290,11 @@ void sg::map::TerrainLayer::Init()
 
 void sg::map::TerrainLayer::CreateTiles()
 {
-    for (auto z{ 0 }; z < tileCount; ++z)
+    for (auto z{ 0 }; z < Map::TILE_COUNT; ++z)
     {
-        for (auto x{ 0 }; x < tileCount; ++x)
+        for (auto x{ 0 }; x < Map::TILE_COUNT; ++x)
         {
-            const auto i{ z * tileCount + x };
-            // todo: the normal of each Tile is vec3(0, 1, 0) by default
-            tiles.emplace_back(std::make_unique<Tile>(static_cast<float>(x), static_cast<float>(z), i));
+            tiles.emplace_back(TileFactory::CreateTile(static_cast<float>(x), static_cast<float>(z), Tile::TileType::NONE));
         }
     }
 }
@@ -307,59 +305,59 @@ void sg::map::TerrainLayer::CreateTiles()
 
 void sg::map::TerrainLayer::AddTileNeighbors() const
 {
-    for (auto z{ 0 }; z < tileCount; ++z)
+    for (auto z{ 0 }; z < Map::TILE_COUNT; ++z)
     {
-        for (auto x{ 0 }; x < tileCount; ++x)
+        for (auto x{ 0 }; x < Map::TILE_COUNT; ++x)
         {
-            const auto i{ z * tileCount + x };
+            const auto i{ z * Map::TILE_COUNT + x };
 
             // regular grid
             if (z > 0)
             {
-                tiles[i]->n = tiles[(z - 1) * tileCount + x];
+                tiles[i]->n = tiles[(z - 1) * Map::TILE_COUNT + x];
                 tiles[i]->neighbors.push_back(tiles[i]->n);
             }
 
-            if (z < tileCount - 1)
+            if (z < Map::TILE_COUNT - 1)
             {
-                tiles[i]->s = tiles[(z + 1) * tileCount + x];
+                tiles[i]->s = tiles[(z + 1) * Map::TILE_COUNT + x];
                 tiles[i]->neighbors.push_back(tiles[i]->s);
             }
 
             if (x > 0)
             {
-                tiles[i]->w = tiles[z * tileCount + (x - 1)];
+                tiles[i]->w = tiles[z * Map::TILE_COUNT + (x - 1)];
                 tiles[i]->neighbors.push_back(tiles[i]->w);
             }
 
-            if (x < tileCount - 1)
+            if (x < Map::TILE_COUNT - 1)
             {
-                tiles[i]->e = tiles[z * tileCount + (x + 1)];
+                tiles[i]->e = tiles[z * Map::TILE_COUNT + (x + 1)];
                 tiles[i]->neighbors.push_back(tiles[i]->e);
             }
 
             // connect diagonally
-            if (z > 0 && x < tileCount - 1)
+            if (z > 0 && x < Map::TILE_COUNT - 1)
             {
-                tiles[i]->ne = tiles[(z - 1) * tileCount + (x + 1)];
+                tiles[i]->ne = tiles[(z - 1) * Map::TILE_COUNT + (x + 1)];
                 tiles[i]->neighbors.push_back(tiles[i]->ne);
             }
 
             if (z > 0 && x > 0)
             {
-                tiles[i]->nw = tiles[(z - 1) * tileCount + (x - 1)];
+                tiles[i]->nw = tiles[(z - 1) * Map::TILE_COUNT + (x - 1)];
                 tiles[i]->neighbors.push_back(tiles[i]->nw);
             }
 
-            if (z < tileCount - 1 && x > 0)
+            if (z < Map::TILE_COUNT - 1 && x > 0)
             {
-                tiles[i]->sw = tiles[(z + 1) * tileCount + (x - 1)];
+                tiles[i]->sw = tiles[(z + 1) * Map::TILE_COUNT + (x - 1)];
                 tiles[i]->neighbors.push_back(tiles[i]->sw);
             }
 
-            if (z < tileCount - 1 && x < tileCount - 1)
+            if (z < Map::TILE_COUNT - 1 && x < Map::TILE_COUNT - 1)
             {
-                tiles[i]->se = tiles[(z + 1) * tileCount + (x + 1)];
+                tiles[i]->se = tiles[(z + 1) * Map::TILE_COUNT + (x + 1)];
                 tiles[i]->neighbors.push_back(tiles[i]->se);
             }
         }
@@ -369,7 +367,7 @@ void sg::map::TerrainLayer::AddTileNeighbors() const
 void sg::map::TerrainLayer::TilesToGpu()
 {
     vao = std::make_unique<ogl::buffer::Vao>();
-    vao->CreateEmptyDynamicVbo(tileCount * tileCount * Tile::BYTES_PER_TILE, tileCount * tileCount * Tile::VERTICES_PER_TILE);
+    vao->CreateEmptyDynamicVbo(Map::TILE_COUNT * Map::TILE_COUNT * Tile::BYTES_PER_TILE, Map::TILE_COUNT * Map::TILE_COUNT * Tile::VERTICES_PER_TILE);
 
     for (const auto& tile : tiles)
     {

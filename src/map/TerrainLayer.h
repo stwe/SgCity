@@ -80,9 +80,8 @@ namespace sg::map
          * Constructs a new TerrainLayer object.
          *
          * @param t_window The Window object.
-         * @param t_tileCount The number of tiles in x and z direction.
          */
-        TerrainLayer(std::shared_ptr<ogl::Window> t_window, int t_tileCount);
+        explicit TerrainLayer(std::shared_ptr<ogl::Window> t_window);
 
         TerrainLayer(const TerrainLayer& t_other) = delete;
         TerrainLayer(TerrainLayer&& t_other) noexcept = delete;

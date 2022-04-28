@@ -18,9 +18,8 @@
 
 #include <imgui.h>
 #include "WaterLayer.h"
-#include "Application.h"
 #include "Log.h"
-#include "ogl/Window.h"
+#include "Map.h"
 #include "ogl/OpenGL.h"
 #include "ogl/math/Transform.h"
 #include "ogl/buffer/Vao.h"
@@ -30,8 +29,8 @@
 // Ctors. / Dtor.
 //-------------------------------------------------
 
-sg::map::WaterLayer::WaterLayer(std::shared_ptr<ogl::Window> t_window, const int t_tileCount)
-    : Layer(std::move(t_window), t_tileCount)
+sg::map::WaterLayer::WaterLayer(std::shared_ptr<ogl::Window> t_window)
+    : Layer(std::move(t_window))
 {
     Log::SG_LOG_DEBUG("[WaterLayer::WaterLayer()] Create WaterLayer.");
 
@@ -145,11 +144,11 @@ void sg::map::WaterLayer::Init()
     Log::SG_LOG_DEBUG("[WaterLayer::Init()] Initialize the WaterLayer.");
 
     m_waterFbos = std::make_unique<ogl::buffer::WaterFbos>(window->GetWidth(), window->GetHeight());
-    position = glm::vec3(tileCount / 2, -WATER_HEIGHT, tileCount / 2);
+    position = glm::vec3(Map::TILE_COUNT / 2, -WATER_HEIGHT, Map::TILE_COUNT / 2);
     modelMatrix = ogl::math::Transform::CreateModelMatrix(
         position,
         glm::vec3(0.0f),
-        glm::vec3(static_cast<float>(tileCount) * 0.5f, 1.0f, static_cast<float>(tileCount) * 0.5f)
+        glm::vec3(static_cast<float>(Map::TILE_COUNT) * 0.5f, 1.0f, static_cast<float>(Map::TILE_COUNT) * 0.5f)
     );
 
     vao = std::make_unique<ogl::buffer::Vao>();

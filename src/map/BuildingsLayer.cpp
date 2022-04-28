@@ -29,8 +29,8 @@
 // Ctors. / Dtor.
 //-------------------------------------------------
 
-sg::map::BuildingsLayer::BuildingsLayer(std::shared_ptr<ogl::Window> t_window, const int t_tileCount, std::vector<std::shared_ptr<Tile>> t_tiles)
-    : Layer(std::move(t_window), t_tileCount, std::move(t_tiles))
+sg::map::BuildingsLayer::BuildingsLayer(std::shared_ptr<ogl::Window> t_window, std::vector<std::shared_ptr<Tile>> t_tiles)
+    : Layer(std::move(t_window), std::move(t_tiles))
 {
     Log::SG_LOG_DEBUG("[BuildingsLayer::BuildingsLayer()] Create BuildingsLayer.");
 

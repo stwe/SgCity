@@ -51,10 +51,9 @@ namespace sg::map
          * Constructs a new BuildingsLayer object.
          *
          * @param t_window The Window object.
-         * @param t_tileCount The number of tiles in x and z direction.
          * @param t_tiles The Tile objects.
          */
-        BuildingsLayer(std::shared_ptr<ogl::Window> t_window, int t_tileCount, std::vector<std::shared_ptr<Tile>> t_tiles);
+        BuildingsLayer(std::shared_ptr<ogl::Window> t_window, std::vector<std::shared_ptr<Tile>> t_tiles);
 
         BuildingsLayer(const BuildingsLayer& t_other) = delete;
         BuildingsLayer(BuildingsLayer&& t_other) noexcept = delete;

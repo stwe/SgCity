@@ -18,7 +18,7 @@
 
 #pragma once
 
-#include <memory>
+#include "Application.h"
 #include "ogl/resource/Skybox.h"
 
 //-------------------------------------------------
@@ -59,6 +59,15 @@ namespace sg::map
     {
     public:
         //-------------------------------------------------
+        // Constants
+        //-------------------------------------------------
+
+        /*
+         * The number of tiles in x and z direction.
+         */
+        inline static const auto TILE_COUNT{ Application::INI.Get<int>("world", "tile_count") };
+
+        //-------------------------------------------------
         // Member
         //-------------------------------------------------
 
@@ -68,7 +77,7 @@ namespace sg::map
         std::shared_ptr<ogl::Window> window;
 
         /**
-         * The terrain Layer.
+         * The Terrain Layer.
          */
         std::unique_ptr<TerrainLayer> terrainLayer;
 
@@ -82,9 +91,8 @@ namespace sg::map
          * Constructs a new Map object.
          *
          * @param t_window The Window object.
-         * @param t_tileCount The number of tiles in x and z direction.
          */
-        Map(std::shared_ptr<ogl::Window> t_window, int t_tileCount);
+        explicit Map(std::shared_ptr<ogl::Window> t_window);
 
         Map(const Map& t_other) = delete;
         Map(Map&& t_other) noexcept = delete;
@@ -110,28 +118,23 @@ namespace sg::map
         // Member
         //-------------------------------------------------
 
-        /*
-         * The number of tiles in x and z direction.
-         */
-        int m_tileCount{ 0 };
-
         /**
-         * The water Layer.
+         * The Water Layer.
          */
         std::unique_ptr<WaterLayer> m_waterLayer;
 
         /**
-         * The roads Layer
+         * The Roads Layer
          */
         std::unique_ptr<RoadsLayer> m_roadsLayer;
 
         /**
-         * The buildings Layer.
+         * The Buildings Layer.
          */
         std::unique_ptr<BuildingsLayer> m_buildingsLayer;
 
         /**
-         * The plants layer.
+         * The Plants layer.
          */
         std::unique_ptr<PlantsLayer> m_plantsLayer;
 

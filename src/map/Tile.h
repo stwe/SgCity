@@ -226,7 +226,7 @@ namespace sg::map
         /**
          * The maximum number of residents / employees.
          */
-        int maxResidentsOrEmployees{ 50 };
+        int maxResidentsOrEmployees{ 0 };
 
         //-------------------------------------------------
         // Ctors. / Dtor.

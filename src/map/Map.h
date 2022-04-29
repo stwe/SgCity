@@ -65,7 +65,7 @@ namespace sg::map
         /*
          * The number of tiles in x and z direction.
          */
-        inline static const auto TILE_COUNT{ Application::INI.Get<int>("world", "tile_count") };
+        inline static const auto TILE_COUNT{ Application::INI.Get<int>("world", "tile_count") }; // NOLINT(cert-err58-cpp)
 
         //-------------------------------------------------
         // Member

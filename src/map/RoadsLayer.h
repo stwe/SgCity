@@ -77,7 +77,7 @@ namespace sg::map
          * @param t_camera The Camera object.
          * @param t_plane The clipping plane.
          */
-        void Render(const ogl::camera::Camera& t_camera, const glm::vec4& t_plane = glm::vec4(0.0f)) override;
+        void Render(const ogl::camera::Camera& t_camera, const glm::vec4& t_plane) override;
 
     protected:
 

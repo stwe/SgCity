@@ -11,7 +11,7 @@ void main()
 {
     fragColor = texture(diffuseMap, vUv);
 
-    if (vSelected)
+    if (vSelected > 0.5)
     {
         fragColor = fragColor / 2.0;
     }

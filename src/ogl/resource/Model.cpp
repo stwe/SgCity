@@ -19,6 +19,7 @@
 #include <assimp/Importer.hpp>
 #include <ogl/math/Transform.h>
 #include "Model.h"
+#include "Application.h"
 #include "Mesh.h"
 #include "Material.h"
 #include "SgAssert.h"
@@ -64,7 +65,7 @@ void sg::ogl::resource::Model::Render(
 {
     OpenGL::EnableAlphaBlending();
 
-    const auto& shaderProgram{ ResourceManager::LoadShaderProgram("E:/Dev/SgCity/resources/shader/model") };
+    const auto& shaderProgram{ ResourceManager::LoadShaderProgram(Application::RESOURCES_PATH + "shader/model") };
     shaderProgram.Bind();
 
     for (const auto& mesh : meshes)

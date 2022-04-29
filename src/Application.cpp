@@ -70,7 +70,11 @@ void sg::Application::Init()
     const auto pos{ INI.GetVector<float>("camera", "position") };
     const auto yaw{ INI.Get<float>("camera", "yaw") };
     const auto pitch{ INI.Get<float>("camera", "pitch") };
+    const auto movementSpeed{ INI.Get<float>("camera", "movement_speed") };
+    const auto mouseSensitivity{ INI.Get<float>("camera", "mouse_sensitivity") };
     m_camera = std::make_unique<ogl::camera::Camera>(m_window, glm::vec3(pos[0], pos[1], pos[2]), yaw, pitch);
+    m_camera->SetCameraSpeed(movementSpeed);
+    m_camera->SetMouseSensitivity(mouseSensitivity);
 
     // create && init map tiles
     m_map = std::make_shared<map::Map>(m_window);

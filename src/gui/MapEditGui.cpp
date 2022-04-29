@@ -17,6 +17,7 @@
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 #include "MapEditGui.h"
+#include "Application.h"
 #include "Log.h"
 #include "ogl/resource/ResourceManager.h"
 
@@ -105,14 +106,14 @@ std::vector<ImTextureID> sg::gui::MapEditGui::CreateButtonTextures()
 
     std::vector<ImTextureID> textures;
 
-    const auto& raiseTexture{ ogl::resource::ResourceManager::LoadTexture("E:/Dev/SgCity/resources/texture/raise.png") };
-    const auto& lowerTexture{ ogl::resource::ResourceManager::LoadTexture("E:/Dev/SgCity/resources/texture/lower.png") };
-    const auto& rTexture{ ogl::resource::ResourceManager::LoadTexture("E:/Dev/SgCity/resources/texture/r.png", true) };
-    const auto& cTexture{ ogl::resource::ResourceManager::LoadTexture("E:/Dev/SgCity/resources/texture/c.png") };
-    const auto& iTexture{ ogl::resource::ResourceManager::LoadTexture("E:/Dev/SgCity/resources/texture/i.png") };
-    const auto& tTexture{ ogl::resource::ResourceManager::LoadTexture("E:/Dev/SgCity/resources/texture/traffic.png") };
-    const auto& plantTexture{ ogl::resource::ResourceManager::LoadTexture("E:/Dev/SgCity/resources/texture/trees.png") };
-    const auto& infoTexture{ ogl::resource::ResourceManager::LoadTexture("E:/Dev/SgCity/resources/texture/info.png") };
+    const auto& raiseTexture{ ogl::resource::ResourceManager::LoadTexture(Application::RESOURCES_PATH + "texture/raise.png") };
+    const auto& lowerTexture{ ogl::resource::ResourceManager::LoadTexture(Application::RESOURCES_PATH + "texture/lower.png") };
+    const auto& rTexture{ ogl::resource::ResourceManager::LoadTexture(Application::RESOURCES_PATH + "texture/r.png", true) };
+    const auto& cTexture{ ogl::resource::ResourceManager::LoadTexture(Application::RESOURCES_PATH + "texture/c.png") };
+    const auto& iTexture{ ogl::resource::ResourceManager::LoadTexture(Application::RESOURCES_PATH + "texture/i.png") };
+    const auto& tTexture{ ogl::resource::ResourceManager::LoadTexture(Application::RESOURCES_PATH + "texture/traffic.png") };
+    const auto& plantTexture{ ogl::resource::ResourceManager::LoadTexture(Application::RESOURCES_PATH + "texture/trees.png") };
+    const auto& infoTexture{ ogl::resource::ResourceManager::LoadTexture(Application::RESOURCES_PATH + "texture/info.png") };
 
     textures.push_back(reinterpret_cast<ImTextureID>(static_cast<uintptr_t>(raiseTexture.id)));
     textures.push_back(reinterpret_cast<ImTextureID>(static_cast<uintptr_t>(lowerTexture.id)));

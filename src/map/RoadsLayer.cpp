@@ -17,6 +17,7 @@
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 #include "RoadsLayer.h"
+#include "Application.h"
 #include "Tile.h"
 #include "Log.h"
 #include "Map.h"
@@ -58,14 +59,14 @@ void sg::map::RoadsLayer::Render(const ogl::camera::Camera& t_camera, const glm:
 
     vao->Bind();
 
-    const auto& shaderProgram{ ogl::resource::ResourceManager::LoadShaderProgram("E:/Dev/SgCity/resources/shader/layer/roads") };
+    const auto& shaderProgram{ ogl::resource::ResourceManager::LoadShaderProgram(Application::RESOURCES_PATH + "shader/layer/roads") };
     shaderProgram.Bind();
 
     shaderProgram.SetUniform("model", modelMatrix);
     shaderProgram.SetUniform("view", t_camera.GetViewMatrix());
     shaderProgram.SetUniform("projection", window->GetProjectionMatrix());
 
-    const auto& texture{ ogl::resource::ResourceManager::LoadTexture("E:/Dev/SgCity/resources/texture/roads.png") };
+    const auto& texture{ ogl::resource::ResourceManager::LoadTexture(Application::RESOURCES_PATH + "texture/roads.png") };
     texture.BindForReading(GL_TEXTURE0);
     shaderProgram.SetUniform("diffuseMap", 0);
 

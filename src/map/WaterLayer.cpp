@@ -18,6 +18,7 @@
 
 #include <imgui.h>
 #include "WaterLayer.h"
+#include "Application.h"
 #include "Log.h"
 #include "Map.h"
 #include "ogl/OpenGL.h"
@@ -59,7 +60,7 @@ void sg::map::WaterLayer::Render(const ogl::camera::Camera& t_camera, const glm:
 
     vao->Bind();
 
-    const auto& shaderProgram{ ogl::resource::ResourceManager::LoadShaderProgram("E:/Dev/SgCity/resources/shader/layer/water") };
+    const auto& shaderProgram{ ogl::resource::ResourceManager::LoadShaderProgram(Application::RESOURCES_PATH + "shader/layer/water") };
     shaderProgram.Bind();
 
     shaderProgram.SetUniform("model", modelMatrix);
@@ -77,12 +78,12 @@ void sg::map::WaterLayer::Render(const ogl::camera::Camera& t_camera, const glm:
     glBindTexture(GL_TEXTURE_2D, m_waterFbos->refractionColorTextureId);
     shaderProgram.SetUniform("refractionTexture", 1);
 
-    const auto& dudvTexture{ ogl::resource::ResourceManager::LoadTexture("E:/Dev/SgCity/resources/water/dudv.png") };
+    const auto& dudvTexture{ ogl::resource::ResourceManager::LoadTexture(Application::RESOURCES_PATH + "water/dudv.png") };
     glActiveTexture(GL_TEXTURE2);
     glBindTexture(GL_TEXTURE_2D, dudvTexture.id);
     shaderProgram.SetUniform("dudvTexture", 2);
 
-    const auto& normalTexture{ ogl::resource::ResourceManager::LoadTexture("E:/Dev/SgCity/resources/water/normal.png") };
+    const auto& normalTexture{ ogl::resource::ResourceManager::LoadTexture(Application::RESOURCES_PATH + "water/normal.png") };
     glActiveTexture(GL_TEXTURE3);
     glBindTexture(GL_TEXTURE_2D, normalTexture.id);
     shaderProgram.SetUniform("normalTexture", 3);

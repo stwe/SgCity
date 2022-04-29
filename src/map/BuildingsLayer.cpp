@@ -109,7 +109,7 @@ void sg::map::BuildingsLayer::Init()
     m_frustumCulling = Application::INI.Get<bool>("buildings", "frustum_culling");
     m_renderSphere = Application::INI.Get<bool>("buildings", "render_sphere_volume");
 
-    m_model = ogl::resource::ResourceManager::LoadModel(window, "E:/Dev/SgCity/resources/model/house/node_115.obj");
+    m_model = ogl::resource::ResourceManager::LoadModel(window, Application::RESOURCES_PATH + "model/house/node_115.obj");
 
     Log::SG_LOG_DEBUG("[BuildingsLayer::Init()] The BuildingsLayer was successfully initialized.");
 }

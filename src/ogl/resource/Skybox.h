@@ -84,15 +84,7 @@ namespace sg::ogl::resource
         // Constants
         //-------------------------------------------------
 
-        inline static const std::vector<std::string> FACES
-        {
-            "E:/Dev/SgCity/resources/skybox/NissiBeach2/right.jpg",
-            "E:/Dev/SgCity/resources/skybox/NissiBeach2/left.jpg",
-            "E:/Dev/SgCity/resources/skybox/NissiBeach2/top.jpg",
-            "E:/Dev/SgCity/resources/skybox/NissiBeach2/bottom.jpg",
-            "E:/Dev/SgCity/resources/skybox/NissiBeach2/front.jpg",
-            "E:/Dev/SgCity/resources/skybox/NissiBeach2/back.jpg"
-        };
+        static const std::vector<std::string> FACES;
 
         //-------------------------------------------------
         // Member

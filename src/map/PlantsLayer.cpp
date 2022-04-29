@@ -111,7 +111,7 @@ void sg::map::PlantsLayer::Init()
     m_frustumCulling = Application::INI.Get<bool>("plants", "frustum_culling");
     m_renderSphere = Application::INI.Get<bool>("plants", "render_sphere_volume");
 
-    m_model = ogl::resource::ResourceManager::LoadModel(window, "E:/Dev/SgCity/resources/model/tree/prop_001_pine.obj");
+    m_model = ogl::resource::ResourceManager::LoadModel(window, Application::RESOURCES_PATH + "model/tree/prop_001_pine.obj");
 
     Log::SG_LOG_DEBUG("[PlantsLayer::Init()] The PlantsLayer was successfully initialized.");
 }

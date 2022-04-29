@@ -35,7 +35,7 @@ void main()
     float ambientIntensity = 0.4;
     fragColor = max(vIntensity * col, ambientIntensity * col);
 
-    if (vSelected)
+    if (vSelected > 0.5)
     {
         fragColor = fragColor / 2.0;
     }

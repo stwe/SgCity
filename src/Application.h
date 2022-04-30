@@ -35,6 +35,11 @@ namespace sg::map
     class Map;
 }
 
+namespace sg::state
+{
+    class StateStack;
+}
+
 namespace sg::ogl
 {
     class Window;
@@ -133,6 +138,11 @@ namespace sg
          * A City object.
          */
         std::unique_ptr<city::City> m_city;
+
+        /**
+         * A StateStack object.
+         */
+        std::unique_ptr<state::StateStack> m_stateStack;
 
         //-------------------------------------------------
         // Logic

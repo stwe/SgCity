@@ -23,6 +23,7 @@
 #include <functional>
 #include <unordered_map>
 #include "State.h"
+#include "Log.h"
 
 //-------------------------------------------------
 // StateStack
@@ -33,7 +34,7 @@ namespace sg::state
     /**
      * Class to manage all the State objects.
      */
-    class StateStack
+    class StateStack : public std::enable_shared_from_this<StateStack>
     {
     public:
         //-------------------------------------------------
@@ -81,7 +82,8 @@ namespace sg::state
         template<typename T>
         void RegisterState(const State::Id t_id)
         {
-            m_factories[t_id] = [this]() { return std::make_unique<T>(this, m_context); };
+            Log::SG_LOG_DEBUG("[StateStack::RegisterState()] Register state {}.", State::STATE_IDS.at(static_cast<int>(t_id)));
+            m_factories[t_id] = [this]() { return std::make_unique<T>(shared_from_this(), m_context); };
         }
 
         //-------------------------------------------------
@@ -108,7 +110,7 @@ namespace sg::state
 
         struct PendingChange
         {
-            explicit PendingChange(Action t_action, State::Id t_id = State::Id::NONE)
+            explicit PendingChange(const Action t_action, const State::Id t_id = State::Id::NONE)
                 : action{ t_action }
                 , id{ t_id }
             {}

@@ -19,6 +19,8 @@
 #pragma once
 
 #include <memory>
+#include <array>
+#include <string>
 
 //-------------------------------------------------
 // State
@@ -50,6 +52,11 @@ namespace sg::state
             MENU,
             GAME,
             PAUSE
+        };
+
+        static constexpr std::array<std::string_view, 4> STATE_IDS =
+        {
+            "NONE", "MENU", "GAME", "PAUSE"
         };
 
         /**
@@ -103,9 +110,9 @@ namespace sg::state
         // Stack operations
         //-------------------------------------------------
 
-        void RequestStackPush(Id t_id);
-        void RequestStackPop();
-        void RequestStateClear();
+        void RequestStackPush(Id t_id) const;
+        void RequestStackPop() const;
+        void RequestStateClear() const;
 
     private:
         //-------------------------------------------------

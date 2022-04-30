@@ -20,6 +20,8 @@
 #include <imgui.h>
 #include "Application.h"
 #include "Log.h"
+#include "MenuState.h"
+#include "GameState.h"
 #include "state/StateStack.h"
 #include "map/Map.h"
 #include "ogl/OpenGL.h"
@@ -86,9 +88,12 @@ void sg::Application::Init()
     // create && init city
     m_city = std::make_unique<city::City>("Musterstadt", m_map);
 
-    // state stack
-    // todo
+    // create state stack
     m_stateStack = std::make_unique<state::StateStack>(state::State::Context());
+
+    // register states
+    m_stateStack->RegisterState<MenuState>(state::State::Id::MENU);
+    m_stateStack->RegisterState<GameState>(state::State::Id::GAME);
 
     Log::SG_LOG_DEBUG("[Application::Init()] The application was successfully initialized.");
 }

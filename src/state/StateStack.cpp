@@ -23,7 +23,7 @@
 // Ctors. / Dtor.
 //-------------------------------------------------
 
-sg::state::StateStack::StateStack(const sg::state::State::Context t_context)
+sg::state::StateStack::StateStack(const State::Context t_context)
     : m_context{ t_context }
 {
     Log::SG_LOG_DEBUG("[StateStack::StateStack()] Create StateStack.");
@@ -38,7 +38,7 @@ sg::state::StateStack::~StateStack() noexcept
 // Stack operations
 //-------------------------------------------------
 
-void sg::state::StateStack::PushState(const sg::state::State::Id t_id)
+void sg::state::StateStack::PushState(const State::Id t_id)
 {
     m_pendingChanges.emplace_back(Action::PUSH, t_id);
 }
@@ -80,7 +80,7 @@ void sg::state::StateStack::Render()
 // Helper
 //-------------------------------------------------
 
-std::unique_ptr<sg::state::State> sg::state::StateStack::CreateState(const sg::state::State::Id t_id)
+std::unique_ptr<sg::state::State> sg::state::StateStack::CreateState(const State::Id t_id)
 {
     const auto it{ m_factories.find(t_id) };
     SG_ASSERT(it != m_factories.end(), "[StateStack::CreateState()] Factory function not found.")

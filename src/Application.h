@@ -81,8 +81,8 @@ namespace sg
         //-------------------------------------------------
 
 #if defined(_WIN64)
-        inline static const inih::INIReader INI{ "./config.ini" };
-        inline static const std::string RESOURCES_PATH{ INI.Get<std::string>("win64", "resources_path") };
+        inline static const inih::INIReader INI{ "./config.ini" }; // NOLINT(cert-err58-cpp)
+        inline static const std::string RESOURCES_PATH{ INI.Get<std::string>("win64", "resources_path") }; // NOLINT(cert-err58-cpp)
 #else
         inline static const inih::INIReader INI{ "/home/steffen/CLionProjects/SgCity/config.ini" }; // NOLINT(cert-err58-cpp)
         inline static const std::string RESOURCES_PATH{ INI.Get<std::string>("linux", "resources_path") }; // NOLINT(cert-err58-cpp)

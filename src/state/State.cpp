@@ -24,7 +24,7 @@
 // Ctors. / Dtor.
 //-------------------------------------------------
 
-sg::state::State::State(std::shared_ptr<StateStack> t_stateStack, const sg::state::State::Context t_context)
+sg::state::State::State(std::shared_ptr<StateStack> t_stateStack, const Context t_context)
     : context{ t_context }
     , m_stateStack{ std::move(t_stateStack) }
 {
@@ -40,17 +40,17 @@ sg::state::State::~State() noexcept
 // Stack operations
 //-------------------------------------------------
 
-void sg::state::State::RequestStackPush(const sg::state::State::Id t_id)
+void sg::state::State::RequestStackPush(const Id t_id) const
 {
     m_stateStack->PushState(t_id);
 }
 
-void sg::state::State::RequestStackPop()
+void sg::state::State::RequestStackPop() const
 {
     m_stateStack->PopState();
 }
 
-void sg::state::State::RequestStateClear()
+void sg::state::State::RequestStateClear() const
 {
     m_stateStack->ClearStates();
 }

@@ -30,22 +30,9 @@
 // Ctors. / Dtor.
 //-------------------------------------------------
 
-sg::ogl::Window::Window(const int t_width, const int t_height, std::string t_title)
-    : m_title{ std::move(t_title) }
-    , m_width{ t_width }
-    , m_height{ t_height }
+sg::ogl::Window::Window()
 {
     Log::SG_LOG_DEBUG("[Window::Window()] Create Window.");
-
-    if (m_width <= 0)
-    {
-        m_width = MIN_WIDTH;
-    }
-
-    if (m_height <= 0)
-    {
-        m_height = MIN_HEIGHT;
-    }
 
     Init();
 }
@@ -119,6 +106,11 @@ bool sg::ogl::Window::WindowShouldClose() const
     return glfwWindowShouldClose(m_windowHandle);
 }
 
+void sg::ogl::Window::Close() const
+{
+    glfwSetWindowShouldClose(m_windowHandle, true);
+}
+
 //-------------------------------------------------
 // Input Polling
 //-------------------------------------------------
@@ -133,7 +125,7 @@ void sg::ogl::Window::CloseIfEscKeyPressed() const
 {
     if (IsKeyPressed(GLFW_KEY_ESCAPE))
     {
-        glfwSetWindowShouldClose(m_windowHandle, true);
+        Close();
     }
 }
 
@@ -174,16 +166,33 @@ void sg::ogl::Window::Init()
 {
     Log::SG_LOG_DEBUG("[Window::Init()] Initializing window.");
 
-    fovDeg = Application::INI.Get<float>("frustum", "fov_deg");
-    nearPlane = Application::INI.Get<float>("frustum", "near");
-    farPlane = Application::INI.Get<float>("frustum", "far");
-
+    LoadConfig();
     InitWindow();
     InitProjectionMatrix();
     InitImGui();
     InitInputCallbacks();
 
     Log::SG_LOG_DEBUG("[Window::Init()] The window was successfully initialized.");
+}
+
+void sg::ogl::Window::LoadConfig()
+{
+    m_title = Application::INI.Get<std::string>("window", "title");
+
+    Log::SG_LOG_INFO("Game window title: {}", m_title);
+
+    m_width = Application::INI.Get<int>("window", "width");
+    m_height = Application::INI.Get<int>("window", "height");
+
+    m_width = std::max(m_width, MIN_WIDTH);
+    m_height = std::max(m_height, MIN_HEIGHT);
+
+    Log::SG_LOG_INFO("Game window width: {}", m_width);
+    Log::SG_LOG_INFO("Game window height: {}", m_height);
+
+    fovDeg = Application::INI.Get<float>("frustum", "fov_deg");
+    nearPlane = Application::INI.Get<float>("frustum", "near");
+    farPlane = Application::INI.Get<float>("frustum", "far");
 }
 
 void sg::ogl::Window::InitWindow()

@@ -35,17 +35,14 @@ namespace sg
 
         GameState() = delete;
 
-        GameState(std::shared_ptr<state::StateStack> t_stateStack, const Context& t_context)
-            : State(std::move(t_stateStack), t_context)
-        {
-        }
+        GameState(Id t_id, state::StateStack* t_stateStack, const Context& t_context);
 
         GameState(const GameState& t_other) = delete;
         GameState(GameState&& t_other) noexcept = delete;
         GameState& operator=(const GameState& t_other) = delete;
         GameState& operator=(GameState&& t_other) noexcept = delete;
 
-        ~GameState() noexcept override {}
+        ~GameState() noexcept override;
 
         //-------------------------------------------------
         // Logic

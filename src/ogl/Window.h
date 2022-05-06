@@ -79,16 +79,7 @@ namespace sg::ogl
         // Ctors. / Dtor.
         //-------------------------------------------------
 
-        Window() = delete;
-
-        /**
-         * Constructs a new Window object.
-         *
-         * @param t_width The width of the window.
-         * @param t_height The height of the window.
-         * @param t_title The title of the window.
-         */
-        explicit Window(int t_width = MIN_WIDTH, int t_height = MIN_HEIGHT, std::string t_title = "SgCity");
+        Window();
 
         Window(const Window& t_other) = delete;
         Window(Window&& t_other) noexcept = delete;
@@ -136,6 +127,11 @@ namespace sg::ogl
          * @return boolean
          */
         [[nodiscard]] bool WindowShouldClose() const;
+
+        /**
+         * Sets the close flag value on true.
+         */
+        void Close() const;
 
         //-------------------------------------------------
         // Input Polling
@@ -242,6 +238,11 @@ namespace sg::ogl
          * Initializing class.
          */
         void Init();
+
+        /**
+         * Loads values from config.ini.
+         */
+        void LoadConfig();
 
         /**
          * The Window initialization code.

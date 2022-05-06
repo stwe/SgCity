@@ -64,10 +64,7 @@ void sg::Application::Init()
     Log::SG_LOG_DEBUG("[Application::Init()] Initializing application.");
 
     // create && init window
-    const auto ww{ INI.Get<int>("window", "width") };
-    const auto wh{ INI.Get<int>("window", "height") };
-    auto wt{ INI.Get<std::string>("window", "title") };
-    m_window = std::make_shared<ogl::Window>(ww, wh, wt);
+    m_window = std::make_shared<ogl::Window>();
 
     // create && init camera
     const auto pos{ INI.GetVector<float>("camera", "position") };
@@ -89,7 +86,7 @@ void sg::Application::Init()
     m_city = std::make_unique<city::City>("Musterstadt", m_map);
 
     // create state stack
-    m_stateStack = std::make_unique<state::StateStack>(state::State::Context());
+    m_stateStack = std::make_unique<state::StateStack>(state::State::Context(m_window));
 
     // register states
     m_stateStack->RegisterState<MenuState>(state::State::Id::MENU);

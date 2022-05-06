@@ -16,40 +16,20 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
+#include "GameState.h"
 #include "Log.h"
-#include "Game.h"
-#include "SgException.h"
 
 //-------------------------------------------------
-// Main
+// Ctors. / Dtor.
 //-------------------------------------------------
 
-int main()
+sg::GameState::GameState(const Id t_id, state::StateStack* t_stateStack, const Context& t_context)
+    : State(t_id, t_stateStack, t_context)
 {
-    sg::Log::Init();
+    Log::SG_LOG_DEBUG("[GameState::GameState()] Create GameState.");
+}
 
-    sg::Log::SG_LOG_DEBUG("[main()] Starting main.");
-    sg::Log::SG_LOG_DEBUG("[main()] Logger was initialized.");
-
-    try
-    {
-        sg::Game game;
-        game.Run();
-
-        return EXIT_SUCCESS;
-    }
-    catch (const sg::SgException& e)
-    {
-        sg::Log::SG_LOG_ERROR("SgException {}", e.what());
-    }
-    catch (const std::exception& e)
-    {
-        sg::Log::SG_LOG_ERROR("Standard Exception: {}", e.what());
-    }
-    catch ( ... )
-    {
-        sg::Log::SG_LOG_ERROR("Unknown Exception. No details available.");
-    }
-
-    return EXIT_FAILURE;
+sg::GameState::~GameState() noexcept
+{
+    Log::SG_LOG_DEBUG("[GameState::~GameState()] Destruct GameState.");
 }

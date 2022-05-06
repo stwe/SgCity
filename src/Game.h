@@ -18,81 +18,95 @@
 
 #pragma once
 
-#include <vector>
-#include "state/State.h"
+#include <memory>
+#include "ini/ini.h"
 
 //-------------------------------------------------
-// MenuState
+// Forward declarations
+//-------------------------------------------------
+
+namespace sg::ogl
+{
+    class Window;
+}
+
+namespace sg::state
+{
+    class StateStack;
+}
+
+//-------------------------------------------------
+// Game
 //-------------------------------------------------
 
 namespace sg
 {
-    class MenuState : public state::State
+    class Game
     {
     public:
         //-------------------------------------------------
-        // Types
+        // Constants
         //-------------------------------------------------
 
-        enum class Action
-        {
-            NONE, PLAY, LOAD, SETTINGS, EXIT
-        };
+        /**
+         * 60 updates per second.
+         */
+        static constexpr auto FRAME_TIME{ 1.0 / 60.0 };
 
         //-------------------------------------------------
         // Member
         //-------------------------------------------------
 
-        Action action{ Action::NONE };
+#if defined(_WIN64)
+        inline static const inih::INIReader INI{ "./config.ini" }; // NOLINT(cert-err58-cpp)
+        inline static const std::string RESOURCES_PATH{ INI.Get<std::string>("win64", "resources_path") }; // NOLINT(cert-err58-cpp)
+#else
+        inline static const inih::INIReader INI{ "/home/steffen/CLionProjects/SgCity/config.ini" }; // NOLINT(cert-err58-cpp)
+        inline static const std::string RESOURCES_PATH{ INI.Get<std::string>("linux", "resources_path") }; // NOLINT(cert-err58-cpp)
+#endif
 
         //-------------------------------------------------
         // Ctors. / Dtor.
         //-------------------------------------------------
 
-        MenuState() = delete;
+        Game();
 
-        MenuState(Id t_id, state::StateStack* t_stateStack, const Context& t_context);
+        Game(const Game& t_other) = delete;
+        Game(Game&& t_other) noexcept = delete;
+        Game& operator=(const Game& t_other) = delete;
+        Game& operator=(Game&& t_other) noexcept = delete;
 
-        MenuState(const MenuState& t_other) = delete;
-        MenuState(MenuState&& t_other) noexcept = delete;
-        MenuState& operator=(const MenuState& t_other) = delete;
-        MenuState& operator=(MenuState&& t_other) noexcept = delete;
-
-        ~MenuState() noexcept override;
+        ~Game() noexcept;
 
         //-------------------------------------------------
-        // Logic
+        // Run
         //-------------------------------------------------
 
-        void Init() override;
-        void Input() override;
-        void Update() override;
-        void Render() override;
-        void RenderImGui() override;
+        void Run();
 
     protected:
 
     private:
         //-------------------------------------------------
-        // Constants
-        //-------------------------------------------------
-
-        static constexpr std::array<std::string_view, 5> BUTTON_NAMES
-        {
-            "None",
-            "Start a new game",
-            "Load a game",
-            "Change settings",
-            "Exit",
-        };
-
-        //-------------------------------------------------
         // Member
         //-------------------------------------------------
 
-        std::vector<bool> m_buttons
-        {
-            true, false, false, false, false
-        };
+        std::shared_ptr<ogl::Window> m_window;
+        std::unique_ptr<state::StateStack> m_stateStack;
+
+        //-------------------------------------------------
+        // Logic
+        //-------------------------------------------------
+
+        void Init();
+        void Input();
+        void Update();
+        void Render();
+
+        //-------------------------------------------------
+        // Game loop
+        //-------------------------------------------------
+
+        void GameLoop();
     };
 }

@@ -18,9 +18,7 @@
 
 #pragma once
 
-#include <memory>
 #include <vector>
-#include <functional>
 #include <unordered_map>
 #include "State.h"
 #include "Log.h"
@@ -34,7 +32,7 @@ namespace sg::state
     /**
      * Class to manage all the State objects.
      */
-    class StateStack : public std::enable_shared_from_this<StateStack>
+    class StateStack
     {
     public:
         //-------------------------------------------------
@@ -70,11 +68,20 @@ namespace sg::state
         ~StateStack() noexcept;
 
         //-------------------------------------------------
+        // Getter
+        //-------------------------------------------------
+
+        /**
+         * Returns whether the stack is empty.
+         */
+        [[nodiscard]] bool IsEmpty() const { return m_stack.empty(); }
+
+        //-------------------------------------------------
         // Register
         //-------------------------------------------------
 
         /**
-         * Registers a State so that it can be created on demand.
+         * Registers a State factory function so that it can be created on demand.
          *
          * @tparam T The derived state class.
          * @param t_id The unique identifier of the state.
@@ -83,7 +90,7 @@ namespace sg::state
         void RegisterState(const State::Id t_id)
         {
             Log::SG_LOG_DEBUG("[StateStack::RegisterState()] Register state {}.", State::STATE_IDS.at(static_cast<int>(t_id)));
-            m_factories[t_id] = [this]() { return std::make_unique<T>(shared_from_this(), m_context); };
+            m_factories[t_id] = [this, t_id]() { return std::make_unique<T>(t_id, this, m_context); };
         }
 
         //-------------------------------------------------
@@ -91,13 +98,14 @@ namespace sg::state
         //-------------------------------------------------
 
         void PushState(State::Id t_id);
-        void PopState();
+        void PopState(State::Id t_id);
         void ClearStates();
 
         //-------------------------------------------------
         // Logic
         //-------------------------------------------------
 
+        void Input();
         void Update();
         void Render();
 
@@ -108,9 +116,12 @@ namespace sg::state
         // Types
         //-------------------------------------------------
 
+        /**
+         * A pending stack operation.
+         */
         struct PendingChange
         {
-            explicit PendingChange(const Action t_action, const State::Id t_id = State::Id::NONE)
+            PendingChange(const Action t_action, const State::Id t_id)
                 : action{ t_action }
                 , id{ t_id }
             {}
@@ -129,7 +140,7 @@ namespace sg::state
         std::vector<std::unique_ptr<State>> m_stack;
 
         /**
-         * A list with stack operations.
+         * A list with pending stack operations.
          */
         std::vector<PendingChange> m_pendingChanges;
 

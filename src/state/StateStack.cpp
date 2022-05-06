@@ -23,8 +23,8 @@
 // Ctors. / Dtor.
 //-------------------------------------------------
 
-sg::state::StateStack::StateStack(const State::Context t_context)
-    : m_context{ t_context }
+sg::state::StateStack::StateStack(State::Context t_context)
+    : m_context{ std::move(t_context) }
 {
     Log::SG_LOG_DEBUG("[StateStack::StateStack()] Create StateStack.");
 }
@@ -40,22 +40,36 @@ sg::state::StateStack::~StateStack() noexcept
 
 void sg::state::StateStack::PushState(const State::Id t_id)
 {
+    Log::SG_LOG_DEBUG("[StateStack::PushState()] Add pending stack operation PUSH for state {}.", State::STATE_IDS.at(static_cast<int>(t_id)));
     m_pendingChanges.emplace_back(Action::PUSH, t_id);
 }
 
-void sg::state::StateStack::PopState()
+void sg::state::StateStack::PopState(const State::Id t_id)
 {
-    m_pendingChanges.emplace_back(Action::POP);
+    Log::SG_LOG_DEBUG("[StateStack::PushState()] Add pending stack operation POP for state {}.", State::STATE_IDS.at(static_cast<int>(t_id)));
+    m_pendingChanges.emplace_back(Action::POP, t_id);
 }
 
 void sg::state::StateStack::ClearStates()
 {
-    m_pendingChanges.emplace_back(Action::CLEAR);
+    Log::SG_LOG_DEBUG("[StateStack::ClearStates()] Add pending stack operation CLEAR all states.");
+    m_pendingChanges.emplace_back(Action::CLEAR, State::Id::ALL);
 }
 
 //-------------------------------------------------
 // Logic
 //-------------------------------------------------
+
+void sg::state::StateStack::Input()
+{
+    // iterate from top to bottom
+    for (auto itr{ m_stack.rbegin() }; itr != m_stack.rend(); ++itr)
+    {
+        (*itr)->Input();
+    }
+
+    ApplyPendingChanges();
+}
 
 void sg::state::StateStack::Update()
 {
@@ -72,7 +86,10 @@ void sg::state::StateStack::Render()
 {
     for (const auto& state : m_stack)
     {
+        state->StartFrame();
         state->Render();
+        state->RenderImGui();
+        state->EndFrame();
     }
 }
 
@@ -82,8 +99,10 @@ void sg::state::StateStack::Render()
 
 std::unique_ptr<sg::state::State> sg::state::StateStack::CreateState(const State::Id t_id)
 {
+    Log::SG_LOG_DEBUG("[StateStack::CreateState()] Create state {}.", State::STATE_IDS.at(static_cast<int>(t_id)));
+
     const auto it{ m_factories.find(t_id) };
-    SG_ASSERT(it != m_factories.end(), "[StateStack::CreateState()] Factory function not found.")
+    SG_ASSERT(it != m_factories.end(), "[StateStack::CreateState()] Factory function not found for state " + std::string(State::STATE_IDS.at(static_cast<int>(t_id))) + ".")
 
     return it->second();
 }

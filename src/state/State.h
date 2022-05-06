@@ -20,7 +20,16 @@
 
 #include <memory>
 #include <array>
-#include <string>
+#include <string_view>
+
+//-------------------------------------------------
+// Forward declarations
+//-------------------------------------------------
+
+namespace sg::ogl
+{
+    class Window;
+}
 
 //-------------------------------------------------
 // State
@@ -44,26 +53,34 @@ namespace sg::state
         //-------------------------------------------------
 
         /**
-         * A set of state Ids.
+         * The unique identifiers of the states.
          */
         enum class Id
         {
-            NONE,
-            MENU,
-            GAME,
-            PAUSE
+            MENU, // MenuState
+            GAME, // GameState
+            ALL   // is used when all states are meant
         };
 
-        static constexpr std::array<std::string_view, 4> STATE_IDS =
+        /**
+         * The unique identifiers of the states as string.
+         */
+        static constexpr std::array<std::string_view, 3> STATE_IDS
         {
-            "NONE", "MENU", "GAME", "PAUSE"
+            "MENU", "GAME", "ALL"
         };
 
         /**
          * Shared objects between all states.
          */
         struct Context
-        {};
+        {
+            explicit Context(std::shared_ptr<ogl::Window> t_window)
+                : window{ std::move(t_window) }
+            {}
+
+            std::shared_ptr<ogl::Window> window;
+        };
 
         //-------------------------------------------------
         // Member
@@ -83,10 +100,11 @@ namespace sg::state
         /**
          * Constructs a new State object.
          *
+         * @param t_id The unique identifier.
          * @param t_stateStack The StateStack object.
          * @param t_context The holder of shared objects.
          */
-        State(std::shared_ptr<StateStack> t_stateStack, Context t_context);
+        State(Id t_id, StateStack* t_stateStack, Context t_context);
 
         State(const State& t_other) = delete;
         State(State&& t_other) noexcept = delete;
@@ -105,6 +123,13 @@ namespace sg::state
         virtual void Render() = 0;
         virtual void RenderImGui() = 0;
 
+        //-------------------------------------------------
+        // Frame
+        //-------------------------------------------------
+
+        virtual void StartFrame();
+        virtual void EndFrame() const;
+
     protected:
         //-------------------------------------------------
         // Stack operations
@@ -120,8 +145,13 @@ namespace sg::state
         //-------------------------------------------------
 
         /**
-         * The StateStack object.
+         * The unique identifier of this state.
          */
-        std::shared_ptr<StateStack> m_stateStack;
+        Id m_id;
+
+        /**
+         * Pointer to the parent state stack.
+         */
+        StateStack* m_stateStack{ nullptr };
     };
 }

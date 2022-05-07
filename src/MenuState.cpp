@@ -47,19 +47,24 @@ void sg::MenuState::Init()
 
 void sg::MenuState::Input()
 {
-    // Esc key closes the game
-    context.window->Input();
+    // ESC ends the game
+    if (context.window->IsKeyPressed(GLFW_KEY_ESCAPE))
+    {
+        action = Action::EXIT;
+    }
 
+    // switch to the game state
     if (action == Action::PLAY)
     {
-        Log::SG_LOG_INFO("[MenuState::Input()] Switch to GameState");
+        Log::SG_LOG_INFO("[MenuState::Input()] Starts switching to the GameState.");
         RequestStackPop();
         RequestStackPush(Id::GAME);
     }
 
+    // empties the stack for ending the game
     if (action == Action::EXIT)
     {
-        Log::SG_LOG_INFO("[MenuState::Input()] Empty the stack.");
+        Log::SG_LOG_INFO("[MenuState::Input()] Starts POP MenuState.");
         RequestStackPop();
     }
 }

@@ -30,6 +30,21 @@ namespace sg
     {
     public:
         //-------------------------------------------------
+        // Types
+        //-------------------------------------------------
+
+        enum class Action
+        {
+            NONE, MAIN_MENU
+        };
+
+        //-------------------------------------------------
+        // Member
+        //-------------------------------------------------
+
+        Action action{ Action::NONE };
+
+        //-------------------------------------------------
         // Ctors. / Dtor.
         //-------------------------------------------------
 
@@ -48,11 +63,11 @@ namespace sg
         // Logic
         //-------------------------------------------------
 
-        void Init() override {}
-        void Input() override {}
-        void Update() override {}
-        void Render() override {}
-        void RenderImGui() override {}
+        void Init() override;
+        void Input() override;
+        void Update() override;
+        void Render() override;
+        void RenderImGui() override;
 
     protected:
 

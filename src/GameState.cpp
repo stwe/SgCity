@@ -16,8 +16,11 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
+#include <imgui.h>
 #include "GameState.h"
 #include "Log.h"
+#include "ogl/Window.h"
+#include "ogl/OpenGL.h"
 
 //-------------------------------------------------
 // Ctors. / Dtor.
@@ -32,4 +35,53 @@ sg::GameState::GameState(const Id t_id, state::StateStack* t_stateStack, const C
 sg::GameState::~GameState() noexcept
 {
     Log::SG_LOG_DEBUG("[GameState::~GameState()] Destruct GameState.");
+}
+
+//-------------------------------------------------
+// Logic
+//-------------------------------------------------
+
+void sg::GameState::Init()
+{
+}
+
+void sg::GameState::Input()
+{
+    // ESC ecs ends the state
+    if (context.window->IsKeyPressed(GLFW_KEY_ESCAPE))
+    {
+        action = Action::MAIN_MENU;
+    }
+
+    // switch to the menu state
+    if (action == Action::MAIN_MENU)
+    {
+        Log::SG_LOG_INFO("[GameState::Input()] Starts switching back to the MenuState.");
+        RequestStackPop();
+        RequestStackPush(Id::MENU);
+    }
+}
+
+void sg::GameState::Update()
+{
+}
+
+void sg::GameState::Render()
+{
+}
+
+void sg::GameState::RenderImGui()
+{
+    ogl::Window::ImGuiBegin();
+
+    ImGui::Begin("Game Menu", nullptr, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoScrollbar);
+
+    if (ImGui::Button("Back to Main Menu"))
+    {
+        action = Action::MAIN_MENU;
+    }
+
+    ImGui::End();
+
+    ogl::Window::ImGuiEnd();
 }

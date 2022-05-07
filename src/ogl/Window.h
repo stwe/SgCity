@@ -106,7 +106,7 @@ namespace sg::ogl
         /**
          * Window specific input logic.
          */
-        void Input() const;
+        [[deprecated]] void Input() const;
 
         //-------------------------------------------------
         // Rendering
@@ -149,7 +149,7 @@ namespace sg::ogl
         /**
          * Close if Esc key was pressed.
          */
-        void CloseIfEscKeyPressed() const;
+        [[deprecated]] void CloseIfEscKeyPressed() const;
 
         /**
          * Poll the mouse button pressed status.

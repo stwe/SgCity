@@ -82,7 +82,7 @@ void sg::state::StateStack::Update()
     ApplyPendingChanges();
 }
 
-void sg::state::StateStack::Render()
+void sg::state::StateStack::Render() const
 {
     for (const auto& state : m_stack)
     {
@@ -99,7 +99,7 @@ void sg::state::StateStack::Render()
 
 std::unique_ptr<sg::state::State> sg::state::StateStack::CreateState(const State::Id t_id)
 {
-    Log::SG_LOG_DEBUG("[StateStack::CreateState()] Create state {}.", State::STATE_IDS.at(static_cast<int>(t_id)));
+    Log::SG_LOG_DEBUG("[StateStack::CreateState()] Running factory function for state {}.", State::STATE_IDS.at(static_cast<int>(t_id)));
 
     const auto it{ m_factories.find(t_id) };
     SG_ASSERT(it != m_factories.end(), "[StateStack::CreateState()] Factory function not found for state " + std::string(State::STATE_IDS.at(static_cast<int>(t_id))) + ".")
@@ -114,13 +114,19 @@ void sg::state::StateStack::ApplyPendingChanges()
         switch (change.action)
         {
             case Action::PUSH:
+                // add element at the end
                 m_stack.emplace_back(CreateState(change.id));
+                Log::SG_LOG_INFO("Stack size is {} after PUSH state {}.", m_stack.size(), State::STATE_IDS.at(static_cast<int>(change.id)));
                 break;
             case Action::POP:
+                // removes the last element in the vector
+                SG_ASSERT(change.id == m_stack.back()->GetId(), "[StateStack::ApplyPendingChanges()] Invalid POP operation.")
                 m_stack.pop_back();
+                Log::SG_LOG_INFO("Stack size is {} after POP state {}.", m_stack.size(), State::STATE_IDS.at(static_cast<int>(change.id)));
                 break;
             case Action::CLEAR:
                 m_stack.clear();
+                Log::SG_LOG_INFO("Stack size is {} after CLEAR all states.", m_stack.size());
                 break;
         }
     }

@@ -89,7 +89,7 @@ namespace sg::state
         template<typename T>
         void RegisterState(const State::Id t_id)
         {
-            Log::SG_LOG_DEBUG("[StateStack::RegisterState()] Register state {}.", State::STATE_IDS.at(static_cast<int>(t_id)));
+            Log::SG_LOG_DEBUG("[StateStack::RegisterState()] Register factory function for state {}.", State::STATE_IDS.at(static_cast<int>(t_id)));
             m_factories[t_id] = [this, t_id]() { return std::make_unique<T>(t_id, this, m_context); };
         }
 
@@ -107,7 +107,7 @@ namespace sg::state
 
         void Input();
         void Update();
-        void Render();
+        void Render() const;
 
     protected:
 

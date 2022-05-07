@@ -78,27 +78,8 @@ void sg::GameState::RenderImGui()
     ogl::Window::ImGuiBegin();
 
     //m_camera->RenderImGui();
-
-    ImGui::SetNextWindowPos(
-        ImVec2(static_cast<float>(context.window->GetWidth()) * 0.5f, static_cast<float>(context.window->GetHeight())),
-        ImGuiCond_Always,
-        ImVec2(0.5f, 1.0f)
-    );
-
-    ImGui::Begin("Game Menu", nullptr,
-        ImGuiWindowFlags_NoTitleBar |
-        ImGuiWindowFlags_NoResize |
-        ImGuiWindowFlags_NoScrollbar |
-        ImGuiWindowFlags_NoSavedSettings |
-        ImGuiWindowFlags_NoMove
-    );
-
-    if (ImGui::Button("Back to Main Menu"))
-    {
-        action = Action::MAIN_MENU;
-    }
-
-    ImGui::End();
+    ShowMainMenuBar();
+    ShowMenu();
 
     ogl::Window::ImGuiEnd();
 }
@@ -115,4 +96,55 @@ void sg::GameState::Init()
     m_skybox = std::make_unique<ogl::resource::Skybox>();
 
     Log::SG_LOG_DEBUG("[GameState::Init()] The game state was successfully initialized.");
+}
+
+//-------------------------------------------------
+// ImGui
+//-------------------------------------------------
+
+void sg::GameState::ShowMainMenuBar()
+{
+    if (ImGui::BeginMainMenuBar())
+    {
+        if (ImGui::BeginMenu("City"))
+        {
+            //ShowExampleMenuFile();
+            ImGui::EndMenu();
+        }
+
+        if (ImGui::BeginMenu("Exit"))
+        {
+            if (ImGui::MenuItem("Back to Main Menu"))
+            {
+                action = Action::MAIN_MENU;
+            }
+
+            ImGui::EndMenu();
+        }
+
+        ImGui::EndMainMenuBar();
+    }
+}
+
+void sg::GameState::ShowMenu()
+{
+    ImGui::SetNextWindowPos(
+        ImVec2(static_cast<float>(context.window->GetWidth()) * 0.5f, static_cast<float>(context.window->GetHeight())),
+        ImGuiCond_Always,
+        ImVec2(0.5f, 1.0f)
+    );
+
+    ImGui::Begin("Game Menu", nullptr,
+        ImGuiWindowFlags_NoTitleBar |
+        ImGuiWindowFlags_NoResize |
+        ImGuiWindowFlags_NoScrollbar |
+        ImGuiWindowFlags_NoSavedSettings |
+        ImGuiWindowFlags_NoMove
+    );
+
+    if (ImGui::Button("Test"))
+    {
+    }
+
+    ImGui::End();
 }

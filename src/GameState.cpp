@@ -19,7 +19,7 @@
 #include <imgui.h>
 #include "GameState.h"
 #include "Log.h"
-#include "ogl/Window.h"
+#include "ogl/resource/Skybox.h"
 #include "ogl/OpenGL.h"
 
 //-------------------------------------------------
@@ -30,6 +30,8 @@ sg::GameState::GameState(const Id t_id, state::StateStack* t_stateStack, const C
     : State(t_id, t_stateStack, t_context)
 {
     Log::SG_LOG_DEBUG("[GameState::GameState()] Create GameState.");
+
+    Init();
 }
 
 sg::GameState::~GameState() noexcept
@@ -41,17 +43,17 @@ sg::GameState::~GameState() noexcept
 // Logic
 //-------------------------------------------------
 
-void sg::GameState::Init()
-{
-}
-
 void sg::GameState::Input()
 {
     // ESC ecs ends the state
+    // todo ESC beendet alle States
     if (context.window->IsKeyPressed(GLFW_KEY_ESCAPE))
     {
         action = Action::MAIN_MENU;
     }
+
+    // WASD keys + right mouse button rotation
+    m_camera->Input();
 
     // switch to the menu state
     if (action == Action::MAIN_MENU)
@@ -68,13 +70,28 @@ void sg::GameState::Update()
 
 void sg::GameState::Render()
 {
+    m_skybox->Render(*context.window, *m_camera);
 }
 
 void sg::GameState::RenderImGui()
 {
     ogl::Window::ImGuiBegin();
 
-    ImGui::Begin("Game Menu", nullptr, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoScrollbar);
+    //m_camera->RenderImGui();
+
+    ImGui::SetNextWindowPos(
+        ImVec2(static_cast<float>(context.window->GetWidth()) * 0.5f, static_cast<float>(context.window->GetHeight())),
+        ImGuiCond_Always,
+        ImVec2(0.5f, 1.0f)
+    );
+
+    ImGui::Begin("Game Menu", nullptr,
+        ImGuiWindowFlags_NoTitleBar |
+        ImGuiWindowFlags_NoResize |
+        ImGuiWindowFlags_NoScrollbar |
+        ImGuiWindowFlags_NoSavedSettings |
+        ImGuiWindowFlags_NoMove
+    );
 
     if (ImGui::Button("Back to Main Menu"))
     {
@@ -84,4 +101,18 @@ void sg::GameState::RenderImGui()
     ImGui::End();
 
     ogl::Window::ImGuiEnd();
+}
+
+//-------------------------------------------------
+// Init
+//-------------------------------------------------
+
+void sg::GameState::Init()
+{
+    Log::SG_LOG_DEBUG("[GameState::Init()] Initializing game state.");
+
+    m_camera = std::make_unique<ogl::camera::Camera>(context.window);
+    m_skybox = std::make_unique<ogl::resource::Skybox>();
+
+    Log::SG_LOG_DEBUG("[GameState::Init()] The game state was successfully initialized.");
 }

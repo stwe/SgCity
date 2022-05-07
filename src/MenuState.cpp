@@ -41,10 +41,6 @@ sg::MenuState::~MenuState() noexcept
 // Logic
 //-------------------------------------------------
 
-void sg::MenuState::Init()
-{
-}
-
 void sg::MenuState::Input()
 {
     // ESC ends the game
@@ -81,8 +77,19 @@ void sg::MenuState::RenderImGui()
 {
     ogl::Window::ImGuiBegin();
 
-    ImGui::SetNextWindowPos(ImVec2(static_cast<float>(context.window->GetWidth()) * 0.5f, static_cast<float>(context.window->GetHeight()) * 0.5f), ImGuiCond_Always, ImVec2(0.5f, 0.5f));
-    ImGui::Begin("Main Menu", nullptr, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoScrollbar);
+    ImGui::SetNextWindowPos(
+        ImVec2(static_cast<float>(context.window->GetWidth()) * 0.5f, static_cast<float>(context.window->GetHeight()) * 0.5f),
+        ImGuiCond_Always,
+        ImVec2(0.5f, 0.5f)
+    );
+
+    ImGui::Begin("Main Menu", nullptr,
+        ImGuiWindowFlags_NoTitleBar |
+        ImGuiWindowFlags_NoResize |
+        ImGuiWindowFlags_NoScrollbar |
+        ImGuiWindowFlags_NoSavedSettings |
+        ImGuiWindowFlags_NoMove
+    );
 
     for (auto i{ 1u }; i < m_buttons.size(); ++i)
     {

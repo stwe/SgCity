@@ -18,7 +18,7 @@
 
 #include <glm/gtc/matrix_transform.hpp>
 #include "Window.h"
-#include "Application.h"
+#include "Game.h"
 #include "OpenGL.h"
 #include "Log.h"
 #include "SgException.h"
@@ -177,12 +177,14 @@ void sg::ogl::Window::Init()
 
 void sg::ogl::Window::LoadConfig()
 {
-    m_title = Application::INI.Get<std::string>("window", "title");
+    Log::SG_LOG_DEBUG("[Window::LoadConfig()] Load values from config file.");
+
+    m_title = Game::INI.Get<std::string>("window", "title");
 
     Log::SG_LOG_INFO("Game window title: {}", m_title);
 
-    m_width = Application::INI.Get<int>("window", "width");
-    m_height = Application::INI.Get<int>("window", "height");
+    m_width = Game::INI.Get<int>("window", "width");
+    m_height = Game::INI.Get<int>("window", "height");
 
     m_width = std::max(m_width, MIN_WIDTH);
     m_height = std::max(m_height, MIN_HEIGHT);
@@ -190,9 +192,9 @@ void sg::ogl::Window::LoadConfig()
     Log::SG_LOG_INFO("Game window width: {}", m_width);
     Log::SG_LOG_INFO("Game window height: {}", m_height);
 
-    fovDeg = Application::INI.Get<float>("frustum", "fov_deg");
-    nearPlane = Application::INI.Get<float>("frustum", "near");
-    farPlane = Application::INI.Get<float>("frustum", "far");
+    fovDeg = Game::INI.Get<float>("frustum", "fov_deg");
+    nearPlane = Game::INI.Get<float>("frustum", "near");
+    farPlane = Game::INI.Get<float>("frustum", "far");
 }
 
 void sg::ogl::Window::InitWindow()
@@ -214,7 +216,8 @@ void sg::ogl::Window::InitWindow()
     }
 
     glfwDefaultWindowHints();
-    glfwWindowHint(GLFW_VISIBLE, GL_FALSE);
+    glfwWindowHint(GLFW_VISIBLE, GL_TRUE);
+    glfwWindowHint(GLFW_FOCUSED, GL_TRUE);
     glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);

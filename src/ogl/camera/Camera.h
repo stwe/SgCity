@@ -46,30 +46,6 @@ namespace sg::ogl::camera
     {
     public:
         //-------------------------------------------------
-        // Constants
-        //-------------------------------------------------
-
-        /**
-         * The camera velocity.
-         */
-        static constexpr auto MOVEMENT_SPEED{ 1.0f / 60.0f / 4.0f };
-
-        /**
-         * Mouse movement multiplicator.
-         */
-        static constexpr auto MOUSE_SENSITIVITY{ 0.2f };
-
-        /**
-         * The default yaw.
-         */
-        static constexpr auto DEFAULT_YAW{ 90.0f };
-
-        /**
-         * The default pitch.
-         */
-        static constexpr auto DEFAULT_PITCH{ 0.0f };
-
-        //-------------------------------------------------
         // Type
         //-------------------------------------------------
 
@@ -98,12 +74,12 @@ namespace sg::ogl::camera
         /**
          * Represents the magnitude we're looking to the left or to the right.
          */
-        float yaw{ DEFAULT_YAW };
+        float yaw{ 0.0f };
 
         /**
          * The angle that depicts how much we're looking up or down.
          */
-        float pitch{ DEFAULT_PITCH };
+        float pitch{ 0.0f };
 
         //-------------------------------------------------
         // Ctors. / Dtor.
@@ -115,16 +91,8 @@ namespace sg::ogl::camera
          * Constructs a new Camera object.
          *
          * @param t_window The Window object.
-         * @param t_position The camera position.
-         * @param t_yaw Rotation around the vertical axis.
-         * @param t_pitch Rotation around the side-to-side.
          */
-        Camera(
-            std::shared_ptr<Window> t_window,
-            const glm::vec3& t_position,
-            float t_yaw = DEFAULT_YAW,
-            float t_pitch = DEFAULT_PITCH
-        );
+        explicit Camera(std::shared_ptr<Window> t_window);
 
         Camera(const Camera& t_other) = delete;
         Camera(Camera&& t_other) noexcept = delete;
@@ -197,7 +165,7 @@ namespace sg::ogl::camera
         /**
          * The camera velocity.
          */
-        float m_movementSpeed{ MOVEMENT_SPEED };
+        float m_movementSpeed{ 0.0f };
 
         /**
          * The front vector.
@@ -222,7 +190,7 @@ namespace sg::ogl::camera
         /**
          * The mouse sensitivity.
          */
-        float m_mouseSensitivity{ MOUSE_SENSITIVITY };
+        float m_mouseSensitivity{ 0.0f };
 
         /**
          * The previous mouse position.
@@ -247,6 +215,11 @@ namespace sg::ogl::camera
         //-------------------------------------------------
         // Init
         //-------------------------------------------------
+
+        /**
+         * Loads values from config.ini.
+         */
+        void LoadConfig();
 
         /**
          * Adds event handlers.

@@ -18,6 +18,7 @@
 
 #include <imgui.h>
 #include <glm/gtc/type_ptr.hpp>
+#include "Game.h"
 #include "Camera.h"
 #include "Log.h"
 #include "ogl/OpenGL.h"
@@ -29,19 +30,12 @@
 // Ctors. / Dtor.
 //-------------------------------------------------
 
-sg::ogl::camera::Camera::Camera(
-    std::shared_ptr<Window> t_window,
-    const glm::vec3& t_position,
-    const float t_yaw,
-    const float t_pitch
-)
-    : position{ t_position }
-    , yaw{ t_yaw }
-    , pitch{ t_pitch }
-    , m_window{ std::move(t_window) }
+sg::ogl::camera::Camera::Camera(std::shared_ptr<Window> t_window)
+    : m_window{ std::move(t_window) }
 {
     Log::SG_LOG_DEBUG("[Camera::Camera()] Create Camera.");
 
+    LoadConfig();
     InitListeners();
     UpdateCameraVectors();
 }
@@ -57,6 +51,12 @@ sg::ogl::camera::Camera::~Camera() noexcept
 
 void sg::ogl::camera::Camera::Input()
 {
+    // do nothing (return) when the mouse is over the ImGui window
+    if (ImGui::GetIO().WantCaptureMouse)
+    {
+        return;
+    } 
+
     // keyboard
 
     if (m_window->IsKeyPressed(GLFW_KEY_W))
@@ -112,8 +112,8 @@ void sg::ogl::camera::Camera::Input()
         const auto deltax{ m_currentPosition.x - m_previousPosition.x };
         const auto deltay{ m_currentPosition.y - m_previousPosition.y };
 
-        const auto rotateX = deltax != 0;
-        const auto rotateY = deltay != 0;
+        const auto rotateX = deltax != 0; // NOLINT(clang-diagnostic-float-equal)
+        const auto rotateY = deltay != 0; // NOLINT(clang-diagnostic-float-equal)
 
         if (rotateX)
         {
@@ -148,12 +148,12 @@ void sg::ogl::camera::Camera::RenderImGui()
 
     ImGui::Separator();
     ImGui::Text("Frustum, normal xyz, distance");
-    ImGui::Text("Top %.2f, %.2f, %.2f, %.2f", topFace.normal.x, topFace.normal.y, topFace.normal.z, topFace.distance);
-    ImGui::Text("Bottom %.2f, %.2f, %.2f, %.2f", bottomFace.normal.x, bottomFace.normal.y, bottomFace.normal.z, bottomFace.distance);
-    ImGui::Text("Right %.2f, %.2f, %.2f, %.2f", rightFace.normal.x, rightFace.normal.y, rightFace.normal.z, rightFace.distance);
-    ImGui::Text("Left %.2f, %.2f, %.2f, %.2f", leftFace.normal.x, leftFace.normal.y, leftFace.normal.z, leftFace.distance);
-    ImGui::Text("Near %.2f, %.2f, %.2f, %.2f", nearFace.normal.x, nearFace.normal.y, nearFace.normal.z, nearFace.distance);
-    ImGui::Text("Far %.2f, %.2f, %.2f, %.2f", farFace.normal.x, farFace.normal.y, farFace.normal.z, farFace.distance);
+    ImGui::Text("Top %.2f, %.2f, %.2f, %.2f", static_cast<double>(topFace.normal.x), static_cast<double>(topFace.normal.y), static_cast<double>(topFace.normal.z), static_cast<double>(topFace.distance));
+    ImGui::Text("Bottom %.2f, %.2f, %.2f, %.2f", static_cast<double>(bottomFace.normal.x), static_cast<double>(bottomFace.normal.y), static_cast<double>(bottomFace.normal.z), static_cast<double>(bottomFace.distance));
+    ImGui::Text("Right %.2f, %.2f, %.2f, %.2f", static_cast<double>(rightFace.normal.x), static_cast<double>(rightFace.normal.y), static_cast<double>(rightFace.normal.z), static_cast<double>(rightFace.distance));
+    ImGui::Text("Left %.2f, %.2f, %.2f, %.2f", static_cast<double>(leftFace.normal.x), static_cast<double>(leftFace.normal.y), static_cast<double>(leftFace.normal.z), static_cast<double>(leftFace.distance));
+    ImGui::Text("Near %.2f, %.2f, %.2f, %.2f", static_cast<double>(nearFace.normal.x), static_cast<double>(nearFace.normal.y), static_cast<double>(nearFace.normal.z), static_cast<double>(nearFace.distance));
+    ImGui::Text("Far %.2f, %.2f, %.2f, %.2f", static_cast<double>(farFace.normal.x), static_cast<double>(farFace.normal.y), static_cast<double>(farFace.normal.z), static_cast<double>(farFace.distance));
 
     ImGui::End();
 }
@@ -178,6 +178,18 @@ sg::ogl::camera::Frustum sg::ogl::camera::Camera::GetCurrentFrustum() const
 //-------------------------------------------------
 // Init
 //-------------------------------------------------
+
+void sg::ogl::camera::Camera::LoadConfig()
+{
+    Log::SG_LOG_DEBUG("[Camera::LoadConfig()] Load values from config file.");
+
+    const auto pos{ Game::INI.GetVector<float>("camera", "position") };
+    position = glm::vec3(pos[0], pos[1], pos[2]);
+    yaw = Game::INI.Get<float>("camera", "yaw");
+    pitch = Game::INI.Get<float>("camera", "pitch");
+    m_movementSpeed = Game::INI.Get<float>("camera", "movement_speed");
+    m_mouseSensitivity = Game::INI.Get<float>("camera", "mouse_sensitivity");
+}
 
 void sg::ogl::camera::Camera::InitListeners()
 {

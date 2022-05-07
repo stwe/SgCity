@@ -21,6 +21,20 @@
 #include "state/State.h"
 
 //-------------------------------------------------
+// Forward declarations
+//-------------------------------------------------
+
+namespace sg::ogl::camera
+{
+    class Camera;
+}
+
+namespace sg::ogl::resource
+{
+    class Skybox;
+}
+
+//-------------------------------------------------
 // GameState
 //-------------------------------------------------
 
@@ -63,7 +77,6 @@ namespace sg
         // Logic
         //-------------------------------------------------
 
-        void Init() override;
         void Input() override;
         void Update() override;
         void Render() override;
@@ -72,6 +85,17 @@ namespace sg
     protected:
 
     private:
+        //-------------------------------------------------
+        // Member
+        //-------------------------------------------------
 
+        std::unique_ptr<ogl::camera::Camera> m_camera;
+        std::unique_ptr<ogl::resource::Skybox> m_skybox;
+
+        //-------------------------------------------------
+        // Init
+        //-------------------------------------------------
+
+        void Init();
     };
 }

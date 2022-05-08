@@ -285,11 +285,10 @@ void sg::ogl::Window::InitImGui() const
     // setup ImGui context
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
-    const auto& io{ ImGui::GetIO() };
-    (void)io;
 
-    // setup renderer bindings
-    ImGui_ImplGlfw_InitForOpenGL(m_windowHandle, true);
+    // setup renderer bindings without callbacks
+    // the callbacks from ImGui will later be integrated into our own
+    ImGui_ImplGlfw_InitForOpenGL(m_windowHandle, false);
     ImGui_ImplOpenGL3_Init("#version 330 core");
 
     // setup style

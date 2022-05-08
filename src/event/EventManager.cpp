@@ -16,6 +16,7 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
+#include <imgui.h>
 #include "EventManager.h"
 
 //-------------------------------------------------
@@ -30,6 +31,22 @@ void sg::event::EventManager::SetKeyboardGlfwCallbacks(GLFWwindow* t_windowHandl
         t_windowHandle,
         [](GLFWwindow* t_window, const int t_key, const int t_scanCode, const int t_action, const int t_mods)
         {
+            // stuff needed by ImGui
+            auto& io{ ImGui::GetIO() };
+            if (t_key >= 0 && t_key < IM_ARRAYSIZE(io.KeysDown))
+            {
+                if (t_action == GLFW_PRESS)
+                {
+                    io.KeysDown[t_key] = true;
+                }
+
+                if (t_action == GLFW_RELEASE)
+                {
+                    io.KeysDown[t_key] = false;
+                }
+            }
+
+            // SgCity
             switch (t_action)
             {
             case GLFW_PRESS:
@@ -43,6 +60,18 @@ void sg::event::EventManager::SetKeyboardGlfwCallbacks(GLFWwindow* t_windowHandl
                 break;
             default:;
             }
+        }
+    );
+
+    // Registers a callback that will be called when a Unicode character is input.
+    glfwSetCharCallback
+    (
+        // stuff needed by ImGui
+        t_windowHandle,
+        [](GLFWwindow* t_window, const unsigned int t_char)
+        {
+            ImGuiIO& io = ImGui::GetIO();
+            io.AddInputCharacter(t_char);
         }
     );
 }

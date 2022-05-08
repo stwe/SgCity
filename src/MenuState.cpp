@@ -43,22 +43,26 @@ sg::MenuState::~MenuState() noexcept
 
 void sg::MenuState::Input()
 {
-    // ESC ends the game
+    // ESC for quit
     if (context.window->IsKeyPressed(GLFW_KEY_ESCAPE))
     {
-        action = Action::EXIT;
+        action = Action::QUIT;
     }
 
-    // switch to the game state
-    if (action == Action::PLAY)
+    // todo: load saved city
+
+    // switch to the game state for starting a new city
+    if (action == Action::START_CITY)
     {
         Log::SG_LOG_INFO("[MenuState::Input()] Starts switching to the GameState.");
         RequestStackPop();
         RequestStackPush(Id::GAME);
     }
 
+    // todo edit new map
+
     // empties the stack for ending the game
-    if (action == Action::EXIT)
+    if (action == Action::QUIT)
     {
         Log::SG_LOG_INFO("[MenuState::Input()] Starts POP MenuState.");
         RequestStackPop();
@@ -78,9 +82,9 @@ void sg::MenuState::RenderImGui()
     ogl::Window::ImGuiBegin();
 
     ImGui::SetNextWindowPos(
-        ImVec2(static_cast<float>(context.window->GetWidth()) * 0.5f, static_cast<float>(context.window->GetHeight()) * 0.5f),
+        { static_cast<float>(context.window->GetWidth()) * 0.5f, static_cast<float>(context.window->GetHeight()) * 0.5f },
         ImGuiCond_Always,
-        ImVec2(0.5f, 0.5f)
+        { 0.5f, 0.5f }
     );
 
     ImGui::Begin("Main Menu", nullptr,

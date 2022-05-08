@@ -18,6 +18,7 @@
 
 #pragma once
 
+#include <string>
 #include "state/State.h"
 
 //-------------------------------------------------
@@ -50,6 +51,11 @@ namespace sg
         enum class Action
         {
             NONE, MAIN_MENU
+        };
+
+        enum class Level
+        {
+            EASY, MEDIUM, HARD
         };
 
         //-------------------------------------------------
@@ -89,6 +95,11 @@ namespace sg
         // Member
         //-------------------------------------------------
 
+        bool m_initialRun{ true };
+        bool m_showAbout{ false };
+        char m_cityName[96]{ "Musterstadt" };
+        Level m_level{ Level::EASY };
+
         std::unique_ptr<ogl::camera::Camera> m_camera;
         std::unique_ptr<ogl::resource::Skybox> m_skybox;
 
@@ -103,6 +114,6 @@ namespace sg
         //-------------------------------------------------
 
         void ShowMainMenuBar();
-        void ShowMenu();
+        void ShowGameMenu();
     };
 }

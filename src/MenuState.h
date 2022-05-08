@@ -36,7 +36,7 @@ namespace sg
 
         enum class Action
         {
-            NONE, PLAY, LOAD, SETTINGS, EXIT
+            NONE, LOAD_CITY, START_CITY, EDIT_MAP, QUIT
         };
 
         //-------------------------------------------------
@@ -79,10 +79,10 @@ namespace sg
         static constexpr std::array<std::string_view, 5> BUTTON_NAMES
         {
             "None",
-            "Start a new game",
-            "Load a game",
-            "Change settings",
-            "Exit",
+            "Load Saved City",
+            "Start New City",
+            "Edit New Map",
+            "Quit",
         };
 
         //-------------------------------------------------

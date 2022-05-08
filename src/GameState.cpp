@@ -77,9 +77,49 @@ void sg::GameState::RenderImGui()
 {
     ogl::Window::ImGuiBegin();
 
-    //m_camera->RenderImGui();
-    ShowMainMenuBar();
-    ShowMenu();
+    if (m_initialRun)
+    {
+        ImGui::SetNextWindowPos(
+            { static_cast<float>(context.window->GetWidth()) * 0.5f, static_cast<float>(context.window->GetHeight()) * 0.5f },
+            ImGuiCond_Always,
+            { 0.5f, 0.5f }
+        );
+        ImGui::Begin("New City", &m_initialRun,
+            ImGuiWindowFlags_NoTitleBar |
+            ImGuiWindowFlags_NoResize |
+            ImGuiWindowFlags_NoScrollbar |
+            ImGuiWindowFlags_NoSavedSettings |
+            ImGuiWindowFlags_NoMove
+            );
+
+        ImGui::InputText("Name", m_cityName, IM_ARRAYSIZE(m_cityName));
+
+        static int e{ 0 };
+        ImGui::RadioButton("Easy (20.000 EUR)", &e, 0);
+        ImGui::SameLine();
+        ImGui::RadioButton("Medium (10.000 EUR)", &e, 1);
+        ImGui::SameLine();
+        ImGui::RadioButton("Hard (10k Bonds)", &e, 2);
+        ImGui::Separator();
+
+        if (ImGui::Button("Done"))
+        {
+            m_initialRun = false;
+            if (strlen(m_cityName) <= 4)
+            {
+                strncpy(m_cityName, "Musterstadt", 96);
+            }
+            m_level = static_cast<Level>(e);
+        }
+
+        ImGui::End();
+    }
+    else
+    {
+        //m_camera->RenderImGui();
+        ShowMainMenuBar();
+        ShowGameMenu();
+    }
 
     ogl::Window::ImGuiEnd();
 }
@@ -104,17 +144,42 @@ void sg::GameState::Init()
 
 void sg::GameState::ShowMainMenuBar()
 {
+    if (m_showAbout)
+    {
+        ImGui::SetNextWindowPos(
+            { static_cast<float>(context.window->GetWidth()) * 0.5f, static_cast<float>(context.window->GetHeight()) * 0.5f },
+            ImGuiCond_Appearing,
+            { 0.5f, 0.5f }
+        );
+        ImGui::Begin("About SgCity", &m_showAbout, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoMove);
+
+        ImGui::Text("SgCity");
+        ImGui::Separator();
+        ImGui::Text("Copyright (c) 2022. stwe <https://github.com/stwe/SgCity>");
+
+        ImGui::End();
+    }
+
     if (ImGui::BeginMainMenuBar())
     {
-        if (ImGui::BeginMenu("City"))
+        if (ImGui::BeginMenu("File"))
         {
-            //ShowExampleMenuFile();
-            ImGui::EndMenu();
-        }
+            if (ImGui::MenuItem("Load City")) {}
+            if (ImGui::MenuItem("New City")) {}
+            if (ImGui::MenuItem("Edit New Map")) {}
 
-        if (ImGui::BeginMenu("Exit"))
-        {
-            if (ImGui::MenuItem("Back to Main Menu"))
+            ImGui::Separator();
+
+            if (ImGui::MenuItem("Save City")) {}
+            if (ImGui::MenuItem("Save City As...")) {}
+
+            ImGui::Separator();
+
+            if (ImGui::MenuItem("About", nullptr, &m_showAbout)) {}
+
+            ImGui::Separator();
+
+            if (ImGui::MenuItem("Quit"))
             {
                 action = Action::MAIN_MENU;
             }
@@ -122,18 +187,38 @@ void sg::GameState::ShowMainMenuBar()
             ImGui::EndMenu();
         }
 
+        if (ImGui::BeginMenu("Speed"))
+        {
+            if (ImGui::MenuItem("Pause")) {}
+            if (ImGui::MenuItem("Turtle")) {}
+            if (ImGui::MenuItem("Llama")) {}
+            if (ImGui::MenuItem("Cheetah")) {}
+            ImGui::EndMenu();
+        }
+
+        if (ImGui::BeginMenu("Options"))
+        {
+            ImGui::EndMenu();
+        }
+
+        if (ImGui::BeginMenu("Windows"))
+        {
+            if (ImGui::MenuItem("Budget")) {}
+            ImGui::EndMenu();
+        }
+
         ImGui::EndMainMenuBar();
     }
 }
 
-void sg::GameState::ShowMenu()
+void sg::GameState::ShowGameMenu()
 {
     ImGui::SetNextWindowPos(
-        ImVec2(static_cast<float>(context.window->GetWidth()) * 0.5f, static_cast<float>(context.window->GetHeight())),
+        { static_cast<float>(context.window->GetWidth()) * 0.5f, static_cast<float>(context.window->GetHeight()) },
         ImGuiCond_Always,
-        ImVec2(0.5f, 1.0f)
+        { 0.5f, 1.0f }
     );
-
+    ImGui::SetNextWindowSize({ static_cast<float>(context.window->GetWidth()), 64.0f });
     ImGui::Begin("Game Menu", nullptr,
         ImGuiWindowFlags_NoTitleBar |
         ImGuiWindowFlags_NoResize |
@@ -144,6 +229,12 @@ void sg::GameState::ShowMenu()
 
     if (ImGui::Button("Test"))
     {
+    }
+    ImGui::SameLine();
+    if (!m_initialRun)
+    {
+        ImGui::Text("City: %s", m_cityName);
+        ImGui::Text("Level: %i", m_level);
     }
 
     ImGui::End();

@@ -23,7 +23,7 @@
 // Ctors. / Dtor.
 //-------------------------------------------------
 
-sg::state::StateStack::StateStack(State::Context t_context)
+sg::state::StateStack::StateStack(std::shared_ptr<State::Context> t_context)
     : m_context{ std::move(t_context) }
 {
     Log::SG_LOG_DEBUG("[StateStack::StateStack()] Create StateStack.");

@@ -18,12 +18,16 @@
 
 #pragma once
 
-#include <string>
 #include "state/State.h"
 
 //-------------------------------------------------
 // Forward declarations
 //-------------------------------------------------
+
+namespace sg::city
+{
+    class City;
+}
 
 namespace sg::ogl::camera
 {
@@ -36,48 +40,60 @@ namespace sg::ogl::resource
 }
 
 //-------------------------------------------------
-// GameState
+// CityState
 //-------------------------------------------------
 
 namespace sg
 {
-    class GameState : public state::State
+    /**
+     * Represents all the stuff to play a city.
+     */
+    class CityState : public state::State
     {
     public:
         //-------------------------------------------------
         // Types
         //-------------------------------------------------
 
+        /**
+         * Menu actions.
+         */
         enum class Action
         {
-            NONE, MAIN_MENU
-        };
-
-        enum class Level
-        {
-            EASY, MEDIUM, HARD
+            NONE,      // default
+            MAIN_MENU  // skip the StartState and go back to the MenuState
         };
 
         //-------------------------------------------------
         // Member
         //-------------------------------------------------
 
+        /**
+         * The current menu action.
+         */
         Action action{ Action::NONE };
 
         //-------------------------------------------------
         // Ctors. / Dtor.
         //-------------------------------------------------
 
-        GameState() = delete;
+        CityState() = delete;
 
-        GameState(Id t_id, state::StateStack* t_stateStack, const Context& t_context);
+        /**
+         * Constructs a new CityState object.
+         *
+         * @param t_id The unique identifier.
+         * @param t_stateStack The parent StateStack object.
+         * @param t_context The holder of shared objects.
+         */
+        CityState(Id t_id, state::StateStack* t_stateStack, std::shared_ptr<Context> t_context);
 
-        GameState(const GameState& t_other) = delete;
-        GameState(GameState&& t_other) noexcept = delete;
-        GameState& operator=(const GameState& t_other) = delete;
-        GameState& operator=(GameState&& t_other) noexcept = delete;
+        CityState(const CityState& t_other) = delete;
+        CityState(CityState&& t_other) noexcept = delete;
+        CityState& operator=(const CityState& t_other) = delete;
+        CityState& operator=(CityState&& t_other) noexcept = delete;
 
-        ~GameState() noexcept override;
+        ~CityState() noexcept override;
 
         //-------------------------------------------------
         // Logic
@@ -95,12 +111,19 @@ namespace sg
         // Member
         //-------------------------------------------------
 
-        bool m_initialRun{ true };
+        /**
+         * To show an about window.
+         */
         bool m_showAbout{ false };
-        char m_cityName[96]{ "Musterstadt" };
-        Level m_level{ Level::EASY };
 
+        /**
+         * A camera to move around.
+         */
         std::unique_ptr<ogl::camera::Camera> m_camera;
+
+        /**
+         * A skybox for a good looking environment.
+         */
         std::unique_ptr<ogl::resource::Skybox> m_skybox;
 
         //-------------------------------------------------
@@ -113,7 +136,14 @@ namespace sg
         // ImGui
         //-------------------------------------------------
 
+        /**
+         * The main menu bar on the top.
+         */
         void ShowMainMenuBar();
+
+        /**
+         * The menu for build the city.
+         */
         void ShowGameMenu();
     };
 }

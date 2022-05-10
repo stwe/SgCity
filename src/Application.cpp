@@ -21,7 +21,7 @@
 #include "Application.h"
 #include "Log.h"
 #include "MenuState.h"
-#include "GameState.h"
+#include "StartState.h"
 #include "state/StateStack.h"
 #include "map/Map.h"
 #include "ogl/OpenGL.h"
@@ -90,7 +90,7 @@ void sg::Application::Init()
 
     // register states
     m_stateStack->RegisterState<MenuState>(state::State::Id::MENU);
-    m_stateStack->RegisterState<GameState>(state::State::Id::GAME);
+    m_stateStack->RegisterState<StartState>(state::State::Id::START);
 
     Log::SG_LOG_DEBUG("[Application::Init()] The application was successfully initialized.");
 }

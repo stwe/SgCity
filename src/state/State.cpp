@@ -19,6 +19,7 @@
 #include "State.h"
 #include "StateStack.h"
 #include "SgAssert.h"
+#include "city/City.h"
 #include "ogl/Window.h"
 #include "ogl/OpenGL.h"
 
@@ -26,7 +27,7 @@
 // Ctors. / Dtor.
 //-------------------------------------------------
 
-sg::state::State::State(const Id t_id, StateStack* t_stateStack, Context t_context)
+sg::state::State::State(const Id t_id, StateStack* t_stateStack, std::shared_ptr<Context> t_context)
     : context{ std::move(t_context) }
     , m_id{ t_id }
     , m_stateStack{ t_stateStack }
@@ -53,7 +54,7 @@ void sg::state::State::StartFrame()
 
 void sg::state::State::EndFrame() const
 {
-    context.window->SwapBuffersAndCallEvents();
+    context->window->SwapBuffersAndCallEvents();
 }
 
 //-------------------------------------------------

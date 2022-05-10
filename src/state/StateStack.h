@@ -58,7 +58,7 @@ namespace sg::state
          *
          * @param t_context The holder of shared objects.
          */
-        explicit StateStack(State::Context t_context);
+        explicit StateStack(std::shared_ptr<State::Context> t_context);
 
         StateStack(const StateStack& t_other) = delete;
         StateStack(StateStack&& t_other) noexcept = delete;
@@ -147,7 +147,7 @@ namespace sg::state
         /**
          * Works as a holder of shared objects between all states.
          */
-        State::Context m_context;
+        std::shared_ptr<State::Context> m_context;
 
         /**
          * A list of factory functions for each Stack object.

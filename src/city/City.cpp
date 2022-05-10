@@ -30,7 +30,7 @@
 //-------------------------------------------------
 
 sg::city::City::City(std::string t_name, std::shared_ptr<map::Map> t_map)
-    : m_name{ std::move(t_name) }
+    : name{ std::move(t_name) }
     , m_map{ std::move(t_map) }
 {
     Log::SG_LOG_DEBUG("[City::City()] Create City.");
@@ -107,7 +107,7 @@ void sg::city::City::RenderImGui()
 {
     ImGui::Begin("City");
 
-    ImGui::Text("Name: %s", m_name.c_str());
+    ImGui::Text("Name: %s", name.c_str());
     ImGui::Text("Day: %d", day);
     ImGui::Text("Population: %d / Homeless: %d", static_cast<int>(population), static_cast<int>(homelessPeople));
     ImGui::Text("Employable: %d / Unemployed: %d", static_cast<int>(employable), static_cast<int>(unemployedPeople));

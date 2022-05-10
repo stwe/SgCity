@@ -26,6 +26,11 @@
 // Forward declarations
 //-------------------------------------------------
 
+namespace sg::city
+{
+    class City;
+}
+
 namespace sg::ogl
 {
     class Window;
@@ -52,22 +57,37 @@ namespace sg::state
         // Types
         //-------------------------------------------------
 
+        /*
+         Menu state ->
+             ----------------
+             Load saved city
+             Start new city -----> StartState ----->
+             Edit new map                        ----
+             Quit                                Name
+             ---------------                     Level
+                                                 -----
+                                                   |
+                                                   |
+                                                CityState
+        */
+
         /**
          * The unique identifiers of the states.
          */
         enum class Id
         {
-            MENU, // MenuState
-            GAME, // GameState
-            ALL   // is used when all states are meant
+            MAIN_MENU,  // MenuState
+            START,      // StartState
+            CITY,       // CityState
+            ALL         // is used when all states are meant
         };
 
         /**
          * The unique identifiers of the states as string.
          */
-        static constexpr std::array<std::string_view, 3> STATE_IDS
+        static constexpr std::array<std::string_view, 4> STATE_IDS
         {
-            "MENU", "GAME", "ALL"
+            "MAIN_MENU", "START", "CITY", "ALL"
         };
 
         /**
@@ -80,6 +100,7 @@ namespace sg::state
             {}
 
             std::shared_ptr<ogl::Window> window;
+            std::shared_ptr<city::City> city;
         };
 
         //-------------------------------------------------
@@ -89,7 +110,7 @@ namespace sg::state
         /**
          * Works as a holder of shared objects between all states.
          */
-        Context context;
+        std::shared_ptr<Context> context;
 
         //-------------------------------------------------
         // Ctors. / Dtor.
@@ -104,7 +125,7 @@ namespace sg::state
          * @param t_stateStack The StateStack object.
          * @param t_context The holder of shared objects.
          */
-        State(Id t_id, StateStack* t_stateStack, Context t_context);
+        State(Id t_id, StateStack* t_stateStack, std::shared_ptr<Context> t_context);
 
         State(const State& t_other) = delete;
         State(State&& t_other) noexcept = delete;

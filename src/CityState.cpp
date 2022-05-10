@@ -17,8 +17,9 @@
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 #include <imgui.h>
-#include "GameState.h"
+#include "CityState.h"
 #include "Log.h"
+#include "city/City.h"
 #include "ogl/resource/Skybox.h"
 #include "ogl/OpenGL.h"
 
@@ -26,100 +27,53 @@
 // Ctors. / Dtor.
 //-------------------------------------------------
 
-sg::GameState::GameState(const Id t_id, state::StateStack* t_stateStack, const Context& t_context)
-    : State(t_id, t_stateStack, t_context)
+sg::CityState::CityState(const Id t_id, state::StateStack* t_stateStack, std::shared_ptr<Context> t_context)
+    : State(t_id, t_stateStack, std::move(t_context))
 {
-    Log::SG_LOG_DEBUG("[GameState::GameState()] Create GameState.");
+    Log::SG_LOG_DEBUG("[CityState::CityState()] Create CityState.");
 
     Init();
 }
 
-sg::GameState::~GameState() noexcept
+sg::CityState::~CityState() noexcept
 {
-    Log::SG_LOG_DEBUG("[GameState::~GameState()] Destruct GameState.");
+    Log::SG_LOG_DEBUG("[CityState::~CityState()] Destruct CityState.");
 }
 
 //-------------------------------------------------
 // Logic
 //-------------------------------------------------
 
-void sg::GameState::Input()
+void sg::CityState::Input()
 {
-    // ESC ecs ends the state
-    // todo ESC beendet alle States
-    if (context.window->IsKeyPressed(GLFW_KEY_ESCAPE))
-    {
-        action = Action::MAIN_MENU;
-    }
-
     // WASD keys + right mouse button rotation
     m_camera->Input();
 
-    // switch to the menu state
+    // switch to the MenuState
     if (action == Action::MAIN_MENU)
     {
         Log::SG_LOG_INFO("[GameState::Input()] Starts switching back to the MenuState.");
         RequestStackPop();
-        RequestStackPush(Id::MENU);
+        RequestStackPush(Id::MAIN_MENU);
     }
 }
 
-void sg::GameState::Update()
+void sg::CityState::Update()
 {
 }
 
-void sg::GameState::Render()
+void sg::CityState::Render()
 {
-    m_skybox->Render(*context.window, *m_camera);
+    m_skybox->Render(*context->window, *m_camera);
 }
 
-void sg::GameState::RenderImGui()
+void sg::CityState::RenderImGui()
 {
     ogl::Window::ImGuiBegin();
 
-    if (m_initialRun)
-    {
-        ImGui::SetNextWindowPos(
-            { static_cast<float>(context.window->GetWidth()) * 0.5f, static_cast<float>(context.window->GetHeight()) * 0.5f },
-            ImGuiCond_Always,
-            { 0.5f, 0.5f }
-        );
-        ImGui::Begin("New City", &m_initialRun,
-            ImGuiWindowFlags_NoTitleBar |
-            ImGuiWindowFlags_NoResize |
-            ImGuiWindowFlags_NoScrollbar |
-            ImGuiWindowFlags_NoSavedSettings |
-            ImGuiWindowFlags_NoMove
-            );
-
-        ImGui::InputText("Name", m_cityName, IM_ARRAYSIZE(m_cityName));
-
-        static int e{ 0 };
-        ImGui::RadioButton("Easy (20.000 EUR)", &e, 0);
-        ImGui::SameLine();
-        ImGui::RadioButton("Medium (10.000 EUR)", &e, 1);
-        ImGui::SameLine();
-        ImGui::RadioButton("Hard (10k Bonds)", &e, 2);
-        ImGui::Separator();
-
-        if (ImGui::Button("Done"))
-        {
-            m_initialRun = false;
-            if (strlen(m_cityName) <= 4)
-            {
-                strncpy(m_cityName, "Musterstadt", 96);
-            }
-            m_level = static_cast<Level>(e);
-        }
-
-        ImGui::End();
-    }
-    else
-    {
-        //m_camera->RenderImGui();
-        ShowMainMenuBar();
-        ShowGameMenu();
-    }
+    //m_camera->RenderImGui();
+    ShowMainMenuBar();
+    ShowGameMenu();
 
     ogl::Window::ImGuiEnd();
 }
@@ -128,26 +82,26 @@ void sg::GameState::RenderImGui()
 // Init
 //-------------------------------------------------
 
-void sg::GameState::Init()
+void sg::CityState::Init()
 {
-    Log::SG_LOG_DEBUG("[GameState::Init()] Initializing game state.");
+    Log::SG_LOG_DEBUG("[CityState::Init()] Initializing city state.");
 
-    m_camera = std::make_unique<ogl::camera::Camera>(context.window);
+    m_camera = std::make_unique<ogl::camera::Camera>(context->window);
     m_skybox = std::make_unique<ogl::resource::Skybox>();
 
-    Log::SG_LOG_DEBUG("[GameState::Init()] The game state was successfully initialized.");
+    Log::SG_LOG_DEBUG("[CityState::Init()] The city state was successfully initialized.");
 }
 
 //-------------------------------------------------
 // ImGui
 //-------------------------------------------------
 
-void sg::GameState::ShowMainMenuBar()
+void sg::CityState::ShowMainMenuBar()
 {
     if (m_showAbout)
     {
         ImGui::SetNextWindowPos(
-            { static_cast<float>(context.window->GetWidth()) * 0.5f, static_cast<float>(context.window->GetHeight()) * 0.5f },
+            { static_cast<float>(context->window->GetWidth()) * 0.5f, static_cast<float>(context->window->GetHeight()) * 0.5f },
             ImGuiCond_Appearing,
             { 0.5f, 0.5f }
         );
@@ -211,14 +165,14 @@ void sg::GameState::ShowMainMenuBar()
     }
 }
 
-void sg::GameState::ShowGameMenu()
+void sg::CityState::ShowGameMenu()
 {
     ImGui::SetNextWindowPos(
-        { static_cast<float>(context.window->GetWidth()) * 0.5f, static_cast<float>(context.window->GetHeight()) },
+        { static_cast<float>(context->window->GetWidth()) * 0.5f, static_cast<float>(context->window->GetHeight()) },
         ImGuiCond_Always,
         { 0.5f, 1.0f }
     );
-    ImGui::SetNextWindowSize({ static_cast<float>(context.window->GetWidth()), 64.0f });
+    ImGui::SetNextWindowSize({ static_cast<float>(context->window->GetWidth()), 64.0f });
     ImGui::Begin("Game Menu", nullptr,
         ImGuiWindowFlags_NoTitleBar |
         ImGuiWindowFlags_NoResize |
@@ -231,11 +185,8 @@ void sg::GameState::ShowGameMenu()
     {
     }
     ImGui::SameLine();
-    if (!m_initialRun)
-    {
-        ImGui::Text("City: %s", m_cityName);
-        ImGui::Text("Level: %i", m_level);
-    }
+
+    ImGui::Text("City: %s", context->city->name.c_str());
 
     ImGui::End();
 }

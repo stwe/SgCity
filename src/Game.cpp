@@ -18,7 +18,8 @@
 
 #include "Game.h"
 #include "MenuState.h"
-#include "GameState.h"
+#include "StartState.h"
+#include "CityState.h"
 #include "state/StateStack.h"
 #include "ogl/Window.h"
 #include "ogl/OpenGL.h"
@@ -61,14 +62,15 @@ void sg::Game::Init()
     m_window = std::make_shared<ogl::Window>();
 
     // create state stack
-    m_stateStack = std::make_unique<state::StateStack>(state::State::Context(m_window));
+    m_stateStack = std::make_unique<state::StateStack>(std::make_unique<state::State::Context>(m_window));
 
     // register states
-    m_stateStack->RegisterState<MenuState>(state::State::Id::MENU);
-    m_stateStack->RegisterState<GameState>(state::State::Id::GAME);
+    m_stateStack->RegisterState<MenuState>(state::State::Id::MAIN_MENU);
+    m_stateStack->RegisterState<StartState>(state::State::Id::START);
+    m_stateStack->RegisterState<CityState>(state::State::Id::CITY);
 
     // start with the main menu
-    m_stateStack->PushState(state::State::Id::MENU);
+    m_stateStack->PushState(state::State::Id::MAIN_MENU);
 
     Log::SG_LOG_DEBUG("[Game::Init()] The game was successfully initialized.");
 }

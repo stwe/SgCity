@@ -57,6 +57,11 @@ namespace sg::city
         //-------------------------------------------------
 
         /**
+         * The name of the city.
+         */
+        std::string name;
+
+        /**
          * The real world time (in seconds) since the day updated.
          */
         float currentTime{ 0.0f };
@@ -136,11 +141,6 @@ namespace sg::city
         //-------------------------------------------------
         // Member
         //-------------------------------------------------
-
-        /**
-         * The name of the city.
-         */
-        std::string m_name;
 
         /**
          * The Map object.

@@ -26,8 +26,8 @@
 // Ctors. / Dtor.
 //-------------------------------------------------
 
-sg::MenuState::MenuState(const Id t_id, state::StateStack* t_stateStack, const Context& t_context)
-    : State(t_id, t_stateStack, t_context)
+sg::MenuState::MenuState(const Id t_id, state::StateStack* t_stateStack, std::shared_ptr<Context> t_context)
+    : State(t_id, t_stateStack, std::move(t_context))
 {
     Log::SG_LOG_DEBUG("[MenuState::MenuState()] Create MenuState.");
 }
@@ -44,19 +44,19 @@ sg::MenuState::~MenuState() noexcept
 void sg::MenuState::Input()
 {
     // ESC for quit
-    if (context.window->IsKeyPressed(GLFW_KEY_ESCAPE))
+    if (context->window->IsKeyPressed(GLFW_KEY_ESCAPE))
     {
         action = Action::QUIT;
     }
 
     // todo: load saved city
 
-    // switch to the game state for starting a new city
+    // switch to the start state for setup a new city
     if (action == Action::START_CITY)
     {
-        Log::SG_LOG_INFO("[MenuState::Input()] Starts switching to the GameState.");
+        Log::SG_LOG_INFO("[MenuState::Input()] Starts switching to the StartState.");
         RequestStackPop();
-        RequestStackPush(Id::GAME);
+        RequestStackPush(Id::START);
     }
 
     // todo edit new map
@@ -82,7 +82,7 @@ void sg::MenuState::RenderImGui()
     ogl::Window::ImGuiBegin();
 
     ImGui::SetNextWindowPos(
-        { static_cast<float>(context.window->GetWidth()) * 0.5f, static_cast<float>(context.window->GetHeight()) * 0.5f },
+        { static_cast<float>(context->window->GetWidth()) * 0.5f, static_cast<float>(context->window->GetHeight()) * 0.5f },
         ImGuiCond_Always,
         { 0.5f, 0.5f }
     );

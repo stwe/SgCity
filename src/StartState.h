@@ -18,19 +18,27 @@
 
 #pragma once
 
-#include <vector>
 #include "state/State.h"
 
 //-------------------------------------------------
-// MenuState
+// Forward declarations
+//-------------------------------------------------
+
+namespace sg::city
+{
+    class City;
+}
+
+//-------------------------------------------------
+// StartState
 //-------------------------------------------------
 
 namespace sg
 {
     /**
-     * Shows the main menu.
+     * State to setup a new city.
      */
-    class MenuState : public state::State
+    class StartState : public state::State
     {
     public:
         //-------------------------------------------------
@@ -43,10 +51,16 @@ namespace sg
         enum class Action
         {
             NONE,        // default
-            LOAD_CITY,   // load saved city
-            START_CITY,  // start new city (StartState)
-            EDIT_MAP,    // edit new map
-            QUIT         // quit game
+            MAIN_MENU,   // back to the main menu (MenuState)
+            CREATE_CITY  // play a city
+        };
+
+        /**
+         * The level of difficulty.
+         */
+        enum class Level
+        {
+            EASY, MEDIUM, HARD
         };
 
         //-------------------------------------------------
@@ -62,7 +76,7 @@ namespace sg
         // Ctors. / Dtor.
         //-------------------------------------------------
 
-        MenuState() = delete;
+        StartState() = delete;
 
         /**
          * Constructs a new CityState object.
@@ -71,14 +85,14 @@ namespace sg
          * @param t_stateStack The parent StateStack object.
          * @param t_context The holder of shared objects.
          */
-        MenuState(Id t_id, state::StateStack* t_stateStack, std::shared_ptr<Context> t_context);
+        StartState(Id t_id, state::StateStack* t_stateStack, std::shared_ptr<Context> t_context);
 
-        MenuState(const MenuState& t_other) = delete;
-        MenuState(MenuState&& t_other) noexcept = delete;
-        MenuState& operator=(const MenuState& t_other) = delete;
-        MenuState& operator=(MenuState&& t_other) noexcept = delete;
+        StartState(const StartState& t_other) = delete;
+        StartState(StartState&& t_other) noexcept = delete;
+        StartState& operator=(const StartState& t_other) = delete;
+        StartState& operator=(StartState&& t_other) noexcept = delete;
 
-        ~MenuState() noexcept override;
+        ~StartState() noexcept override;
 
         //-------------------------------------------------
         // Logic
@@ -93,31 +107,17 @@ namespace sg
 
     private:
         //-------------------------------------------------
-        // Constants
-        //-------------------------------------------------
-
-        /**
-         * The menu action strings.
-         */
-        static constexpr std::array<std::string_view, 5> BUTTON_NAMES
-        {
-            "None",
-            "Load Saved City",
-            "Start New City",
-            "Edit New Map",
-            "Quit",
-        };
-
-        //-------------------------------------------------
         // Member
         //-------------------------------------------------
 
         /**
-         * Boolean to determine which button is active (NONE by default).
+         * Name name of the city.
          */
-        std::vector<bool> m_buttons
-        {
-            true, false, false, false, false
-        };
+        char m_cityName[96]{ "Musterstadt" };
+
+        /**
+         * The level of difficulty.
+         */
+        Level m_level{ Level::EASY };
     };
 }

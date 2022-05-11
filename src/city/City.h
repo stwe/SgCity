@@ -18,8 +18,8 @@
 
 #pragma once
 
-#include <string>
-#include <memory>
+#include "ogl/Window.h"
+#include "ogl/camera/Camera.h"
 
 //-------------------------------------------------
 // Forward declarations
@@ -116,10 +116,11 @@ namespace sg::city
         /**
          * Constructs a new City object.
          *
+         * @param t_tileCount The number of tiles in x and z direction.
          * @param t_name The name of the city.
-         * @param t_map The Map object for access to the tiles.
+         * @param t_window The window object.
          */
-        City(std::string t_name, std::shared_ptr<map::Map> t_map);
+        City(int t_tileCount, std::string t_name, std::shared_ptr<ogl::Window> t_window);
 
         City(const City& t_other) = delete;
         City(City&& t_other) noexcept = delete;
@@ -132,7 +133,9 @@ namespace sg::city
         // Logic
         //-------------------------------------------------
 
+        void Input();
         void Update();
+        void Render(const ogl::camera::Camera& t_camera);
         void RenderImGui();
 
     protected:
@@ -145,7 +148,7 @@ namespace sg::city
         /**
          * The Map object.
          */
-        std::shared_ptr<map::Map> m_map;
+        std::unique_ptr<map::Map> m_map;
 
         //-------------------------------------------------
         // Distribute

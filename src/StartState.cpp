@@ -20,7 +20,6 @@
 #include "StartState.h"
 #include "Log.h"
 #include "city/City.h"
-#include "map/Map.h"
 #include "ogl/OpenGL.h"
 
 //-------------------------------------------------
@@ -63,11 +62,10 @@ void sg::StartState::Input()
     if (action == Action::CREATE_CITY)
     {
         Log::SG_LOG_INFO("[StartState::Input()] Starts switching to the CityState.");
-        Log::SG_LOG_INFO("[StartState::Input()] Name: {}, Level: {}, Size: {}", m_cityName, m_level, m_mapSize);
+        Log::SG_LOG_INFO("[StartState::Input()] Name: {}, Level: {}, Size: {}", m_cityName, m_level, m_tileCount);
 
-        // create a map and a city
-        auto map{ std::make_unique<map::Map>(m_mapSize, context->window) };
-        context->city = std::make_unique<city::City>(m_cityName, std::move(map));
+        // create a new city
+        context->city = std::make_unique<city::City>(m_tileCount, m_cityName, context->window);
 
         RequestStackPop();
         RequestStackPush(Id::CITY);
@@ -123,7 +121,7 @@ void sg::StartState::RenderImGui()
         {
             strncpy(m_cityName, "Musterstadt", 96);
         }
-        m_mapSize = MAP_SIZES.at(s);
+        m_tileCount = MAP_SIZES.at(s);
         m_level = static_cast<Level>(e);
 
         action = Action::CREATE_CITY;

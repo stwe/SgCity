@@ -79,15 +79,6 @@ GLFWwindow* sg::ogl::Window::GetWindowHandle() const
 }
 
 //-------------------------------------------------
-// Logic
-//-------------------------------------------------
-
-void sg::ogl::Window::Input() const
-{
-    CloseIfEscKeyPressed();
-}
-
-//-------------------------------------------------
 // Rendering
 //-------------------------------------------------
 
@@ -119,14 +110,6 @@ bool sg::ogl::Window::IsKeyPressed(const int t_keyCode) const
 {
     return glfwGetKey(m_windowHandle, t_keyCode) == GLFW_PRESS ||
         glfwGetKey(m_windowHandle, t_keyCode) == GLFW_REPEAT;
-}
-
-void sg::ogl::Window::CloseIfEscKeyPressed() const
-{
-    if (IsKeyPressed(GLFW_KEY_ESCAPE))
-    {
-        Close();
-    }
 }
 
 bool sg::ogl::Window::IsMouseButtonPressed(const int t_button) const

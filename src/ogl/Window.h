@@ -100,15 +100,6 @@ namespace sg::ogl
         [[nodiscard]] GLFWwindow* GetWindowHandle() const;
 
         //-------------------------------------------------
-        // Logic
-        //-------------------------------------------------
-
-        /**
-         * Window specific input logic.
-         */
-        [[deprecated]] void Input() const;
-
-        //-------------------------------------------------
         // Rendering
         //-------------------------------------------------
 
@@ -145,11 +136,6 @@ namespace sg::ogl
          * @return true if GLFW_PRESS or GLFW_REPEAT
          */
         [[nodiscard]] bool IsKeyPressed(int t_keyCode) const;
-
-        /**
-         * Close if Esc key was pressed.
-         */
-        [[deprecated]] void CloseIfEscKeyPressed() const;
 
         /**
          * Poll the mouse button pressed status.

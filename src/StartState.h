@@ -125,9 +125,9 @@ namespace sg
         char m_cityName[96]{ "Musterstadt" };
 
         /**
-         * The size of the map.
+         * The number of tiles in x and z direction.
          */
-        int m_mapSize{ 0 };
+        int m_tileCount{ 0 };
 
         /**
          * The level of difficulty.

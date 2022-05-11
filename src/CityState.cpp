@@ -60,10 +60,12 @@ void sg::CityState::Input()
 
 void sg::CityState::Update()
 {
+    context->city->Update();
 }
 
 void sg::CityState::Render()
 {
+    context->city->Render(*m_camera);
     m_skybox->Render(*context->window, *m_camera);
 }
 

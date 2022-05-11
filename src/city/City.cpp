@@ -29,11 +29,12 @@
 // Ctors. / Dtor.
 //-------------------------------------------------
 
-sg::city::City::City(std::string t_name, std::shared_ptr<map::Map> t_map)
+sg::city::City::City(const int t_tileCount, std::string t_name, std::shared_ptr<ogl::Window> t_window)
     : name{ std::move(t_name) }
-    , m_map{ std::move(t_map) }
 {
     Log::SG_LOG_DEBUG("[City::City()] Create City.");
+
+    m_map = std::make_unique<map::Map>(t_tileCount, std::move(t_window));
 
     Init();
 }
@@ -47,8 +48,19 @@ sg::city::City::~City() noexcept
 // Logic
 //-------------------------------------------------
 
+void sg::city::City::Input()
+{
+}
+
 void sg::city::City::Update()
 {
+    // map
+
+    m_map->Update();
+
+
+    // city
+
     auto populationTotal{ 0.0f };
 
     currentTime += static_cast<float>(Game::FRAME_TIME);
@@ -103,8 +115,18 @@ void sg::city::City::Update()
     population = populationTotal;
 }
 
+void sg::city::City::Render(const ogl::camera::Camera& t_camera)
+{
+    m_map->Render(t_camera);
+}
+
 void sg::city::City::RenderImGui()
 {
+    // map
+    m_map->RenderImGui();
+
+    // city
+
     ImGui::Begin("City");
 
     ImGui::Text("Name: %s", name.c_str());
@@ -174,6 +196,7 @@ void sg::city::City::Init()
 {
     Log::SG_LOG_DEBUG("[City::Init()] Initializing city.");
 
+    // get city config
     birthRate = Game::INI.Get<float>("city", "birth_rate");
     deathRate = Game::INI.Get<float>("city", "death_rate");
     homelessPeople = Game::INI.Get<float>("city", "homeless_people");

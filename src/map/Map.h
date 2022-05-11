@@ -18,7 +18,6 @@
 
 #pragma once
 
-#include "Application.h"
 #include "ogl/resource/Skybox.h"
 
 //-------------------------------------------------
@@ -59,17 +58,13 @@ namespace sg::map
     {
     public:
         //-------------------------------------------------
-        // Constants
-        //-------------------------------------------------
-
-        /*
-         * The number of tiles in x and z direction.
-         */
-        inline static const auto TILE_COUNT{ Application::INI.Get<int>("world", "tile_count") }; // NOLINT(cert-err58-cpp)
-
-        //-------------------------------------------------
         // Member
         //-------------------------------------------------
+
+        /**
+         * The number of tiles in x and z direction.
+         */
+        int tileCount;
 
         /**
          * The Window object.
@@ -90,9 +85,10 @@ namespace sg::map
         /**
          * Constructs a new Map object.
          *
+         * @param t_tileCount The number of tiles in x and z direction.
          * @param t_window The Window object.
          */
-        explicit Map(std::shared_ptr<ogl::Window> t_window);
+        Map(int t_tileCount, std::shared_ptr<ogl::Window> t_window);
 
         Map(const Map& t_other) = delete;
         Map(Map&& t_other) noexcept = delete;

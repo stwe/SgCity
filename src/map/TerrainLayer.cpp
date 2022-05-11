@@ -19,7 +19,7 @@
 #include <glm/gtc/matrix_inverse.hpp>
 #include "TerrainLayer.h"
 #include "TileFactory.h"
-#include "Application.h"
+#include "Game.h"
 #include "Log.h"
 #include "Map.h"
 #include "ogl/OpenGL.h"
@@ -32,8 +32,9 @@
 // Ctors. / Dtor.
 //-------------------------------------------------
 
-sg::map::TerrainLayer::TerrainLayer(std::shared_ptr<ogl::Window> t_window)
+sg::map::TerrainLayer::TerrainLayer(const int t_tileCount, std::shared_ptr<ogl::Window> t_window)
     : Layer(std::move(t_window))
+    , m_tileCount{ t_tileCount }
 {
     Log::SG_LOG_DEBUG("[TerrainLayer::TerrainLayer()] Create TerrainLayer.");
 
@@ -63,7 +64,7 @@ void sg::map::TerrainLayer::RenderForMousePicking(const ogl::Window& t_window, c
 
     vao->Bind();
 
-    const auto& shaderProgram{ ogl::resource::ResourceManager::LoadShaderProgram(Application::RESOURCES_PATH + "shader/picking") };
+    const auto& shaderProgram{ ogl::resource::ResourceManager::LoadShaderProgram(Game::RESOURCES_PATH + "shader/picking") };
     shaderProgram.Bind();
 
     shaderProgram.SetUniform("model", modelMatrix);
@@ -88,7 +89,7 @@ void sg::map::TerrainLayer::Render(const ogl::camera::Camera& t_camera, const gl
 
     vao->Bind();
 
-    const auto& shaderProgram{ ogl::resource::ResourceManager::LoadShaderProgram(Application::RESOURCES_PATH + "shader/layer/terrain") };
+    const auto& shaderProgram{ ogl::resource::ResourceManager::LoadShaderProgram(Game::RESOURCES_PATH + "shader/layer/terrain") };
     shaderProgram.Bind();
 
     shaderProgram.SetUniform("model", modelMatrix);
@@ -100,23 +101,23 @@ void sg::map::TerrainLayer::Render(const ogl::camera::Camera& t_camera, const gl
     const auto n{ glm::inverseTranspose(glm::mat3(mv)) };
     shaderProgram.SetUniform("normalMatrix", n);
 
-    const auto& grassTexture{ ogl::resource::ResourceManager::LoadTexture(Application::RESOURCES_PATH + "texture/grass.png") };
+    const auto& grassTexture{ ogl::resource::ResourceManager::LoadTexture(Game::RESOURCES_PATH + "texture/grass.png") };
     grassTexture.BindForReading(GL_TEXTURE0);
     shaderProgram.SetUniform("diffuseMap", 0);
 
-    const auto& rTexture{ ogl::resource::ResourceManager::LoadTexture(Application::RESOURCES_PATH + "texture/r.png", true) };
+    const auto& rTexture{ ogl::resource::ResourceManager::LoadTexture(Game::RESOURCES_PATH + "texture/r.png", true) };
     rTexture.BindForReading(GL_TEXTURE1);
     shaderProgram.SetUniform("rMap", 1);
 
-    const auto& cTexture{ ogl::resource::ResourceManager::LoadTexture(Application::RESOURCES_PATH + "texture/c.png", true) };
+    const auto& cTexture{ ogl::resource::ResourceManager::LoadTexture(Game::RESOURCES_PATH + "texture/c.png", true) };
     cTexture.BindForReading(GL_TEXTURE2);
     shaderProgram.SetUniform("cMap", 2);
 
-    const auto& iTexture{ ogl::resource::ResourceManager::LoadTexture(Application::RESOURCES_PATH + "texture/i.png", true) };
+    const auto& iTexture{ ogl::resource::ResourceManager::LoadTexture(Game::RESOURCES_PATH + "texture/i.png", true) };
     iTexture.BindForReading(GL_TEXTURE3);
     shaderProgram.SetUniform("iMap", 3);
 
-    const auto& trafficTexture{ ogl::resource::ResourceManager::LoadTexture(Application::RESOURCES_PATH + "texture/t.png") };
+    const auto& trafficTexture{ ogl::resource::ResourceManager::LoadTexture(Game::RESOURCES_PATH + "texture/t.png") };
     trafficTexture.BindForReading(GL_TEXTURE4);
     shaderProgram.SetUniform("tMap", 4);
 
@@ -247,7 +248,7 @@ void sg::map::TerrainLayer::OnMouseMoved()
                 for (auto x{ sx }; x <= ex; ++x)
                 {
                     // calc tile map index
-                    const auto i{ TileFactory::GetMapIndexFromPosition(x, z) };
+                    const auto i{ TileFactory::GetMapIndexFromPosition(m_tileCount, x, z) };
 
                     // only tiles of type NONE can be selected
                     if (tiles[i]->type == Tile::TileType::NONE)
@@ -291,11 +292,11 @@ void sg::map::TerrainLayer::Init()
 
 void sg::map::TerrainLayer::CreateTiles()
 {
-    for (auto z{ 0 }; z < Map::TILE_COUNT; ++z)
+    for (auto z{ 0 }; z < m_tileCount; ++z)
     {
-        for (auto x{ 0 }; x < Map::TILE_COUNT; ++x)
+        for (auto x{ 0 }; x < m_tileCount; ++x)
         {
-            tiles.emplace_back(TileFactory::CreateTile(static_cast<float>(x), static_cast<float>(z), Tile::TileType::NONE));
+            tiles.emplace_back(TileFactory::CreateTile(m_tileCount, static_cast<float>(x), static_cast<float>(z), Tile::TileType::NONE));
         }
     }
 }
@@ -306,59 +307,59 @@ void sg::map::TerrainLayer::CreateTiles()
 
 void sg::map::TerrainLayer::AddTileNeighbors() const
 {
-    for (auto z{ 0 }; z < Map::TILE_COUNT; ++z)
+    for (auto z{ 0 }; z < m_tileCount; ++z)
     {
-        for (auto x{ 0 }; x < Map::TILE_COUNT; ++x)
+        for (auto x{ 0 }; x < m_tileCount; ++x)
         {
-            const auto i{ z * Map::TILE_COUNT + x };
+            const auto i{ z * m_tileCount + x };
 
             // regular grid
             if (z > 0)
             {
-                tiles[i]->n = tiles[(z - 1) * Map::TILE_COUNT + x];
+                tiles[i]->n = tiles[(z - 1) * m_tileCount + x];
                 tiles[i]->neighbors.push_back(tiles[i]->n);
             }
 
-            if (z < Map::TILE_COUNT - 1)
+            if (z < m_tileCount - 1)
             {
-                tiles[i]->s = tiles[(z + 1) * Map::TILE_COUNT + x];
+                tiles[i]->s = tiles[(z + 1) * m_tileCount + x];
                 tiles[i]->neighbors.push_back(tiles[i]->s);
             }
 
             if (x > 0)
             {
-                tiles[i]->w = tiles[z * Map::TILE_COUNT + (x - 1)];
+                tiles[i]->w = tiles[z * m_tileCount + (x - 1)];
                 tiles[i]->neighbors.push_back(tiles[i]->w);
             }
 
-            if (x < Map::TILE_COUNT - 1)
+            if (x < m_tileCount - 1)
             {
-                tiles[i]->e = tiles[z * Map::TILE_COUNT + (x + 1)];
+                tiles[i]->e = tiles[z * m_tileCount + (x + 1)];
                 tiles[i]->neighbors.push_back(tiles[i]->e);
             }
 
             // connect diagonally
-            if (z > 0 && x < Map::TILE_COUNT - 1)
+            if (z > 0 && x < m_tileCount - 1)
             {
-                tiles[i]->ne = tiles[(z - 1) * Map::TILE_COUNT + (x + 1)];
+                tiles[i]->ne = tiles[(z - 1) * m_tileCount + (x + 1)];
                 tiles[i]->neighbors.push_back(tiles[i]->ne);
             }
 
             if (z > 0 && x > 0)
             {
-                tiles[i]->nw = tiles[(z - 1) * Map::TILE_COUNT + (x - 1)];
+                tiles[i]->nw = tiles[(z - 1) * m_tileCount + (x - 1)];
                 tiles[i]->neighbors.push_back(tiles[i]->nw);
             }
 
-            if (z < Map::TILE_COUNT - 1 && x > 0)
+            if (z < m_tileCount - 1 && x > 0)
             {
-                tiles[i]->sw = tiles[(z + 1) * Map::TILE_COUNT + (x - 1)];
+                tiles[i]->sw = tiles[(z + 1) * m_tileCount + (x - 1)];
                 tiles[i]->neighbors.push_back(tiles[i]->sw);
             }
 
-            if (z < Map::TILE_COUNT - 1 && x < Map::TILE_COUNT - 1)
+            if (z < m_tileCount - 1 && x < m_tileCount - 1)
             {
-                tiles[i]->se = tiles[(z + 1) * Map::TILE_COUNT + (x + 1)];
+                tiles[i]->se = tiles[(z + 1) * m_tileCount + (x + 1)];
                 tiles[i]->neighbors.push_back(tiles[i]->se);
             }
         }
@@ -368,7 +369,7 @@ void sg::map::TerrainLayer::AddTileNeighbors() const
 void sg::map::TerrainLayer::TilesToGpu()
 {
     vao = std::make_unique<ogl::buffer::Vao>();
-    vao->CreateEmptyDynamicVbo(Map::TILE_COUNT * Map::TILE_COUNT * Tile::BYTES_PER_TILE, Map::TILE_COUNT * Map::TILE_COUNT * Tile::VERTICES_PER_TILE);
+    vao->CreateEmptyDynamicVbo(m_tileCount * m_tileCount * Tile::BYTES_PER_TILE, m_tileCount * m_tileCount * Tile::VERTICES_PER_TILE);
 
     for (const auto& tile : tiles)
     {

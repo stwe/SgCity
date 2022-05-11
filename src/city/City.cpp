@@ -19,7 +19,7 @@
 #include <algorithm>
 #include <imgui.h>
 #include "City.h"
-#include "Application.h"
+#include "Game.h"
 #include "SgAssert.h"
 #include "map/Map.h"
 #include "map/TerrainLayer.h"
@@ -51,7 +51,7 @@ void sg::city::City::Update()
 {
     auto populationTotal{ 0.0f };
 
-    currentTime += static_cast<float>(Application::FRAME_TIME);
+    currentTime += static_cast<float>(Game::FRAME_TIME);
     if (currentTime < TIME_PER_DAY)
     {
         return;
@@ -174,10 +174,10 @@ void sg::city::City::Init()
 {
     Log::SG_LOG_DEBUG("[City::Init()] Initializing city.");
 
-    birthRate = Application::INI.Get<float>("city", "birth_rate");
-    deathRate = Application::INI.Get<float>("city", "death_rate");
-    homelessPeople = Application::INI.Get<float>("city", "homeless_people");
-    proportionCanWork = Application::INI.Get<float>("city", "proportion_population_can_work");
+    birthRate = Game::INI.Get<float>("city", "birth_rate");
+    deathRate = Game::INI.Get<float>("city", "death_rate");
+    homelessPeople = Game::INI.Get<float>("city", "homeless_people");
+    proportionCanWork = Game::INI.Get<float>("city", "proportion_population_can_work");
 
     // at the beginning all residents are homeless
     population = homelessPeople;

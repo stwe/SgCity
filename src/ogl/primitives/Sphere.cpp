@@ -17,7 +17,7 @@
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 #include "Sphere.h"
-#include "Application.h"
+#include "Game.h"
 #include "Log.h"
 #include "ogl/Window.h"
 #include "ogl/buffer/Vao.h"
@@ -56,7 +56,7 @@ void sg::ogl::primitives::Sphere::Render(
 {
     m_sphereVao->Bind();
 
-    const auto& shaderProgram{ resource::ResourceManager::LoadShaderProgram(Application::RESOURCES_PATH + "shader/sphere") };
+    const auto& shaderProgram{ resource::ResourceManager::LoadShaderProgram(Game::RESOURCES_PATH + "shader/sphere") };
     shaderProgram.Bind();
     shaderProgram.SetUniform("model", math::Transform::CreateModelMatrix(t_position, t_rotation, t_scale));
     shaderProgram.SetUniform("view", t_camera.GetViewMatrix());

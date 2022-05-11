@@ -32,8 +32,9 @@
 // Ctors. / Dtor.
 //-------------------------------------------------
 
-sg::map::Map::Map(std::shared_ptr<ogl::Window> t_window)
-    : window{ std::move(t_window) }
+sg::map::Map::Map(const int t_tileCount, std::shared_ptr<ogl::Window> t_window)
+    : tileCount{ t_tileCount }
+    , window{ std::move(t_window) }
 {
     Log::SG_LOG_DEBUG("[Map::Map()] Create Map.");
 
@@ -130,9 +131,9 @@ void sg::map::Map::Init()
 
     InitEventDispatcher();
 
-    m_waterLayer = std::make_unique<WaterLayer>(window);
-    terrainLayer = std::make_unique<TerrainLayer>(window);
-    m_roadsLayer = std::make_unique<RoadsLayer>(window, terrainLayer->tiles);
+    m_waterLayer = std::make_unique<WaterLayer>(tileCount, window);
+    terrainLayer = std::make_unique<TerrainLayer>(tileCount, window);
+    m_roadsLayer = std::make_unique<RoadsLayer>(tileCount, window, terrainLayer->tiles);
     m_buildingsLayer = std::make_unique<BuildingsLayer>(window, terrainLayer->tiles);
     m_plantsLayer = std::make_unique<PlantsLayer>(window, terrainLayer->tiles);
 

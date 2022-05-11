@@ -18,7 +18,7 @@
 
 #include <imgui.h>
 #include "CityState.h"
-#include "Log.h"
+#include "SgAssert.h"
 #include "city/City.h"
 #include "ogl/resource/Skybox.h"
 #include "ogl/OpenGL.h"
@@ -71,6 +71,8 @@ void sg::CityState::RenderImGui()
 {
     ogl::Window::ImGuiBegin();
 
+    context->city->RenderImGui();
+
     //m_camera->RenderImGui();
     ShowMainMenuBar();
     ShowGameMenu();
@@ -86,8 +88,12 @@ void sg::CityState::Init()
 {
     Log::SG_LOG_DEBUG("[CityState::Init()] Initializing city state.");
 
+    SG_ASSERT(context->window, "[CityState::Init()] Null pointer.")
+
     m_camera = std::make_unique<ogl::camera::Camera>(context->window);
     m_skybox = std::make_unique<ogl::resource::Skybox>();
+
+    SG_ASSERT(context->city, "[CityState::Init()] Null pointer.")
 
     Log::SG_LOG_DEBUG("[CityState::Init()] The city state was successfully initialized.");
 }

@@ -18,7 +18,7 @@
 
 #include "Gui.h"
 #include "Log.h"
-#include "Application.h"
+#include "Game.h"
 #include "ogl/OpenGL.h"
 #include "ogl/buffer/Vao.h"
 #include "ogl/math/Transform.h"
@@ -50,7 +50,7 @@ void sg::gui::Gui::Render(const float t_x, const float t_y, const float t_scaleX
     ogl::OpenGL::EnableAlphaBlending();
     ogl::OpenGL::DisableDepthTesting();
 
-    const auto& shaderProgram{ ogl::resource::ResourceManager::LoadShaderProgram(Application::RESOURCES_PATH + "shader/gui") };
+    const auto& shaderProgram{ ogl::resource::ResourceManager::LoadShaderProgram(Game::RESOURCES_PATH + "shader/gui") };
     shaderProgram.Bind();
 
     const auto modelMatrix = ogl::math::Transform::CreateModelMatrix(

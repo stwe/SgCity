@@ -48,11 +48,12 @@ namespace sg::map
         /**
          * Constructs new Tile objects and sets some defaults.
          *
+         * @param t_tileCount The number of tiles in x and z direction.
          * @param t_mapX The top left x position of the Tile in local space.
          * @param t_mapZ The top left z position of the Tile in local space.
          * @param t_tileType The type of the Tile.
          */
-        static std::unique_ptr<Tile> CreateTile(float t_mapX, float t_mapZ, Tile::TileType t_tileType);
+        static std::unique_ptr<Tile> CreateTile(int t_tileCount, float t_mapX, float t_mapZ, Tile::TileType t_tileType);
 
         //-------------------------------------------------
         // Util
@@ -61,22 +62,24 @@ namespace sg::map
         /**
          * Converts a 2D array index into a 1D index.
          *
+         * @param t_tileCount The number of tiles in x and z direction.
          * @param t_mapX The x position.
          * @param t_mapZ The z or y position.
          *
          * @return The 1D index.
          */
-        static int GetMapIndexFromPosition(int t_mapX, int t_mapZ);
+        static int GetMapIndexFromPosition(int t_tileCount, int t_mapX, int t_mapZ);
 
         /**
          * Converts a 2D array index into a 1D index.
          *
+         * @param t_tileCount The number of tiles in x and z direction.
          * @param t_mapX The x position.
          * @param t_mapZ The z or y position.
          *
          * @return The 1D index.
          */
-        static int GetMapIndexFromPosition(float t_mapX, float t_mapZ);
+        static int GetMapIndexFromPosition(int t_tileCount, float t_mapX, float t_mapZ);
 
     protected:
 

@@ -64,6 +64,15 @@ namespace sg
         };
 
         //-------------------------------------------------
+        // Constants
+        //-------------------------------------------------
+
+        /**
+         * Possible map sizes.
+         */
+        static constexpr std::array<int, 3> MAP_SIZES{ 128, 256, 512 };
+
+        //-------------------------------------------------
         // Member
         //-------------------------------------------------
 
@@ -114,6 +123,11 @@ namespace sg
          * Name name of the city.
          */
         char m_cityName[96]{ "Musterstadt" };
+
+        /**
+         * The size of the map.
+         */
+        int m_mapSize{ 0 };
 
         /**
          * The level of difficulty.

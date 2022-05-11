@@ -18,7 +18,7 @@
 
 #include <imgui.h>
 #include "BuildingsLayer.h"
-#include "Application.h"
+#include "Game.h"
 #include "Tile.h"
 #include "Log.h"
 #include "ogl/primitives/Sphere.h"
@@ -106,10 +106,10 @@ void sg::map::BuildingsLayer::Init()
 {
     Log::SG_LOG_DEBUG("[BuildingsLayer::Init()] Initialize the BuildingsLayer.");
 
-    m_frustumCulling = Application::INI.Get<bool>("buildings", "frustum_culling");
-    m_renderSphere = Application::INI.Get<bool>("buildings", "render_sphere_volume");
+    m_frustumCulling = Game::INI.Get<bool>("buildings", "frustum_culling");
+    m_renderSphere = Game::INI.Get<bool>("buildings", "render_sphere_volume");
 
-    m_model = ogl::resource::ResourceManager::LoadModel(window, Application::RESOURCES_PATH + "model/house/node_115.obj");
+    m_model = ogl::resource::ResourceManager::LoadModel(window, Game::RESOURCES_PATH + "model/house/node_115.obj");
 
     Log::SG_LOG_DEBUG("[BuildingsLayer::Init()] The BuildingsLayer was successfully initialized.");
 }

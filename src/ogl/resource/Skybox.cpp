@@ -17,7 +17,7 @@
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 #include "Skybox.h"
-#include "Application.h"
+#include "Game.h"
 #include "SgAssert.h"
 #include "ResourceManager.h"
 #include "SgException.h"
@@ -31,12 +31,12 @@
 
 const std::vector<std::string> sg::ogl::resource::Skybox::FACES
 {
-    Application::RESOURCES_PATH + "skybox/NissiBeach2/right.jpg",
-    Application::RESOURCES_PATH + "skybox/NissiBeach2/left.jpg",
-    Application::RESOURCES_PATH + "skybox/NissiBeach2/top.jpg",
-    Application::RESOURCES_PATH + "skybox/NissiBeach2/bottom.jpg",
-    Application::RESOURCES_PATH + "skybox/NissiBeach2/front.jpg",
-    Application::RESOURCES_PATH + "skybox/NissiBeach2/back.jpg"
+    Game::RESOURCES_PATH + "skybox/NissiBeach2/right.jpg",
+    Game::RESOURCES_PATH + "skybox/NissiBeach2/left.jpg",
+    Game::RESOURCES_PATH + "skybox/NissiBeach2/top.jpg",
+    Game::RESOURCES_PATH + "skybox/NissiBeach2/bottom.jpg",
+    Game::RESOURCES_PATH + "skybox/NissiBeach2/front.jpg",
+    Game::RESOURCES_PATH + "skybox/NissiBeach2/back.jpg"
 };
 
 //-------------------------------------------------
@@ -81,7 +81,7 @@ void sg::ogl::resource::Skybox::Render(const Window& t_window, const camera::Cam
 {
     OpenGL::SetEqualDepthFunction();
 
-    const auto& shaderProgram{ ResourceManager::LoadShaderProgram(Application::RESOURCES_PATH + "shader/skybox") };
+    const auto& shaderProgram{ ResourceManager::LoadShaderProgram(Game::RESOURCES_PATH + "shader/skybox") };
     shaderProgram.Bind();
     shaderProgram.SetUniform("cubeSampler", 0);
     shaderProgram.SetUniform("viewMatrix", glm::mat4(glm::mat3(t_camera.GetViewMatrix())));

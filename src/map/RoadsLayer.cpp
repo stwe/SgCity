@@ -17,7 +17,7 @@
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 #include "RoadsLayer.h"
-#include "Application.h"
+#include "Game.h"
 #include "Tile.h"
 #include "Log.h"
 #include "Map.h"
@@ -31,8 +31,9 @@
 // Ctors. / Dtor.
 //-------------------------------------------------
 
-sg::map::RoadsLayer::RoadsLayer(std::shared_ptr<ogl::Window> t_window, std::vector<std::shared_ptr<Tile>> t_tiles)
+sg::map::RoadsLayer::RoadsLayer(const int t_tileCount, std::shared_ptr<ogl::Window> t_window, std::vector<std::shared_ptr<Tile>> t_tiles)
     : Layer(std::move(t_window), std::move(t_tiles))
+    , m_tileCount{ t_tileCount }
 {
     Log::SG_LOG_DEBUG("[RoadsLayer::RoadsLayer()] Create RoadsLayer.");
 
@@ -59,14 +60,14 @@ void sg::map::RoadsLayer::Render(const ogl::camera::Camera& t_camera, const glm:
 
     vao->Bind();
 
-    const auto& shaderProgram{ ogl::resource::ResourceManager::LoadShaderProgram(Application::RESOURCES_PATH + "shader/layer/roads") };
+    const auto& shaderProgram{ ogl::resource::ResourceManager::LoadShaderProgram(Game::RESOURCES_PATH + "shader/layer/roads") };
     shaderProgram.Bind();
 
     shaderProgram.SetUniform("model", modelMatrix);
     shaderProgram.SetUniform("view", t_camera.GetViewMatrix());
     shaderProgram.SetUniform("projection", window->GetProjectionMatrix());
 
-    const auto& texture{ ogl::resource::ResourceManager::LoadTexture(Application::RESOURCES_PATH + "texture/roads.png") };
+    const auto& texture{ ogl::resource::ResourceManager::LoadTexture(Game::RESOURCES_PATH + "texture/roads.png") };
     texture.BindForReading(GL_TEXTURE0);
     shaderProgram.SetUniform("diffuseMap", 0);
 
@@ -156,7 +157,7 @@ void sg::map::RoadsLayer::OnCreateRoad(const Tile& t_tile)
     if (!vao)
     {
         vao = std::make_unique<ogl::buffer::Vao>();
-        vao->CreateEmptyDynamicVbo(Map::TILE_COUNT * Map::TILE_COUNT * Tile::BYTES_PER_TILE, static_cast<int>(m_roadTiles.size()) * Tile::VERTICES_PER_TILE);
+        vao->CreateEmptyDynamicVbo(m_tileCount * m_tileCount * Tile::BYTES_PER_TILE, static_cast<int>(m_roadTiles.size()) * Tile::VERTICES_PER_TILE);
     }
 
     // store all tiles in Vao
@@ -186,7 +187,7 @@ void sg::map::RoadsLayer::RoadTilesToGpu()
     }
 
     vao = std::make_unique<ogl::buffer::Vao>();
-    vao->CreateEmptyDynamicVbo(Map::TILE_COUNT * Map::TILE_COUNT * Tile::BYTES_PER_TILE, static_cast<int>(m_roadTiles.size()) * Tile::VERTICES_PER_TILE);
+    vao->CreateEmptyDynamicVbo(m_tileCount * m_tileCount * Tile::BYTES_PER_TILE, static_cast<int>(m_roadTiles.size()) * Tile::VERTICES_PER_TILE);
 
     for (const auto& roadTile : m_roadTiles)
     {

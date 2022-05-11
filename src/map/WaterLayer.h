@@ -48,7 +48,7 @@ namespace sg::map
 
         WaterLayer() = delete;
 
-        explicit WaterLayer(std::shared_ptr<ogl::Window> t_window);
+        WaterLayer(int t_tileCount, std::shared_ptr<ogl::Window> t_window);
 
         WaterLayer(const WaterLayer& t_other) = delete;
         WaterLayer(WaterLayer&& t_other) noexcept = delete;
@@ -96,6 +96,11 @@ namespace sg::map
         //-------------------------------------------------
         // Member
         //-------------------------------------------------
+
+        /**
+         * The number of tiles in x and z direction.
+         */
+        int m_tileCount;
 
         std::unique_ptr<ogl::buffer::WaterFbos> m_waterFbos;
         float m_moveFactor{ 0.0f };

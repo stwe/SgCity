@@ -20,7 +20,7 @@
 #include "StartState.h"
 #include "Log.h"
 #include "city/City.h"
-#include "ogl/Window.h"
+#include "map/Map.h"
 #include "ogl/OpenGL.h"
 
 //-------------------------------------------------
@@ -63,11 +63,11 @@ void sg::StartState::Input()
     if (action == Action::CREATE_CITY)
     {
         Log::SG_LOG_INFO("[StartState::Input()] Starts switching to the CityState.");
-        Log::SG_LOG_INFO("[StartState::Input()] Name: {}, Level: {}", m_cityName, m_level);
+        Log::SG_LOG_INFO("[StartState::Input()] Name: {}, Level: {}, Size: {}", m_cityName, m_level, m_mapSize);
 
-        // todo
-        auto city{ std::make_unique<city::City>(m_cityName, nullptr) };
-        context->city = std::move(city);
+        // create a map and a city
+        auto map{ std::make_unique<map::Map>(m_mapSize, context->window) };
+        context->city = std::make_unique<city::City>(m_cityName, std::move(map));
 
         RequestStackPop();
         RequestStackPush(Id::CITY);
@@ -109,12 +109,21 @@ void sg::StartState::RenderImGui()
     ImGui::RadioButton("Hard (10k Bonds)", &e, 2);
     ImGui::Separator();
 
+    static int s{ 0 };
+    ImGui::RadioButton("Small (128x128)", &s, 0);
+    ImGui::SameLine();
+    ImGui::RadioButton("Medium (256x256)", &s, 1);
+    ImGui::SameLine();
+    ImGui::RadioButton("Huge (512x512)", &s, 2);
+    ImGui::Separator();
+
     if (ImGui::Button("Done"))
     {
         if (strlen(m_cityName) <= 4)
         {
             strncpy(m_cityName, "Musterstadt", 96);
         }
+        m_mapSize = MAP_SIZES.at(s);
         m_level = static_cast<Level>(e);
 
         action = Action::CREATE_CITY;

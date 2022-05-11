@@ -18,7 +18,7 @@
 
 #include <imgui.h>
 #include "WaterLayer.h"
-#include "Application.h"
+#include "Game.h"
 #include "Log.h"
 #include "Map.h"
 #include "ogl/OpenGL.h"
@@ -30,8 +30,9 @@
 // Ctors. / Dtor.
 //-------------------------------------------------
 
-sg::map::WaterLayer::WaterLayer(std::shared_ptr<ogl::Window> t_window)
+sg::map::WaterLayer::WaterLayer(const int t_tileCount, std::shared_ptr<ogl::Window> t_window)
     : Layer(std::move(t_window))
+    , m_tileCount{ t_tileCount }
 {
     Log::SG_LOG_DEBUG("[WaterLayer::WaterLayer()] Create WaterLayer.");
 
@@ -49,7 +50,7 @@ sg::map::WaterLayer::~WaterLayer() noexcept
 
 void sg::map::WaterLayer::Update()
 {
-    m_moveFactor += 0.024f * static_cast<float>(Application::FRAME_TIME);
+    m_moveFactor += 0.024f * static_cast<float>(Game::FRAME_TIME);
     m_moveFactor = fmod(m_moveFactor, 1.0f);
 }
 
@@ -60,7 +61,7 @@ void sg::map::WaterLayer::Render(const ogl::camera::Camera& t_camera, const glm:
 
     vao->Bind();
 
-    const auto& shaderProgram{ ogl::resource::ResourceManager::LoadShaderProgram(Application::RESOURCES_PATH + "shader/layer/water") };
+    const auto& shaderProgram{ ogl::resource::ResourceManager::LoadShaderProgram(Game::RESOURCES_PATH + "shader/layer/water") };
     shaderProgram.Bind();
 
     shaderProgram.SetUniform("model", modelMatrix);
@@ -78,12 +79,12 @@ void sg::map::WaterLayer::Render(const ogl::camera::Camera& t_camera, const glm:
     glBindTexture(GL_TEXTURE_2D, m_waterFbos->refractionColorTextureId);
     shaderProgram.SetUniform("refractionTexture", 1);
 
-    const auto& dudvTexture{ ogl::resource::ResourceManager::LoadTexture(Application::RESOURCES_PATH + "water/dudv.png") };
+    const auto& dudvTexture{ ogl::resource::ResourceManager::LoadTexture(Game::RESOURCES_PATH + "water/dudv.png") };
     glActiveTexture(GL_TEXTURE2);
     glBindTexture(GL_TEXTURE_2D, dudvTexture.id);
     shaderProgram.SetUniform("dudvTexture", 2);
 
-    const auto& normalTexture{ ogl::resource::ResourceManager::LoadTexture(Application::RESOURCES_PATH + "water/normal.png") };
+    const auto& normalTexture{ ogl::resource::ResourceManager::LoadTexture(Game::RESOURCES_PATH + "water/normal.png") };
     glActiveTexture(GL_TEXTURE3);
     glBindTexture(GL_TEXTURE_2D, normalTexture.id);
     shaderProgram.SetUniform("normalTexture", 3);
@@ -145,11 +146,11 @@ void sg::map::WaterLayer::Init()
     Log::SG_LOG_DEBUG("[WaterLayer::Init()] Initialize the WaterLayer.");
 
     m_waterFbos = std::make_unique<ogl::buffer::WaterFbos>(window->GetWidth(), window->GetHeight());
-    position = glm::vec3(Map::TILE_COUNT / 2, -WATER_HEIGHT, Map::TILE_COUNT / 2);
+    position = glm::vec3(m_tileCount / 2, -WATER_HEIGHT, m_tileCount / 2);
     modelMatrix = ogl::math::Transform::CreateModelMatrix(
         position,
         glm::vec3(0.0f),
-        glm::vec3(static_cast<float>(Map::TILE_COUNT) * 0.5f, 1.0f, static_cast<float>(Map::TILE_COUNT) * 0.5f)
+        glm::vec3(static_cast<float>(m_tileCount) * 0.5f, 1.0f, static_cast<float>(m_tileCount) * 0.5f)
     );
 
     vao = std::make_unique<ogl::buffer::Vao>();

@@ -20,12 +20,13 @@
 #include "Map.h"
 
 std::unique_ptr<sg::map::Tile> sg::map::TileFactory::CreateTile(
+    const int t_tileCount,
     const float t_mapX, const float t_mapZ,
     const Tile::TileType t_tileType
 )
 {
     auto tile{ std::make_unique<Tile>(
-        t_mapX, t_mapZ, GetMapIndexFromPosition(t_mapX, t_mapZ))
+        t_mapX, t_mapZ, GetMapIndexFromPosition(t_tileCount, t_mapX, t_mapZ))
     };
 
     switch (t_tileType)
@@ -69,12 +70,12 @@ std::unique_ptr<sg::map::Tile> sg::map::TileFactory::CreateTile(
 // Util
 //-------------------------------------------------
 
-int sg::map::TileFactory::GetMapIndexFromPosition(const int t_mapX, const int t_mapZ)
+int sg::map::TileFactory::GetMapIndexFromPosition(const int t_tileCount, const int t_mapX, const int t_mapZ)
 {
-    return t_mapZ * Map::TILE_COUNT + t_mapX;
+    return t_mapZ * t_tileCount + t_mapX;
 }
 
-int sg::map::TileFactory::GetMapIndexFromPosition(const float t_mapX, const float t_mapZ)
+int sg::map::TileFactory::GetMapIndexFromPosition(const int t_tileCount, const float t_mapX, const float t_mapZ)
 {
-    return GetMapIndexFromPosition(static_cast<int>(t_mapX), static_cast<int>(t_mapZ));
+    return GetMapIndexFromPosition(t_tileCount, static_cast<int>(t_mapX), static_cast<int>(t_mapZ));
 }

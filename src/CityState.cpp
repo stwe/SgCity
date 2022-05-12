@@ -63,6 +63,11 @@ void sg::CityState::Update()
     context->city->Update();
 }
 
+void sg::CityState::PreRender()
+{
+    context->city->PreRender(*m_camera, *m_skybox);
+}
+
 void sg::CityState::Render()
 {
     context->city->Render(*m_camera);

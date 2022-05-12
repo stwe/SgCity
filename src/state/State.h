@@ -57,20 +57,6 @@ namespace sg::state
         // Types
         //-------------------------------------------------
 
-        /*
-         Menu state ->
-             ----------------
-             Load saved city
-             Start new city -----> StartState ----->
-             Edit new map                        ----
-             Quit                                Name
-             ---------------                     Level
-                                                 -----
-                                                   |
-                                                   |
-                                                CityState
-        */
-
         /**
          * The unique identifiers of the states.
          */
@@ -146,6 +132,7 @@ namespace sg::state
 
         virtual void Input() = 0;
         virtual void Update() = 0;
+        virtual void PreRender() {}
         virtual void Render() = 0;
         virtual void RenderImGui() = 0;
 

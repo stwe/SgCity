@@ -86,9 +86,16 @@ void sg::state::StateStack::Render() const
 {
     for (const auto& state : m_stack)
     {
+        state->PreRender();
+    }
+
+    for (const auto& state : m_stack)
+    {
         state->StartFrame();
+
         state->Render();
         state->RenderImGui();
+
         state->EndFrame();
     }
 }

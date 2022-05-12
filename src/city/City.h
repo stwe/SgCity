@@ -18,8 +18,7 @@
 
 #pragma once
 
-#include "ogl/Window.h"
-#include "ogl/camera/Camera.h"
+#include "ogl/resource/Skybox.h"
 
 //-------------------------------------------------
 // Forward declarations
@@ -135,6 +134,7 @@ namespace sg::city
 
         void Input();
         void Update();
+        void PreRender(ogl::camera::Camera& t_camera, const ogl::resource::Skybox& t_skybox) const;
         void Render(const ogl::camera::Camera& t_camera);
         void RenderImGui();
 

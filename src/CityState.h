@@ -101,6 +101,7 @@ namespace sg
 
         void Input() override;
         void Update() override;
+        void PreRender() override;
         void Render() override;
         void RenderImGui() override;
 

@@ -115,6 +115,12 @@ void sg::city::City::Update()
     population = populationTotal;
 }
 
+void sg::city::City::PreRender(ogl::camera::Camera& t_camera, const ogl::resource::Skybox& t_skybox) const
+{
+    m_map->RenderForMousePicking(t_camera);
+    m_map->RenderForWater(t_camera, t_skybox);
+}
+
 void sg::city::City::Render(const ogl::camera::Camera& t_camera)
 {
     m_map->Render(t_camera);
@@ -123,6 +129,7 @@ void sg::city::City::Render(const ogl::camera::Camera& t_camera)
 void sg::city::City::RenderImGui()
 {
     // map
+
     m_map->RenderImGui();
 
     // city
